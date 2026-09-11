@@ -6,7 +6,7 @@ class SimulatePaymentRequest(BaseModel):
     """Request schema for simulated payment execution."""
     model_config = ConfigDict(extra="ignore")
 
-    outcome: str = Field(
+    outcome: str | None = Field(
         default="SUCCESS",
         description="Deterministic simulated payment outcome: 'SUCCESS' or 'FAILURE'",
     )

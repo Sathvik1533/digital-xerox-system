@@ -2,8 +2,9 @@ import uuid
 from datetime import datetime, timezone
 from app.models.order import Order, OrderStatus
 from app.models.payment import Payment, PaymentOutcome, PaymentStatus
-from app.repositories.dynamodb_repo import DynamoDBRepository
+from app.repositories.dynamodb_repo import DynamoDBRepository, OrderStateConflictError
 from app.services.order_service import OrderNotFoundError
+from app.services.pricing_service import PricingService
 
 
 class PaymentValidationError(Exception):
@@ -83,9 +84,19 @@ class PaymentService:
         payment_reference = f"SIMPAY-{uuid.uuid4().hex[:12].upper()}"
         now = datetime.now(timezone.utc)
 
-        amount_paise = order.pricing.total_price_paise
-        amount_rupees = order.pricing.total_price_rupees
-        currency = getattr(order.pricing, "currency", "INR") or "INR"
+        # Authoritatively recalculate pricing from order print configuration on backend
+        pricing_service = PricingService()
+        _, expected_pricing = pricing_service.calculate_pricing(
+            page_count=order.print_config.page_count,
+            color_mode=order.print_config.color_mode,
+            paper_size=order.print_config.paper_size,
+            copies=order.print_config.copies,
+            double_sided=order.print_config.double_sided,
+            sidedness=order.print_config.sidedness,
+        )
+        amount_paise = expected_pricing.total_price_paise
+        amount_rupees = expected_pricing.total_price_rupees
+        currency = expected_pricing.currency
 
         if norm_outcome == PaymentOutcome.SUCCESS.value:
             payment_status = PaymentStatus.SUCCESS.value
@@ -116,17 +127,31 @@ class PaymentService:
         self.db_repo.save_payment(payment)
 
         # 7. Atomically update order payment status and order status in DynamoDB
-        updated_order = self.db_repo.update_order_payment_state(
-            order_id=order.order_id,
-            payment_status=payment_status,
-            order_status=new_order_status,
-            payment_id=payment_id,
-        )
+        try:
+            updated_order = self.db_repo.update_order_payment_state(
+                order_id=order.order_id,
+                payment_status=payment_status,
+                order_status=new_order_status,
+                payment_id=payment_id,
+            )
+        except OrderStateConflictError:
+            latest = self.db_repo.get_order(order.order_id)
+            if not latest:
+                raise OrderNotFoundError(order.order_id)
+            if latest.status == OrderStatus.PAID.value or latest.payment_status == PaymentStatus.SUCCESS.value:
+                raise OrderNotPayableError(
+                    "ORDER_ALREADY_PAID",
+                    f"Order '{order.order_id}' is already paid and cannot be paid again.",
+                )
+            raise OrderNotPayableError(
+                "ORDER_NOT_PAYABLE",
+                f"Order '{order.order_id}' in status '{latest.status}' is not eligible for payment.",
+            )
 
         return payment, updated_order
 
-    def get_payment_for_order(self, order_id: str) -> Payment:
-        """Retrieve payment details for an order."""
+    def get_payment_for_order(self, order_id: str) -> tuple[Payment, Order]:
+        """Retrieve payment details and associated order for an order."""
         order = self.db_repo.get_order(order_id)
         if not order:
             raise OrderNotFoundError(order_id)
@@ -135,4 +160,4 @@ class PaymentService:
         if not payment:
             raise PaymentNotFoundError(order_id)
 
-        return payment
+        return payment, order

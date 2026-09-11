@@ -2,10 +2,16 @@ from datetime import datetime, timezone
 from decimal import Decimal
 import boto3
 from boto3.dynamodb.conditions import Key
+from botocore.exceptions import ClientError
 from app.core.config import get_settings
 from app.models.document import Document
-from app.models.order import Order
+from app.models.order import Order, OrderStatus, PaymentStatus
 from app.models.payment import Payment
+
+
+class OrderStateConflictError(Exception):
+    """Raised when DynamoDB conditional check fails during order state update."""
+    pass
 
 
 def _convert_floats_to_decimals(obj):
@@ -188,22 +194,32 @@ class DynamoDBRepository:
             ":ps": payment_status,
             ":st": order_status,
             ":ua": now_iso,
+            ":st_pending": OrderStatus.PENDING_PAYMENT.value,
+            ":st_failed": OrderStatus.PAYMENT_FAILED.value,
         }
         if payment_id:
             update_expr += ", #pid = :pid"
             expr_names["#pid"] = "payment_id"
             expr_values[":pid"] = payment_id
 
-        response = self.table.update_item(
-            Key={
-                "PK": f"ORDER#{order_id}",
-                "SK": f"ORDER#{order_id}",
-            },
-            UpdateExpression=update_expr,
-            ExpressionAttributeNames=expr_names,
-            ExpressionAttributeValues=expr_values,
-            ReturnValues="ALL_NEW",
-        )
-        item = response.get("Attributes", {})
-        item = _convert_decimals_to_native(item)
-        return Order(**item)
+        try:
+            response = self.table.update_item(
+                Key={
+                    "PK": f"ORDER#{order_id}",
+                    "SK": f"ORDER#{order_id}",
+                },
+                UpdateExpression=update_expr,
+                ConditionExpression="attribute_exists(PK) AND #st IN (:st_pending, :st_failed)",
+                ExpressionAttributeNames=expr_names,
+                ExpressionAttributeValues=expr_values,
+                ReturnValues="ALL_NEW",
+            )
+            item = response.get("Attributes", {})
+            item = _convert_decimals_to_native(item)
+            return Order(**item)
+        except ClientError as e:
+            if e.response.get("Error", {}).get("Code") == "ConditionalCheckFailedException":
+                raise OrderStateConflictError(
+                    f"Order '{order_id}' cannot be updated: order does not exist or is not in a payable state."
+                ) from e
+            raise

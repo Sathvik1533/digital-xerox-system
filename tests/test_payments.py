@@ -380,3 +380,104 @@ def test_student_ui_serves_step3_elements(client: TestClient):
     assert "queryPaymentOrderId" in res.text
     assert "queryPaymentBtn" in res.text
 
+
+def test_get_payment_returns_order_status(client: TestClient, aws_env):
+    """Test that GET /orders/{order_id}/payment returns authoritative order_status."""
+    doc_id = _upload_test_document(client)
+    order = _create_test_order(client, doc_id, page_count=3, copies=1)
+    order_id = order["order_id"]
+
+    # Pay order
+    pay_res = client.post(f"/orders/{order_id}/payment/simulate", json={"outcome": "SUCCESS"})
+    assert pay_res.status_code == 200
+
+    # Query payment
+    get_res = client.get(f"/orders/{order_id}/payment")
+    assert get_res.status_code == 200
+    data = get_res.json()
+    assert data["order_status"] == "PAID"
+    assert data["status"] == "SUCCESS"
+
+
+def test_simulate_payment_null_outcome_defaults_to_success(client: TestClient, aws_env):
+    """Test that payload with outcome=None safely defaults to SUCCESS instead of raising 422."""
+    doc_id = _upload_test_document(client)
+    order = _create_test_order(client, doc_id, page_count=3)
+    order_id = order["order_id"]
+
+    res = client.post(f"/orders/{order_id}/payment/simulate", json={"outcome": None})
+    assert res.status_code == 200
+    data = res.json()
+    assert data["outcome"] == "SUCCESS"
+    assert data["status"] == "SUCCESS"
+    assert data["order_status"] == "PAID"
+
+
+def test_simulate_payment_case_insensitive_outcome(client: TestClient, aws_env):
+    """Test that outcome string is normalized case-insensitively ('success', 'failure')."""
+    doc_id = _upload_test_document(client)
+    order1 = _create_test_order(client, doc_id, page_count=2)
+    res1 = client.post(f"/orders/{order1['order_id']}/payment/simulate", json={"outcome": "  success  "})
+    assert res1.status_code == 200
+    assert res1.json()["outcome"] == "SUCCESS"
+
+    order2 = _create_test_order(client, doc_id, page_count=2)
+    res2 = client.post(f"/orders/{order2['order_id']}/payment/simulate", json={"outcome": "failure"})
+    assert res2.status_code == 200
+    assert res2.json()["outcome"] == "FAILURE"
+    assert res2.json()["order_status"] == "PAYMENT_FAILED"
+
+
+def test_simulate_payment_race_condition_protection(client: TestClient, aws_env):
+    """
+    Test concurrency / race condition protection:
+    If an order has transitioned to PAID, subsequent payment state update attempts
+    are rejected atomically at the DynamoDB level and cannot overwrite PAID with PAYMENT_FAILED.
+    """
+    from app.repositories.dynamodb_repo import DynamoDBRepository, OrderStateConflictError
+
+    doc_id = _upload_test_document(client)
+    order = _create_test_order(client, doc_id, page_count=5)
+    order_id = order["order_id"]
+
+    # First request marks it PAID
+    res = client.post(f"/orders/{order_id}/payment/simulate", json={"outcome": "SUCCESS"})
+    assert res.status_code == 200
+
+    repo = DynamoDBRepository()
+    # Attempt concurrent update trying to mark it PAYMENT_FAILED
+    with pytest.raises(OrderStateConflictError):
+        repo.update_order_payment_state(
+            order_id=order_id,
+            payment_status="FAILED",
+            order_status="PAYMENT_FAILED",
+            payment_id="PAY-CONCURRENT-FAIL",
+        )
+
+    # Order must remain PAID in DynamoDB
+    persisted_order = repo.get_order(order_id)
+    assert persisted_order.status == "PAID"
+    assert persisted_order.payment_status == "SUCCESS"
+
+
+def test_update_order_payment_state_nonexistent_order_no_ghost_item(aws_env):
+    """
+    Test that calling update_order_payment_state on non-existent order raises OrderStateConflictError
+    and does NOT create a phantom corrupted item in DynamoDB.
+    """
+    from app.repositories.dynamodb_repo import DynamoDBRepository, OrderStateConflictError
+
+    repo = DynamoDBRepository()
+    with pytest.raises(OrderStateConflictError):
+        repo.update_order_payment_state(
+            order_id="ORD-NONEXISTENT-PHANTOM",
+            payment_status="SUCCESS",
+            order_status="PAID",
+            payment_id="PAY-PHANTOM",
+        )
+
+    # Verify no phantom item was written
+    table = aws_env["table"]
+    item = table.get_item(Key={"PK": "ORDER#ORD-NONEXISTENT-PHANTOM", "SK": "ORDER#ORD-NONEXISTENT-PHANTOM"}).get("Item")
+    assert item is None
+

@@ -93,7 +93,7 @@ def get_payment(
 ):
     """Retrieve payment details for an order from DynamoDB."""
     try:
-        payment = service.get_payment_for_order(order_id)
+        payment, order = service.get_payment_for_order(order_id)
         return PaymentResponse(
             payment_id=payment.payment_id,
             order_id=payment.order_id,
@@ -105,7 +105,7 @@ def get_payment(
             status=payment.status,
             outcome=payment.outcome,
             failure_reason=payment.failure_reason,
-            order_status=None,
+            order_status=order.status,
             created_at=payment.created_at,
             updated_at=payment.updated_at,
         )
