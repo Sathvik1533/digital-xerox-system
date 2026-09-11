@@ -18,6 +18,8 @@ from fastapi.staticfiles import StaticFiles
 from app.core.config import get_settings
 from app.api.health import router as health_router
 from app.api.documents import router as documents_router
+from app.api.orders import router as orders_router
+from app.api.pricing import router as pricing_router
 
 settings = get_settings()
 
@@ -60,11 +62,10 @@ def serve_student_ui():
 # Routers — each feature area gets its own router
 app.include_router(health_router, tags=["Health"])
 app.include_router(documents_router, prefix="/documents", tags=["Documents"])
-
+app.include_router(pricing_router, prefix="/pricing", tags=["Pricing"])
+app.include_router(orders_router, prefix="/orders", tags=["Orders"])
 
 # Placeholder: future routers registered here as slices are implemented
-# app.include_router(orders_router, prefix="/orders", tags=["Orders"])
 # app.include_router(payments_router, prefix="/orders", tags=["Payments"])
 # app.include_router(queue_router, prefix="/queue", tags=["Queue"])
-# app.include_router(pricing_router, prefix="/pricing", tags=["Pricing"])
 # app.include_router(staff_router, prefix="/staff", tags=["Staff"])
