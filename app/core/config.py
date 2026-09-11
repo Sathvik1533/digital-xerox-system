@@ -38,6 +38,10 @@ class Settings(BaseSettings):
     # Pricing (in paise / cents — smallest unit to avoid float errors)
     price_per_page_bw: int = 100        # ₹1.00 per page B&W
     price_per_page_color: int = 500     # ₹5.00 per page color
+    supported_paper_sizes: list[str] = ["A4", "A3", "Letter"]
+    supported_color_modes: list[str] = ["bw", "color"]
+    paper_size_multipliers: dict[str, float] = {"a4": 1.0, "letter": 1.0, "a3": 2.0}
+    double_sided_discount_factor: float = 0.8  # 20% discount for double-sided printing
 
     model_config = SettingsConfigDict(
         env_file=".env",
