@@ -347,6 +347,16 @@
       color: #fbbf24;
       border: 1px solid rgba(251, 191, 36, 0.3);
     }
+    .tag-success {
+      background: rgba(52, 211, 153, 0.15);
+      color: #34d399;
+      border: 1px solid rgba(52, 211, 153, 0.3);
+    }
+    .tag-error {
+      background: rgba(248, 113, 113, 0.15);
+      color: #f87171;
+      border: 1px solid rgba(248, 113, 113, 0.3);
+    }
     .quote-box {
       background: linear-gradient(135deg, rgba(30, 41, 59, 0.8) 0%, rgba(15, 23, 42, 0.9) 100%);
       border: 1px solid rgba(56, 189, 248, 0.3);
@@ -649,6 +659,97 @@
       </div>
     </div>
 
+    <!-- STEP 3: SIMULATED PAYMENT -->
+    <div class="card" id="step3Card">
+      <div class="card-title">
+        <span>Step 3: Simulated Payment (Slice 3)</span>
+        <div class="integration-tags">
+          <span class="tag tag-status" id="paymentStatusBadge">PENDING</span>
+          <span class="tag tag-dynamo">DATA-001 DynamoDB</span>
+        </div>
+      </div>
+      <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 1.25rem;">
+        Deterministic payment simulation only (SUCCESS or FAILURE). Amounts and currency are authoritatively derived from the DynamoDB order pricing breakdown (client payment state is never trusted).
+      </p>
+
+      <div class="form-group">
+        <label for="paymentOrderId">Order ID to Pay</label>
+        <input type="text" id="paymentOrderId" placeholder="Create an order above or paste Order ID (ORD-...) here">
+      </div>
+
+      <div class="form-group">
+        <label>Deterministic Simulation Outcome</label>
+        <div style="display: flex; gap: 12px; margin-top: 6px;">
+          <label style="display: flex; align-items: center; gap: 8px; cursor: pointer; background: #0f172a; border: 1px solid var(--card-border); padding: 10px 16px; border-radius: 8px; flex: 1;">
+            <input type="radio" name="paymentOutcome" value="SUCCESS" checked style="accent-color: var(--success); width: auto;">
+            <span style="font-weight: 600; color: var(--success);">Simulate SUCCESS</span>
+          </label>
+          <label style="display: flex; align-items: center; gap: 8px; cursor: pointer; background: #0f172a; border: 1px solid var(--card-border); padding: 10px 16px; border-radius: 8px; flex: 1;">
+            <input type="radio" name="paymentOutcome" value="FAILURE" style="accent-color: var(--error); width: auto;">
+            <span style="font-weight: 600; color: var(--error);">Simulate FAILURE</span>
+          </label>
+        </div>
+      </div>
+
+      <button class="btn btn-action" id="simulatePaymentBtn">
+        <span id="paymentBtnText">Execute Simulated Payment (POST /orders/{order_id}/payment/simulate)</span>
+      </button>
+
+      <!-- SIMULATED PAYMENT RESULT SECTION -->
+      <div class="result-section" id="paymentResultSection">
+        <div class="card-title">
+          <span id="paymentResultHeading">Payment Outcome Recorded</span>
+          <div class="integration-tags">
+            <span class="tag" id="paymentResultTag">SUCCESS</span>
+            <span class="tag tag-dynamo">DynamoDB Updated</span>
+          </div>
+        </div>
+
+        <div class="result-grid">
+          <div class="result-item">
+            <div class="result-label">Payment ID</div>
+            <div class="result-value" id="resPaymentId">-</div>
+          </div>
+          <div class="result-item">
+            <div class="result-label">Payment Reference</div>
+            <div class="result-value" id="resPaymentRef">-</div>
+          </div>
+          <div class="result-item">
+            <div class="result-label">Authoritative Amount Charged</div>
+            <div class="result-value" id="resPaymentAmount" style="color: var(--primary); font-weight: 700;">-</div>
+          </div>
+          <div class="result-item">
+            <div class="result-label">Updated Order Status</div>
+            <div class="result-value" id="resPaymentOrderStatus" style="font-weight: 700;">-</div>
+          </div>
+          <div class="result-item" style="grid-column: span 2;" id="resPaymentFailureRow">
+            <div class="result-label">Failure Reason / Details</div>
+            <div class="result-value" id="resPaymentFailureReason" style="color: var(--error);">-</div>
+          </div>
+          <div class="result-item" style="grid-column: span 2;">
+            <div class="result-label">DynamoDB Partition & Sort Key</div>
+            <div class="result-value" id="resPaymentDdbKey" style="font-size: 0.8rem; font-family: 'JetBrains Mono', monospace;">-</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- VERIFY PAYMENT IN DYNAMODB -->
+    <div class="card">
+      <div class="card-title">
+        <span>Verify Payment in DynamoDB</span>
+        <span style="font-size: 0.8rem; color: var(--text-muted); font-weight: 400;">GET /orders/{order_id}/payment</span>
+      </div>
+      <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 1rem;">
+        Query the single-table DynamoDB partition (PK: ORDER#{order_id}, SK: PAYMENT#{payment_id}) directly via the backend API.
+      </p>
+      <div class="query-section">
+        <input type="text" id="queryPaymentOrderId" placeholder="Paste Order ID here...">
+        <button class="btn btn-outline" id="queryPaymentBtn" type="button">Fetch Payment</button>
+      </div>
+      <pre id="queryPaymentResult" style="display: none;"></pre>
+    </div>
+
     <!-- VERIFY ORDER IN DYNAMODB -->
     <div class="card">
       <div class="card-title">
@@ -679,7 +780,7 @@
     </div>
 
     <footer>
-      Digital Xerox & Stationery System • Vertical Slice 2 • FastAPI + DynamoDB + S3
+      Digital Xerox & Stationery System • Vertical Slice 3 • FastAPI + DynamoDB + S3
     </footer>
   </div>
 
@@ -738,6 +839,28 @@
     const queryOrderId = document.getElementById("queryOrderId");
     const queryOrderBtn = document.getElementById("queryOrderBtn");
     const queryOrderResult = document.getElementById("queryOrderResult");
+
+    // Elements - Step 3 Simulated Payment
+    const step3Indicator = document.getElementById("step3Indicator");
+    const paymentOrderId = document.getElementById("paymentOrderId");
+    const simulatePaymentBtn = document.getElementById("simulatePaymentBtn");
+    const paymentBtnText = document.getElementById("paymentBtnText");
+    const paymentStatusBadge = document.getElementById("paymentStatusBadge");
+    const paymentResultSection = document.getElementById("paymentResultSection");
+    const paymentResultHeading = document.getElementById("paymentResultHeading");
+    const paymentResultTag = document.getElementById("paymentResultTag");
+    const resPaymentId = document.getElementById("resPaymentId");
+    const resPaymentRef = document.getElementById("resPaymentRef");
+    const resPaymentAmount = document.getElementById("resPaymentAmount");
+    const resPaymentOrderStatus = document.getElementById("resPaymentOrderStatus");
+    const resPaymentFailureRow = document.getElementById("resPaymentFailureRow");
+    const resPaymentFailureReason = document.getElementById("resPaymentFailureReason");
+    const resPaymentDdbKey = document.getElementById("resPaymentDdbKey");
+
+    // Elements - Query Payment
+    const queryPaymentOrderId = document.getElementById("queryPaymentOrderId");
+    const queryPaymentBtn = document.getElementById("queryPaymentBtn");
+    const queryPaymentResult = document.getElementById("queryPaymentResult");
 
     let selectedFile = null;
     let latestQuote = null;
@@ -985,10 +1108,118 @@
         queryOrderId.value = data.order_id;
         createOrderBtn.disabled = false;
         orderBtnText.textContent = "Create Order in DynamoDB (POST /orders)";
+
+        // Auto-advance to Step 3: Simulated Payment
+        paymentOrderId.value = data.order_id;
+        queryPaymentOrderId.value = data.order_id;
+        step2Indicator.classList.remove("active");
+        step2Indicator.classList.add("completed");
+        step3Indicator.classList.add("active");
       } catch (err) {
         showAlert("Error connecting to server: " + err.message, "error");
         createOrderBtn.disabled = false;
         orderBtnText.textContent = "Create Order in DynamoDB (POST /orders)";
+      }
+    });
+
+    // --- Step 3: Simulated Payment Execution ---
+    simulatePaymentBtn.addEventListener("click", async () => {
+      const orderId = paymentOrderId.value.trim();
+      if (!orderId) {
+        showAlert("Please enter or specify an Order ID to simulate payment.", "error");
+        paymentOrderId.focus();
+        return;
+      }
+
+      hideAlert();
+      simulatePaymentBtn.disabled = true;
+      paymentBtnText.textContent = "Processing deterministic simulated payment...";
+
+      const selectedOutcomeEl = document.querySelector('input[name="paymentOutcome"]:checked');
+      const outcome = selectedOutcomeEl ? selectedOutcomeEl.value : "SUCCESS";
+
+      try {
+        const res = await fetch(`/orders/${orderId}/payment/simulate`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ outcome: outcome })
+        });
+
+        const data = await res.json();
+
+        if (!res.ok) {
+          const msg = data.detail && data.detail.error ? data.detail.error.message : (data.detail || "Payment simulation failed");
+          showAlert(msg, "error");
+          simulatePaymentBtn.disabled = false;
+          paymentBtnText.textContent = "Execute Simulated Payment (POST /orders/{order_id}/payment/simulate)";
+          return;
+        }
+
+        // Render payment outcome
+        resPaymentId.textContent = data.payment_id;
+        resPaymentRef.textContent = data.payment_reference;
+        resPaymentAmount.textContent = `₹${data.amount_rupees.toFixed(2)} (${data.amount_paise} paise)`;
+        resPaymentOrderStatus.textContent = data.order_status;
+        resPaymentDdbKey.textContent = `PK: ORDER#${data.order_id} / SK: PAYMENT#${data.payment_id}`;
+
+        if (data.status === "SUCCESS") {
+          showAlert(`Payment of ₹${data.amount_rupees.toFixed(2)} recorded successfully for Order ${data.order_id}! Status is now PAID.`, "success");
+          paymentStatusBadge.textContent = "PAID";
+          paymentStatusBadge.className = "tag tag-success";
+          paymentResultHeading.textContent = "Payment Succeeded!";
+          paymentResultTag.textContent = "SUCCESS";
+          paymentResultTag.className = "tag tag-success";
+          resPaymentOrderStatus.style.color = "var(--success)";
+          resPaymentFailureRow.style.display = "none";
+          resOrderPaymentStatus.textContent = "SUCCESS";
+          resOrderPaymentStatus.style.color = "var(--success)";
+          resOrderStatus.textContent = "PAID";
+          step3Indicator.classList.remove("active");
+          step3Indicator.classList.add("completed");
+          const step4 = document.getElementById("step4Indicator");
+          if (step4) step4.classList.add("active");
+        } else {
+          showAlert(`Simulated payment failed: ${data.failure_reason || "Simulation failure"}. You may retry payment.`, "error");
+          paymentStatusBadge.textContent = "PAYMENT_FAILED";
+          paymentStatusBadge.className = "tag tag-error";
+          paymentResultHeading.textContent = "Payment Simulation Failed";
+          paymentResultTag.textContent = "FAILED";
+          paymentResultTag.className = "tag tag-error";
+          resPaymentOrderStatus.style.color = "var(--error)";
+          resPaymentFailureRow.style.display = "block";
+          resPaymentFailureReason.textContent = data.failure_reason || "Payment declined";
+          resOrderPaymentStatus.textContent = "FAILED";
+          resOrderPaymentStatus.style.color = "var(--error)";
+          resOrderStatus.textContent = "PAYMENT_FAILED";
+        }
+
+        paymentResultSection.style.display = "block";
+        queryPaymentOrderId.value = data.order_id;
+        simulatePaymentBtn.disabled = false;
+        paymentBtnText.textContent = "Execute Simulated Payment (POST /orders/{order_id}/payment/simulate)";
+      } catch (err) {
+        showAlert("Network error during payment simulation: " + err.message, "error");
+        simulatePaymentBtn.disabled = false;
+        paymentBtnText.textContent = "Execute Simulated Payment (POST /orders/{order_id}/payment/simulate)";
+      }
+    });
+
+    // --- Payment Verification Lookup ---
+    queryPaymentBtn.addEventListener("click", async () => {
+      const orderId = queryPaymentOrderId.value.trim();
+      if (!orderId) {
+        showAlert("Please enter an Order ID to query payment.", "error");
+        return;
+      }
+
+      try {
+        const res = await fetch(`/orders/${orderId}/payment`);
+        const data = await res.json();
+        queryPaymentResult.style.display = "block";
+        queryPaymentResult.textContent = JSON.stringify(data, null, 2);
+      } catch (err) {
+        queryPaymentResult.style.display = "block";
+        queryPaymentResult.textContent = "Error querying DynamoDB: " + err.message;
       }
     });
 
