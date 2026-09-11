@@ -55,13 +55,41 @@
 - Comprehensive automated test suite: 46/46 tests passing
 - Strict compliance with DATA-001 canonical order schema (`payment_status: PENDING`, `document_key`, `document_name`, `document_content_type`, `document_size`, `color_mode`, `paper_size`, `copies`, `sidedness`, `scheduled_time`)
 
+## Milestone 3 — Vertical Slice 3: Simulated Payment
+**Status:** ✅ Complete  
+**Date:** 2026-09-12
+
+### What was delivered
+- Simulated payment processing engine (`PaymentService`) supporting:
+  - Deterministic simulation only (SUCCESS or FAILURE) without external gateways or SDKs
+  - Authoritative amount derivation from persisted order pricing breakdown (recalculated/validated on backend; client payment state never trusted)
+  - Validation of order eligibility (only `PENDING_PAYMENT` and `PAYMENT_FAILED` orders can be paid)
+  - Duplicate payment rejection (`ORDER_ALREADY_PAID` with 400 Bad Request) on already paid orders
+  - Retry capability on payment failure transitioning to `PAID` on subsequent success
+- DynamoDB single-table persistence according to DATA-001:
+  - Payment record: `PK: ORDER#{order_id}` / `SK: PAYMENT#{payment_id}`
+  - Fast lookup aliases: `PK: ORDER#{order_id}` / `SK: PAYMENT#{order_id}` and `PK: PAYMENT#{payment_id}` / `SK: PAYMENT#{payment_id}`
+  - Atomic order state update (`update_order_payment_state`):
+    - On SUCCESS: `payment_status: "SUCCESS"`, `status: "PAID"`, `payment_id: payment_id`
+    - On FAILURE: `payment_status: "FAILED"`, `status: "PAYMENT_FAILED"`, `payment_id: payment_id`
+- REST API endpoints in `app/api/payments.py` (mounted at `/orders` router):
+  - `POST /orders/{order_id}/payment/simulate`
+  - `GET /orders/{order_id}/payment`
+- Student UI integration in `app/static/index.html`:
+  - Step 3 Simulated Payment card with auto-population of Order ID from Step 2
+  - Toggle between "Simulate SUCCESS" and "Simulate FAILURE"
+  - Interactive payment execution button with live feedback
+  - Formatted payment result summary (Payment ID, Reference, charged amount, order status, DynamoDB keys)
+  - Dedicated DynamoDB payment verification lookup section (`GET /orders/{order_id}/payment`)
+- Comprehensive automated test suite in `tests/test_payments.py`: 13 passing tests (59/59 total project tests passing)
+
 ---
 
 ### Vertical slices planned (awaiting approval)
 1. Document Upload: Student UI → FastAPI → S3 → DynamoDB → UI ✅
 2. Print Config + Order Creation: → validation → pricing → DynamoDB ✅
-3. Simulated Payment: → SUCCESS/FAILURE → DynamoDB (Pending Approval)
-4. Token + Queue + ETA: → token/queue/ETA → DynamoDB
+3. Simulated Payment: → SUCCESS/FAILURE → DynamoDB ✅
+4. Token + Queue + ETA: → token/queue/ETA → DynamoDB (Awaiting approval)
 5. Staff Processing: Staff UI → accept/reject/process/READY
 6. Student Tracking + History
 7. Full End-to-End Validation
