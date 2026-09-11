@@ -1,0 +1,626 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Digital Xerox & Stationery — Student Document Upload</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #0f172a;
+      --card-bg: #1e293b;
+      --card-border: #334155;
+      --primary: #38bdf8;
+      --primary-hover: #0284c7;
+      --accent: #818cf8;
+      --text: #f8fafc;
+      --text-muted: #94a3b8;
+      --success: #34d399;
+      --success-bg: rgba(52, 211, 153, 0.1);
+      --error: #f87171;
+      --error-bg: rgba(248, 113, 113, 0.1);
+      --radius: 12px;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 2rem 1rem;
+    }
+    .container {
+      width: 100%;
+      max-width: 860px;
+    }
+    header {
+      text-align: center;
+      margin-bottom: 2rem;
+    }
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 4px 12px;
+      border-radius: 9999px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      background: rgba(56, 189, 248, 0.15);
+      color: var(--primary);
+      border: 1px solid rgba(56, 189, 248, 0.3);
+      margin-bottom: 0.75rem;
+    }
+    h1 {
+      font-size: 2rem;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      color: #ffffff;
+      margin-bottom: 0.5rem;
+    }
+    .subtitle {
+      color: var(--text-muted);
+      font-size: 0.95rem;
+      max-width: 600px;
+      margin: 0 auto;
+    }
+    .stepper {
+      display: flex;
+      justify-content: space-between;
+      margin: 1.5rem 0 2rem 0;
+      background: var(--card-bg);
+      padding: 0.75rem 1rem;
+      border-radius: var(--radius);
+      border: 1px solid var(--card-border);
+    }
+    .step {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.8rem;
+      color: var(--text-muted);
+    }
+    .step.active {
+      color: var(--primary);
+      font-weight: 600;
+    }
+    .step-circle {
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.75rem;
+      background: #334155;
+      color: #cbd5e1;
+    }
+    .step.active .step-circle {
+      background: var(--primary);
+      color: #0f172a;
+      font-weight: 700;
+    }
+    .card {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: var(--radius);
+      padding: 1.75rem;
+      margin-bottom: 1.5rem;
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.1);
+    }
+    .card-title {
+      font-size: 1.15rem;
+      font-weight: 600;
+      margin-bottom: 1rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .form-group {
+      margin-bottom: 1.25rem;
+    }
+    label {
+      display: block;
+      font-size: 0.85rem;
+      font-weight: 500;
+      color: #cbd5e1;
+      margin-bottom: 0.4rem;
+    }
+    input[type="text"] {
+      width: 100%;
+      padding: 0.75rem 1rem;
+      border-radius: 8px;
+      background: #0f172a;
+      border: 1px solid var(--card-border);
+      color: var(--text);
+      font-size: 0.95rem;
+      transition: border-color 0.2s;
+    }
+    input[type="text"]:focus {
+      outline: none;
+      border-color: var(--primary);
+    }
+    .dropzone {
+      border: 2px dashed var(--card-border);
+      border-radius: var(--radius);
+      padding: 2.5rem 1.5rem;
+      text-align: center;
+      cursor: pointer;
+      background: rgba(15, 23, 42, 0.5);
+      transition: all 0.2s ease;
+      position: relative;
+    }
+    .dropzone:hover, .dropzone.dragover {
+      border-color: var(--primary);
+      background: rgba(56, 189, 248, 0.05);
+    }
+    .dropzone-icon {
+      font-size: 2.5rem;
+      margin-bottom: 0.75rem;
+      color: var(--primary);
+    }
+    .dropzone-text {
+      font-size: 0.95rem;
+      color: #cbd5e1;
+      margin-bottom: 0.25rem;
+    }
+    .dropzone-hint {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+    }
+    input[type="file"] {
+      display: none;
+    }
+    .file-preview {
+      display: none;
+      margin-top: 1rem;
+      padding: 1rem;
+      background: #0f172a;
+      border-radius: 8px;
+      border: 1px solid var(--card-border);
+      align-items: center;
+      justify-content: space-between;
+    }
+    .file-details {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .file-icon {
+      font-size: 1.5rem;
+    }
+    .file-name {
+      font-size: 0.9rem;
+      font-weight: 500;
+    }
+    .file-meta {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+    }
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 0.75rem 1.5rem;
+      border-radius: 8px;
+      font-size: 0.95rem;
+      font-weight: 600;
+      cursor: pointer;
+      border: none;
+      transition: all 0.2s;
+    }
+    .btn-primary {
+      background: var(--primary);
+      color: #0f172a;
+      width: 100%;
+      margin-top: 1rem;
+    }
+    .btn-primary:hover:not(:disabled) {
+      background: var(--primary-hover);
+    }
+    .btn-primary:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+    .btn-outline {
+      background: transparent;
+      border: 1px solid var(--card-border);
+      color: var(--text);
+      font-size: 0.85rem;
+      padding: 0.5rem 1rem;
+    }
+    .btn-outline:hover {
+      border-color: var(--primary);
+      color: var(--primary);
+    }
+    .alert {
+      display: none;
+      padding: 1rem;
+      border-radius: 8px;
+      margin-bottom: 1.25rem;
+      font-size: 0.9rem;
+    }
+    .alert-error {
+      background: var(--error-bg);
+      border: 1px solid var(--error);
+      color: var(--error);
+    }
+    .alert-success {
+      background: var(--success-bg);
+      border: 1px solid var(--success);
+      color: var(--success);
+    }
+    .result-section {
+      display: none;
+      margin-top: 1.5rem;
+      border-top: 1px solid var(--card-border);
+      padding-top: 1.5rem;
+    }
+    .result-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem;
+      margin-bottom: 1.25rem;
+    }
+    .result-item {
+      background: #0f172a;
+      padding: 0.75rem 1rem;
+      border-radius: 8px;
+      border: 1px solid var(--card-border);
+    }
+    .result-label {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-bottom: 4px;
+    }
+    .result-value {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.85rem;
+      word-break: break-all;
+    }
+    .integration-tags {
+      display: flex;
+      gap: 8px;
+      margin-top: 0.5rem;
+    }
+    .tag {
+      font-size: 0.75rem;
+      padding: 3px 8px;
+      border-radius: 4px;
+      font-family: 'JetBrains Mono', monospace;
+    }
+    .tag-s3 {
+      background: rgba(234, 179, 8, 0.15);
+      color: #facc15;
+      border: 1px solid rgba(234, 179, 8, 0.3);
+    }
+    .tag-dynamo {
+      background: rgba(59, 130, 246, 0.15);
+      color: #60a5fa;
+      border: 1px solid rgba(59, 130, 246, 0.3);
+    }
+    .query-section {
+      margin-top: 1rem;
+      display: flex;
+      gap: 8px;
+    }
+    pre {
+      background: #090d16;
+      padding: 1rem;
+      border-radius: 8px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.8rem;
+      color: #a5f3fc;
+      overflow-x: auto;
+      margin-top: 0.75rem;
+      border: 1px solid var(--card-border);
+    }
+    footer {
+      margin-top: 2rem;
+      text-align: center;
+      font-size: 0.8rem;
+      color: var(--text-muted);
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <div class="badge">Slice 1: Document Upload</div>
+      <h1>Digital Xerox & Stationery System</h1>
+      <p class="subtitle">Student self-service document upload powered by FastAPI, Amazon S3 (Binary Storage), and Amazon DynamoDB (Metadata).</p>
+    </header>
+
+    <div class="stepper">
+      <div class="step active">
+        <div class="step-circle">1</div>
+        <span>Upload Document</span>
+      </div>
+      <div class="step">
+        <div class="step-circle">2</div>
+        <span>Print Config</span>
+      </div>
+      <div class="step">
+        <div class="step-circle">3</div>
+        <span>Simulated Pay</span>
+      </div>
+      <div class="step">
+        <div class="step-circle">4</div>
+        <span>Queue & Token</span>
+      </div>
+      <div class="step">
+        <div class="step-circle">5</div>
+        <span>Ready / Pickup</span>
+      </div>
+    </div>
+
+    <div id="alertBox" class="alert"></div>
+
+    <div class="card">
+      <div class="card-title">
+        <span>Step 1: Choose Your Document</span>
+        <span style="font-size: 0.8rem; color: var(--text-muted); font-weight: 400;">Max 25 MB</span>
+      </div>
+
+      <div class="form-group">
+        <label for="studentId">Student ID</label>
+        <input type="text" id="studentId" value="STU-2026-001" placeholder="e.g. STU-2026-001">
+      </div>
+
+      <div class="dropzone" id="dropzone">
+        <div class="dropzone-icon">📁</div>
+        <div class="dropzone-text">Click to choose a file or drag and drop here</div>
+        <div class="dropzone-hint">Supports PDF, DOCX, DOC, TXT, PNG, JPG</div>
+        <input type="file" id="fileInput" accept=".pdf,.docx,.doc,.txt,.png,.jpg,.jpeg">
+      </div>
+
+      <div class="file-preview" id="filePreview">
+        <div class="file-details">
+          <div class="file-icon">📄</div>
+          <div>
+            <div class="file-name" id="previewName">filename.pdf</div>
+            <div class="file-meta" id="previewMeta">0 KB • application/pdf</div>
+          </div>
+        </div>
+        <button class="btn btn-outline" id="removeFileBtn" type="button">Remove</button>
+      </div>
+
+      <button class="btn btn-primary" id="uploadBtn" disabled>
+        <span id="btnText">Upload Document to S3 & DynamoDB</span>
+      </button>
+
+      <div class="result-section" id="resultSection">
+        <div class="card-title">
+          <span>Upload Successful!</span>
+          <div class="integration-tags">
+            <span class="tag tag-s3">S3 Stored</span>
+            <span class="tag tag-dynamo">DynamoDB Saved</span>
+          </div>
+        </div>
+
+        <div class="result-grid">
+          <div class="result-item">
+            <div class="result-label">Document ID</div>
+            <div class="result-value" id="resDocId">-</div>
+          </div>
+          <div class="result-item">
+            <div class="result-label">File Details</div>
+            <div class="result-value" id="resFilename">-</div>
+          </div>
+          <div class="result-item" style="grid-column: span 2;">
+            <div class="result-label">Amazon S3 Object Key</div>
+            <div class="result-value" id="resS3Key">-</div>
+          </div>
+          <div class="result-item">
+            <div class="result-label">DynamoDB Primary Key</div>
+            <div class="result-value" id="resDdbKey">-</div>
+          </div>
+          <div class="result-item">
+            <div class="result-label">Uploaded At (UTC)</div>
+            <div class="result-value" id="resTime">-</div>
+          </div>
+        </div>
+
+        <div style="display: flex; gap: 10px;">
+          <a id="downloadLink" href="#" target="_blank" class="btn btn-outline" style="text-decoration: none; flex: 1;">
+            🔗 Download / View Document (Presigned S3 URL)
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">
+        <span>Verify Document in DynamoDB</span>
+        <span style="font-size: 0.8rem; color: var(--text-muted); font-weight: 400;">GET /documents/{id}</span>
+      </div>
+      <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 1rem;">
+        Verify that document metadata is persisted in DynamoDB and retrievable via backend API.
+      </p>
+      <div class="query-section">
+        <input type="text" id="queryDocId" placeholder="Paste Document ID here...">
+        <button class="btn btn-outline" id="queryBtn" type="button">Fetch Metadata</button>
+      </div>
+      <pre id="queryResult" style="display: none;"></pre>
+    </div>
+
+    <footer>
+      Digital Xerox & Stationery System • Vertical Slice 1 • FastAPI + DynamoDB + S3
+    </footer>
+  </div>
+
+  <script>
+    const dropzone = document.getElementById("dropzone");
+    const fileInput = document.getElementById("fileInput");
+    const filePreview = document.getElementById("filePreview");
+    const previewName = document.getElementById("previewName");
+    const previewMeta = document.getElementById("previewMeta");
+    const removeFileBtn = document.getElementById("removeFileBtn");
+    const uploadBtn = document.getElementById("uploadBtn");
+    const btnText = document.getElementById("btnText");
+    const studentIdInput = document.getElementById("studentId");
+    const alertBox = document.getElementById("alertBox");
+    const resultSection = document.getElementById("resultSection");
+    const resDocId = document.getElementById("resDocId");
+    const resFilename = document.getElementById("resFilename");
+    const resS3Key = document.getElementById("resS3Key");
+    const resDdbKey = document.getElementById("resDdbKey");
+    const resTime = document.getElementById("resTime");
+    const downloadLink = document.getElementById("downloadLink");
+    const queryDocId = document.getElementById("queryDocId");
+    const queryBtn = document.getElementById("queryBtn");
+    const queryResult = document.getElementById("queryResult");
+
+    let selectedFile = null;
+
+    function showAlert(msg, type = "error") {
+      alertBox.textContent = msg;
+      alertBox.className = "alert " + (type === "error" ? "alert-error" : "alert-success");
+      alertBox.style.display = "block";
+    }
+
+    function hideAlert() {
+      alertBox.style.display = "none";
+    }
+
+    function formatBytes(bytes) {
+      if (bytes === 0) return "0 Bytes";
+      const k = 1024;
+      const sizes = ["Bytes", "KB", "MB", "GB"];
+      const i = Math.floor(Math.log(bytes) / Math.log(k));
+      return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + " " + sizes[i];
+    }
+
+    function handleFile(file) {
+      hideAlert();
+      if (!file) return;
+
+      if (file.size === 0) {
+        showAlert("File is empty (0 bytes). Please select a valid document.");
+        return;
+      }
+      if (file.size > 25 * 1024 * 1024) {
+        showAlert("File exceeds the 25 MB limit. Please select a smaller file.");
+        return;
+      }
+
+      selectedFile = file;
+      previewName.textContent = file.name;
+      previewMeta.textContent = `${formatBytes(file.size)} • ${file.type || "unknown"}`;
+      dropzone.style.display = "none";
+      filePreview.style.display = "flex";
+      uploadBtn.disabled = false;
+    }
+
+    dropzone.addEventListener("click", () => fileInput.click());
+    dropzone.addEventListener("dragover", (e) => {
+      e.preventDefault();
+      dropzone.classList.add("dragover");
+    });
+    dropzone.addEventListener("dragleave", () => dropzone.classList.remove("dragover"));
+    dropzone.addEventListener("drop", (e) => {
+      e.preventDefault();
+      dropzone.classList.remove("dragover");
+      if (e.dataTransfer.files && e.dataTransfer.files[0]) {
+        handleFile(e.dataTransfer.files[0]);
+      }
+    });
+
+    fileInput.addEventListener("change", () => {
+      if (fileInput.files && fileInput.files[0]) {
+        handleFile(fileInput.files[0]);
+      }
+    });
+
+    removeFileBtn.addEventListener("click", () => {
+      selectedFile = null;
+      fileInput.value = "";
+      filePreview.style.display = "none";
+      dropzone.style.display = "block";
+      uploadBtn.disabled = true;
+      resultSection.style.display = "none";
+      hideAlert();
+    });
+
+    uploadBtn.addEventListener("click", async () => {
+      if (!selectedFile) return;
+
+      hideAlert();
+      uploadBtn.disabled = true;
+      btnText.textContent = "Uploading to S3 and DynamoDB...";
+
+      const studentId = studentIdInput.value.trim() || "anonymous";
+      const formData = new FormData();
+      formData.append("file", selectedFile);
+      formData.append("student_id", studentId);
+
+      try {
+        const response = await fetch("/documents/upload", {
+          method: "POST",
+          body: formData
+        });
+
+        const data = await response.json();
+
+        if (!response.ok) {
+          const errDetail = data.detail && data.detail.error ? data.detail.error.message : (data.detail || "Upload failed");
+          showAlert(errDetail, "error");
+          uploadBtn.disabled = false;
+          btnText.textContent = "Upload Document to S3 & DynamoDB";
+          return;
+        }
+
+        // Show success result
+        showAlert(`Document "${data.filename}" successfully uploaded and registered!`, "success");
+        resDocId.textContent = data.document_id;
+        resFilename.textContent = `${data.filename} (${formatBytes(data.size_bytes)})`;
+        resS3Key.textContent = data.s3_key;
+        resDdbKey.textContent = `PK: DOC#${data.document_id} / SK: DOC#${data.document_id}`;
+        resTime.textContent = new Date(data.uploaded_at).toLocaleString();
+        
+        if (data.download_url) {
+          downloadLink.href = data.download_url;
+          downloadLink.style.display = "inline-flex";
+        } else {
+          downloadLink.style.display = "none";
+        }
+
+        resultSection.style.display = "block";
+        queryDocId.value = data.document_id;
+        btnText.textContent = "Document Uploaded Successfully";
+      } catch (err) {
+        showAlert("Network error during upload: " + err.message, "error");
+        uploadBtn.disabled = false;
+        btnText.textContent = "Upload Document to S3 & DynamoDB";
+      }
+    });
+
+    queryBtn.addEventListener("click", async () => {
+      const docId = queryDocId.value.trim();
+      if (!docId) {
+        showAlert("Please enter a Document ID to query.");
+        return;
+      }
+
+      try {
+        const res = await fetch(`/documents/${docId}`);
+        const data = await res.json();
+        queryResult.style.display = "block";
+        queryResult.textContent = JSON.stringify(data, null, 2);
+      } catch (err) {
+        queryResult.style.display = "block";
+        queryResult.textContent = "Error querying DynamoDB: " + err.message;
+      }
+    });
+  </script>
+</body>
+</html>
