@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Digital Xerox & Stationery — Student Document Upload</title>
+  <title>Digital Xerox & Stationery — Print Configuration & Ordering</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
@@ -21,11 +21,13 @@
       --success-bg: rgba(52, 211, 153, 0.1);
       --error: #f87171;
       --error-bg: rgba(248, 113, 113, 0.1);
+      --warning: #fbbf24;
+      --warning-bg: rgba(251, 191, 36, 0.1);
       --radius: 12px;
     }
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body {
-      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      font-family: "Inter", -apple-system, BlinkMacSystemFont, sans-serif;
       background: var(--bg);
       color: var(--text);
       min-height: 100vh;
@@ -36,7 +38,7 @@
     }
     .container {
       width: 100%;
-      max-width: 860px;
+      max-width: 880px;
     }
     header {
       text-align: center;
@@ -67,7 +69,7 @@
     .subtitle {
       color: var(--text-muted);
       font-size: 0.95rem;
-      max-width: 600px;
+      max-width: 650px;
       margin: 0 auto;
     }
     .stepper {
@@ -85,10 +87,14 @@
       gap: 8px;
       font-size: 0.8rem;
       color: var(--text-muted);
+      transition: color 0.2s;
     }
     .step.active {
       color: var(--primary);
       font-weight: 600;
+    }
+    .step.completed {
+      color: var(--success);
     }
     .step-circle {
       width: 24px;
@@ -103,6 +109,11 @@
     }
     .step.active .step-circle {
       background: var(--primary);
+      color: #0f172a;
+      font-weight: 700;
+    }
+    .step.completed .step-circle {
+      background: var(--success);
       color: #0f172a;
       font-weight: 700;
     }
@@ -122,8 +133,17 @@
       align-items: center;
       justify-content: space-between;
     }
-    .form-group {
+    .form-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem;
       margin-bottom: 1.25rem;
+    }
+    @media (max-width: 640px) {
+      .form-grid { grid-template-columns: 1fr; }
+    }
+    .form-group {
+      margin-bottom: 1rem;
     }
     label {
       display: block;
@@ -132,7 +152,7 @@
       color: #cbd5e1;
       margin-bottom: 0.4rem;
     }
-    input[type="text"] {
+    input[type="text"], input[type="number"], select {
       width: 100%;
       padding: 0.75rem 1rem;
       border-radius: 8px;
@@ -142,14 +162,14 @@
       font-size: 0.95rem;
       transition: border-color 0.2s;
     }
-    input[type="text"]:focus {
+    input[type="text"]:focus, input[type="number"]:focus, select:focus {
       outline: none;
       border-color: var(--primary);
     }
     .dropzone {
       border: 2px dashed var(--card-border);
       border-radius: var(--radius);
-      padding: 2.5rem 1.5rem;
+      padding: 2.25rem 1.5rem;
       text-align: center;
       cursor: pointer;
       background: rgba(15, 23, 42, 0.5);
@@ -220,7 +240,7 @@
       background: var(--primary);
       color: #0f172a;
       width: 100%;
-      margin-top: 1rem;
+      margin-top: 0.75rem;
     }
     .btn-primary:hover:not(:disabled) {
       background: var(--primary-hover);
@@ -239,6 +259,20 @@
     .btn-outline:hover {
       border-color: var(--primary);
       color: var(--primary);
+    }
+    .btn-action {
+      background: #10b981;
+      color: #0f172a;
+      width: 100%;
+      margin-top: 1rem;
+      font-weight: 700;
+    }
+    .btn-action:hover:not(:disabled) {
+      background: #059669;
+    }
+    .btn-action:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
     }
     .alert {
       display: none;
@@ -283,20 +317,20 @@
       margin-bottom: 4px;
     }
     .result-value {
-      font-family: 'JetBrains Mono', monospace;
+      font-family: "JetBrains Mono", monospace;
       font-size: 0.85rem;
       word-break: break-all;
     }
     .integration-tags {
       display: flex;
       gap: 8px;
-      margin-top: 0.5rem;
+      flex-wrap: wrap;
     }
     .tag {
       font-size: 0.75rem;
       padding: 3px 8px;
       border-radius: 4px;
-      font-family: 'JetBrains Mono', monospace;
+      font-family: "JetBrains Mono", monospace;
     }
     .tag-s3 {
       background: rgba(234, 179, 8, 0.15);
@@ -308,6 +342,62 @@
       color: #60a5fa;
       border: 1px solid rgba(59, 130, 246, 0.3);
     }
+    .tag-status {
+      background: rgba(251, 191, 36, 0.15);
+      color: #fbbf24;
+      border: 1px solid rgba(251, 191, 36, 0.3);
+    }
+    .quote-box {
+      background: linear-gradient(135deg, rgba(30, 41, 59, 0.8) 0%, rgba(15, 23, 42, 0.9) 100%);
+      border: 1px solid rgba(56, 189, 248, 0.3);
+      border-radius: 10px;
+      padding: 1.25rem;
+      margin: 1.25rem 0;
+    }
+    .quote-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 0.75rem;
+      font-size: 0.85rem;
+      color: var(--text-muted);
+    }
+    .quote-price-display {
+      display: flex;
+      align-items: baseline;
+      gap: 8px;
+    }
+    .quote-amount {
+      font-size: 2.2rem;
+      font-weight: 700;
+      color: var(--primary);
+      font-family: "JetBrains Mono", monospace;
+    }
+    .quote-paise {
+      font-size: 0.9rem;
+      color: var(--text-muted);
+    }
+    .quote-breakdown {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 8px;
+      margin-top: 1rem;
+      padding-top: 1rem;
+      border-top: 1px solid rgba(255, 255, 255, 0.08);
+      font-size: 0.8rem;
+    }
+    @media (max-width: 640px) {
+      .quote-breakdown { grid-template-columns: 1fr 1fr; }
+    }
+    .quote-stat-label {
+      color: var(--text-muted);
+      margin-bottom: 2px;
+    }
+    .quote-stat-val {
+      font-family: "JetBrains Mono", monospace;
+      font-weight: 600;
+      color: #e2e8f0;
+    }
     .query-section {
       margin-top: 1rem;
       display: flex;
@@ -317,7 +407,7 @@
       background: #090d16;
       padding: 1rem;
       border-radius: 8px;
-      font-family: 'JetBrains Mono', monospace;
+      font-family: "JetBrains Mono", monospace;
       font-size: 0.8rem;
       color: #a5f3fc;
       overflow-x: auto;
@@ -335,39 +425,40 @@
 <body>
   <div class="container">
     <header>
-      <div class="badge">Slice 1: Document Upload</div>
+      <div class="badge">Slice 1: Document Upload • Slice 2: Print Options & Order Creation</div>
       <h1>Digital Xerox & Stationery System</h1>
-      <p class="subtitle">Student self-service document upload powered by FastAPI, Amazon S3 (Binary Storage), and Amazon DynamoDB (Metadata).</p>
+      <p class="subtitle">Modular monolith backend with FastAPI, Amazon S3 (Document storage), and Amazon DynamoDB (Order persistence).</p>
     </header>
 
     <div class="stepper">
-      <div class="step active">
-        <div class="step-circle">1</div>
+      <div class="step active" id="step1Indicator">
+        <div class="step-circle" id="step1Circle">1</div>
         <span>Upload Document</span>
       </div>
-      <div class="step">
-        <div class="step-circle">2</div>
-        <span>Print Config</span>
+      <div class="step" id="step2Indicator">
+        <div class="step-circle" id="step2Circle">2</div>
+        <span>Print Config & Order</span>
       </div>
-      <div class="step">
-        <div class="step-circle">3</div>
+      <div class="step" id="step3Indicator">
+        <div class="step-circle" id="step3Circle">3</div>
         <span>Simulated Pay</span>
       </div>
-      <div class="step">
-        <div class="step-circle">4</div>
+      <div class="step" id="step4Indicator">
+        <div class="step-circle" id="step4IndicatorCircle">4</div>
         <span>Queue & Token</span>
       </div>
-      <div class="step">
-        <div class="step-circle">5</div>
+      <div class="step" id="step5Indicator">
+        <div class="step-circle" id="step5IndicatorCircle">5</div>
         <span>Ready / Pickup</span>
       </div>
     </div>
 
     <div id="alertBox" class="alert"></div>
 
-    <div class="card">
+    <!-- STEP 1: UPLOAD DOCUMENT -->
+    <div class="card" id="step1Card">
       <div class="card-title">
-        <span>Step 1: Choose Your Document</span>
+        <span>Step 1: Upload Document (Slice 1)</span>
         <span style="font-size: 0.8rem; color: var(--text-muted); font-weight: 400;">Max 25 MB</span>
       </div>
 
@@ -398,7 +489,7 @@
         <span id="btnText">Upload Document to S3 & DynamoDB</span>
       </button>
 
-      <div class="result-section" id="resultSection">
+      <div class="result-section" id="uploadResultSection">
         <div class="card-title">
           <span>Upload Successful!</span>
           <div class="integration-tags">
@@ -413,39 +504,165 @@
             <div class="result-value" id="resDocId">-</div>
           </div>
           <div class="result-item">
-            <div class="result-label">File Details</div>
+            <div class="result-label">Filename</div>
             <div class="result-value" id="resFilename">-</div>
           </div>
           <div class="result-item" style="grid-column: span 2;">
             <div class="result-label">Amazon S3 Object Key</div>
             <div class="result-value" id="resS3Key">-</div>
           </div>
-          <div class="result-item">
-            <div class="result-label">DynamoDB Primary Key</div>
-            <div class="result-value" id="resDdbKey">-</div>
-          </div>
-          <div class="result-item">
-            <div class="result-label">Uploaded At (UTC)</div>
-            <div class="result-value" id="resTime">-</div>
-          </div>
         </div>
 
         <div style="display: flex; gap: 10px;">
           <a id="downloadLink" href="#" target="_blank" class="btn btn-outline" style="text-decoration: none; flex: 1;">
-            🔗 Download / View Document (Presigned S3 URL)
+            🔗 View / Access Document (Presigned S3 URL)
           </a>
         </div>
       </div>
     </div>
 
+    <!-- STEP 2: PRINT CONFIGURATION & PRICING -->
+    <div class="card" id="step2Card">
+      <div class="card-title">
+        <span>Step 2: Print Configuration & Pricing (Slice 2)</span>
+        <div class="integration-tags">
+          <span class="tag tag-dynamo">DATA-001 DynamoDB</span>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="orderDocId">Referenced Document ID</label>
+        <input type="text" id="orderDocId" placeholder="Upload a document above or paste Document ID here">
+      </div>
+
+      <div class="form-grid">
+        <div class="form-group">
+          <label for="pageCount">Page Count (per copy)</label>
+          <input type="number" id="pageCount" value="10" min="1">
+        </div>
+
+        <div class="form-group">
+          <label for="copies">Copies</label>
+          <input type="number" id="copies" value="1" min="1">
+        </div>
+
+        <div class="form-group">
+          <label for="colorMode">Color Mode</label>
+          <select id="colorMode">
+            <option value="bw" selected>Black & White (₹1.00 / page)</option>
+            <option value="color">Color (₹5.00 / page)</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="paperSize">Paper Size</label>
+          <select id="paperSize">
+            <option value="A4" selected>A4 (Standard 1.0x)</option>
+            <option value="A3">A3 (Large 2.0x)</option>
+            <option value="Letter">Letter (Standard 1.0x)</option>
+          </select>
+        </div>
+
+        <div class="form-group" style="grid-column: span 2;">
+          <label for="doubleSided">Side Option</label>
+          <select id="doubleSided">
+            <option value="false" selected>Single-Sided (1 sheet per page)</option>
+            <option value="true">Double-Sided (2 sides per sheet, 20% sheet discount)</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- LIVE QUOTE PREVIEW -->
+      <div class="quote-box">
+        <div class="quote-header">
+          <span>Live Calculated Quote (POST /pricing/quote)</span>
+          <span id="quoteStatus">● Ready</span>
+        </div>
+        <div class="quote-price-display">
+          <span class="quote-amount" id="quoteRupees">₹10.00</span>
+          <span class="quote-paise" id="quotePaise">(1000 paise)</span>
+        </div>
+        <div class="quote-breakdown">
+          <div>
+            <div class="quote-stat-label">Base Rate</div>
+            <div class="quote-stat-val" id="statBaseRate">₹1.00/pg</div>
+          </div>
+          <div>
+            <div class="quote-stat-label">Sheets / Total</div>
+            <div class="quote-stat-val" id="statSheets">10 / 10</div>
+          </div>
+          <div>
+            <div class="quote-stat-label">Total Impressions</div>
+            <div class="quote-stat-val" id="statImpressions">10 pgs</div>
+          </div>
+          <div>
+            <div class="quote-stat-label">Unit Price / Copy</div>
+            <div class="quote-stat-val" id="statUnitPrice">₹10.00</div>
+          </div>
+        </div>
+      </div>
+
+      <button class="btn btn-action" id="createOrderBtn">
+        <span id="orderBtnText">Create Order in DynamoDB (POST /orders)</span>
+      </button>
+
+      <!-- CREATED ORDER SUMMARY -->
+      <div class="result-section" id="orderResultSection">
+        <div class="card-title">
+          <span>Order Created Successfully!</span>
+          <div class="integration-tags">
+            <span class="tag tag-status" id="resOrderStatus">PENDING_PAYMENT</span>
+            <span class="tag tag-dynamo">DynamoDB Persisted</span>
+          </div>
+        </div>
+
+        <div class="result-grid">
+          <div class="result-item">
+            <div class="result-label">Order ID</div>
+            <div class="result-value" id="resOrderId">-</div>
+          </div>
+          <div class="result-item">
+            <div class="result-label">Total Amount</div>
+            <div class="result-value" id="resOrderAmount" style="color: var(--primary); font-weight: 700;">-</div>
+          </div>
+          <div class="result-item" style="grid-column: span 2;">
+            <div class="result-label">DynamoDB Partition & Sort Key</div>
+            <div class="result-value" id="resOrderDdbKey">-</div>
+          </div>
+          <div class="result-item">
+            <div class="result-label">Print Specification</div>
+            <div class="result-value" id="resOrderConfig">-</div>
+          </div>
+          <div class="result-item">
+            <div class="result-label">Physical Sheets</div>
+            <div class="result-value" id="resOrderSheets">-</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- VERIFY ORDER IN DYNAMODB -->
+    <div class="card">
+      <div class="card-title">
+        <span>Verify Order in DynamoDB</span>
+        <span style="font-size: 0.8rem; color: var(--text-muted); font-weight: 400;">GET /orders/{order_id}</span>
+      </div>
+      <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 1rem;">
+        Query the single-table DynamoDB partition (PK: ORDER#{order_id}, SK: ORDER#{order_id}) directly via the backend API.
+      </p>
+      <div class="query-section">
+        <input type="text" id="queryOrderId" placeholder="Paste Order ID here...">
+        <button class="btn btn-outline" id="queryOrderBtn" type="button">Fetch Order</button>
+      </div>
+      <pre id="queryOrderResult" style="display: none;"></pre>
+    </div>
+
+    <!-- VERIFY DOCUMENT IN DYNAMODB -->
     <div class="card">
       <div class="card-title">
         <span>Verify Document in DynamoDB</span>
         <span style="font-size: 0.8rem; color: var(--text-muted); font-weight: 400;">GET /documents/{id}</span>
       </div>
-      <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 1rem;">
-        Verify that document metadata is persisted in DynamoDB and retrievable via backend API.
-      </p>
       <div class="query-section">
         <input type="text" id="queryDocId" placeholder="Paste Document ID here...">
         <button class="btn btn-outline" id="queryBtn" type="button">Fetch Metadata</button>
@@ -454,11 +671,12 @@
     </div>
 
     <footer>
-      Digital Xerox & Stationery System • Vertical Slice 1 • FastAPI + DynamoDB + S3
+      Digital Xerox & Stationery System • Vertical Slice 2 • FastAPI + DynamoDB + S3
     </footer>
   </div>
 
   <script>
+    // Elements - Step 1
     const dropzone = document.getElementById("dropzone");
     const fileInput = document.getElementById("fileInput");
     const filePreview = document.getElementById("filePreview");
@@ -469,18 +687,50 @@
     const btnText = document.getElementById("btnText");
     const studentIdInput = document.getElementById("studentId");
     const alertBox = document.getElementById("alertBox");
-    const resultSection = document.getElementById("resultSection");
+    const uploadResultSection = document.getElementById("uploadResultSection");
     const resDocId = document.getElementById("resDocId");
     const resFilename = document.getElementById("resFilename");
     const resS3Key = document.getElementById("resS3Key");
-    const resDdbKey = document.getElementById("resDdbKey");
-    const resTime = document.getElementById("resTime");
     const downloadLink = document.getElementById("downloadLink");
     const queryDocId = document.getElementById("queryDocId");
     const queryBtn = document.getElementById("queryBtn");
     const queryResult = document.getElementById("queryResult");
 
+    // Elements - Stepper
+    const step1Indicator = document.getElementById("step1Indicator");
+    const step2Indicator = document.getElementById("step2Indicator");
+
+    // Elements - Step 2
+    const orderDocId = document.getElementById("orderDocId");
+    const pageCountInput = document.getElementById("pageCount");
+    const copiesInput = document.getElementById("copies");
+    const colorModeSelect = document.getElementById("colorMode");
+    const paperSizeSelect = document.getElementById("paperSize");
+    const doubleSidedSelect = document.getElementById("doubleSided");
+    const quoteRupees = document.getElementById("quoteRupees");
+    const quotePaise = document.getElementById("quotePaise");
+    const statBaseRate = document.getElementById("statBaseRate");
+    const statSheets = document.getElementById("statSheets");
+    const statImpressions = document.getElementById("statImpressions");
+    const statUnitPrice = document.getElementById("statUnitPrice");
+    const quoteStatus = document.getElementById("quoteStatus");
+    const createOrderBtn = document.getElementById("createOrderBtn");
+    const orderBtnText = document.getElementById("orderBtnText");
+    const orderResultSection = document.getElementById("orderResultSection");
+    const resOrderId = document.getElementById("resOrderId");
+    const resOrderStatus = document.getElementById("resOrderStatus");
+    const resOrderAmount = document.getElementById("resOrderAmount");
+    const resOrderDdbKey = document.getElementById("resOrderDdbKey");
+    const resOrderConfig = document.getElementById("resOrderConfig");
+    const resOrderSheets = document.getElementById("resOrderSheets");
+
+    // Elements - Query Order
+    const queryOrderId = document.getElementById("queryOrderId");
+    const queryOrderBtn = document.getElementById("queryOrderBtn");
+    const queryOrderResult = document.getElementById("queryOrderResult");
+
     let selectedFile = null;
+    let latestQuote = null;
 
     function showAlert(msg, type = "error") {
       alertBox.textContent = msg;
@@ -547,7 +797,7 @@
       filePreview.style.display = "none";
       dropzone.style.display = "block";
       uploadBtn.disabled = true;
-      resultSection.style.display = "none";
+      uploadResultSection.style.display = "none";
       hideAlert();
     });
 
@@ -584,8 +834,6 @@
         resDocId.textContent = data.document_id;
         resFilename.textContent = `${data.filename} (${formatBytes(data.size_bytes)})`;
         resS3Key.textContent = data.s3_key;
-        resDdbKey.textContent = `PK: DOC#${data.document_id} / SK: DOC#${data.document_id}`;
-        resTime.textContent = new Date(data.uploaded_at).toLocaleString();
         
         if (data.download_url) {
           downloadLink.href = data.download_url;
@@ -594,9 +842,16 @@
           downloadLink.style.display = "none";
         }
 
-        resultSection.style.display = "block";
+        uploadResultSection.style.display = "block";
         queryDocId.value = data.document_id;
         btnText.textContent = "Document Uploaded Successfully";
+
+        // Auto-advance to Step 2
+        orderDocId.value = data.document_id;
+        step1Indicator.classList.remove("active");
+        step1Indicator.classList.add("completed");
+        step2Indicator.classList.add("active");
+        fetchLiveQuote();
       } catch (err) {
         showAlert("Network error during upload: " + err.message, "error");
         uploadBtn.disabled = false;
@@ -604,6 +859,144 @@
       }
     });
 
+    // --- Live Quote Calculation ---
+    async function fetchLiveQuote() {
+      const pageCount = parseInt(pageCountInput.value) || 1;
+      const copies = parseInt(copiesInput.value) || 1;
+      const colorMode = colorModeSelect.value;
+      const paperSize = paperSizeSelect.value;
+      const doubleSided = doubleSidedSelect.value === "true";
+
+      quoteStatus.textContent = "● Calculating...";
+      quoteStatus.style.color = "var(--primary)";
+
+      try {
+        const res = await fetch("/pricing/quote", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            page_count: pageCount,
+            copies: copies,
+            color_mode: colorMode,
+            paper_size: paperSize,
+            double_sided: doubleSided
+          })
+        });
+
+        if (!res.ok) {
+          const err = await res.json();
+          quoteStatus.textContent = "● Invalid input";
+          quoteStatus.style.color = "var(--error)";
+          return;
+        }
+
+        const quote = await res.json();
+        latestQuote = quote;
+
+        quoteRupees.textContent = `₹${quote.total_price_rupees.toFixed(2)}`;
+        quotePaise.textContent = `(${quote.total_price_paise} paise)`;
+        statBaseRate.textContent = `₹${(quote.base_rate_per_page_paise / 100).toFixed(2)}/pg`;
+        statSheets.textContent = `${quote.sheets_per_copy} / ${quote.total_sheets}`;
+        statImpressions.textContent = `${quote.total_pages_printed} pgs`;
+        statUnitPrice.textContent = `₹${(quote.unit_price_paise / 100).toFixed(2)}`;
+
+        quoteStatus.textContent = "● Live Quote Ready";
+        quoteStatus.style.color = "var(--success)";
+      } catch (e) {
+        quoteStatus.textContent = "● Error quoting";
+        quoteStatus.style.color = "var(--error)";
+      }
+    }
+
+    // Attach listeners for live pricing updates
+    [pageCountInput, copiesInput, colorModeSelect, paperSizeSelect, doubleSidedSelect].forEach(el => {
+      el.addEventListener("input", fetchLiveQuote);
+      el.addEventListener("change", fetchLiveQuote);
+    });
+
+    // Initial quote fetch on load
+    fetchLiveQuote();
+
+    // --- Order Creation ---
+    createOrderBtn.addEventListener("click", async () => {
+      const docId = orderDocId.value.trim();
+      if (!docId) {
+        showAlert("Please select or specify a Document ID to create an order.", "error");
+        orderDocId.focus();
+        return;
+      }
+
+      hideAlert();
+      createOrderBtn.disabled = true;
+      orderBtnText.textContent = "Persisting Order in DynamoDB...";
+
+      const studentId = studentIdInput.value.trim() || "anonymous";
+      const payload = {
+        document_id: docId,
+        student_id: studentId,
+        page_count: parseInt(pageCountInput.value) || 1,
+        copies: parseInt(copiesInput.value) || 1,
+        color_mode: colorModeSelect.value,
+        paper_size: paperSizeSelect.value,
+        double_sided: doubleSidedSelect.value === "true"
+      };
+
+      try {
+        const res = await fetch("/orders", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload)
+        });
+
+        const data = await res.json();
+
+        if (!res.ok) {
+          const msg = data.detail && data.detail.error ? data.detail.error.message : (data.detail || "Order creation failed");
+          showAlert(msg, "error");
+          createOrderBtn.disabled = false;
+          orderBtnText.textContent = "Create Order in DynamoDB (POST /orders)";
+          return;
+        }
+
+        showAlert(`Order ${data.order_id} created successfully and saved in DynamoDB!`, "success");
+        resOrderId.textContent = data.order_id;
+        resOrderStatus.textContent = data.status;
+        resOrderAmount.textContent = `₹${data.pricing.total_price_rupees.toFixed(2)} (${data.pricing.total_price_paise} paise)`;
+        resOrderDdbKey.textContent = `PK: ORDER#${data.order_id} / SK: ORDER#${data.order_id}`;
+        resOrderConfig.textContent = `${data.print_config.color_mode.toUpperCase()} • ${data.print_config.paper_size} • ${data.print_config.copies} copy(s) • ${data.print_config.double_sided ? "2-Sided" : "1-Sided"}`;
+        resOrderSheets.textContent = `${data.pricing.total_sheets} total sheets (${data.pricing.sheets_per_copy} per copy)`;
+
+        orderResultSection.style.display = "block";
+        queryOrderId.value = data.order_id;
+        createOrderBtn.disabled = false;
+        orderBtnText.textContent = "Create Order in DynamoDB (POST /orders)";
+      } catch (err) {
+        showAlert("Error connecting to server: " + err.message, "error");
+        createOrderBtn.disabled = false;
+        orderBtnText.textContent = "Create Order in DynamoDB (POST /orders)";
+      }
+    });
+
+    // --- Order Verification Lookup ---
+    queryOrderBtn.addEventListener("click", async () => {
+      const orderId = queryOrderId.value.trim();
+      if (!orderId) {
+        showAlert("Please enter an Order ID to query DynamoDB.");
+        return;
+      }
+
+      try {
+        const res = await fetch(`/orders/${orderId}`);
+        const data = await res.json();
+        queryOrderResult.style.display = "block";
+        queryOrderResult.textContent = JSON.stringify(data, null, 2);
+      } catch (err) {
+        queryOrderResult.style.display = "block";
+        queryOrderResult.textContent = "Error querying DynamoDB: " + err.message;
+      }
+    });
+
+    // --- Document Verification Lookup ---
     queryBtn.addEventListener("click", async () => {
       const docId = queryDocId.value.trim();
       if (!docId) {
