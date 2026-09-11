@@ -34,6 +34,7 @@ class OrderResponse(BaseModel):
     pricing: PricingBreakdown
     status: str
     payment_status: str
+    payment_id: str | None = None
     scheduled_time: str | None = None
     token_number: str | None = None
     created_at: datetime

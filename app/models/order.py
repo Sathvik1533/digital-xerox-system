@@ -21,6 +21,7 @@ class OrderStatus(str, Enum):
     READY = "READY"
     COMPLETED = "COMPLETED"
     REJECTED = "REJECTED"
+    PAYMENT_FAILED = "PAYMENT_FAILED"
 
 
 class PaymentStatus(str, Enum):
@@ -73,6 +74,7 @@ class Order(BaseModel):
     pricing: PricingBreakdown
     status: str = OrderStatus.PENDING_PAYMENT.value
     payment_status: str = PaymentStatus.PENDING.value
+    payment_id: str | None = None
     token_number: str | None = None
     scheduled_time: str | None = None
     queue_entered_at: datetime | None = None
