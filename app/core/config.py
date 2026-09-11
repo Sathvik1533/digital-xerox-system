@@ -6,7 +6,7 @@ Never hard-code secrets. In production, AWS provides
 credentials through IAM roles attached to the ECS task.
 """
 from functools import lru_cache
-from pydantic_settings import BaseSettings
+from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
 class Settings(BaseSettings):
@@ -31,14 +31,20 @@ class Settings(BaseSettings):
     s3_bucket_name: str = "digital-xerox-documents"
     s3_endpoint_url: str | None = None  # Set to local endpoint for dev/test
 
+    # Document Upload Constraints (FR-DOC-001)
+    max_upload_size_bytes: int = 25 * 1024 * 1024  # 25 MB
+    allowed_file_extensions: list[str] = ["pdf", "docx", "doc", "txt", "png", "jpg", "jpeg"]
+
     # Pricing (in paise / cents — smallest unit to avoid float errors)
     price_per_page_bw: int = 100        # ₹1.00 per page B&W
     price_per_page_color: int = 500     # ₹5.00 per page color
 
-    class Config:
-        env_file = ".env"
-        env_file_encoding = "utf-8"
-        case_sensitive = False
+    model_config = SettingsConfigDict(
+        env_file=".env",
+        env_file_encoding="utf-8",
+        case_sensitive=False,
+        extra="ignore"
+    )
 
 
 @lru_cache()
