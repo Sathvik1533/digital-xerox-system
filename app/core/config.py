@@ -42,6 +42,8 @@ class Settings(BaseSettings):
     supported_color_modes: list[str] = ["bw", "color"]
     paper_size_multipliers: dict[str, float] = {"a4": 1.0, "letter": 1.0, "a3": 2.0}
     double_sided_discount_factor: float = 0.8  # 20% discount for double-sided printing
+    max_copies: int = 100               # Configured maximum copies per order (DATA-001)
+    max_page_count: int = 1000          # Configured maximum page count per document (DATA-001)
 
     model_config = SettingsConfigDict(
         env_file=".env",

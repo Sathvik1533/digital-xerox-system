@@ -10,6 +10,7 @@ class QuoteRequest(BaseModel):
     paper_size: str = Field(default="A4", description="Paper size ('A4', 'A3', 'Letter')")
     copies: int = Field(default=1, description="Number of copies")
     double_sided: bool = Field(default=False, description="Whether to print double-sided")
+    sidedness: str | None = Field(default=None, description="Print sidedness: 'SINGLE' or 'DOUBLE'")
 
 
 class QuoteResponse(BaseModel):
@@ -21,6 +22,7 @@ class QuoteResponse(BaseModel):
     paper_size: str
     copies: int
     double_sided: bool
+    sidedness: str
     sheets_per_copy: int
     total_sheets: int
     total_pages_printed: int

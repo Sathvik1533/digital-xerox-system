@@ -42,6 +42,25 @@ class PricingService:
             f"Paper size '{paper_size}' is not supported. Supported sizes: A4, A3, Letter.",
         )
 
+    def normalize_sidedness(
+        self, sidedness: str | None, double_sided: bool = False
+    ) -> tuple[str, bool]:
+        """
+        Validate and normalize print sidedness according to DATA-001 and API-001.
+        Returns tuple of (canonical_sidedness_string: 'SINGLE' | 'DOUBLE', is_double_sided: bool).
+        """
+        if sidedness is not None and sidedness != "":
+            s = sidedness.strip().upper()
+            if s in ("DOUBLE", "DOUBLE-SIDED", "DOUBLE_SIDED", "DUPLEX", "TWO_SIDED", "2-SIDED", "TRUE"):
+                return "DOUBLE", True
+            if s in ("SINGLE", "SINGLE-SIDED", "SINGLE_SIDED", "SIMPLEX", "ONE_SIDED", "1-SIDED", "FALSE"):
+                return "SINGLE", False
+            raise PricingValidationError(
+                "UNSUPPORTED_SIDEDNESS",
+                f"Sidedness '{sidedness}' is not supported. Supported values: SINGLE, DOUBLE.",
+            )
+        return ("DOUBLE", True) if double_sided else ("SINGLE", False)
+
     def calculate_pricing(
         self,
         page_count: int,
@@ -49,6 +68,7 @@ class PricingService:
         paper_size: str = "A4",
         copies: int = 1,
         double_sided: bool = False,
+        sidedness: str | None = None,
     ) -> tuple[PrintConfig, PricingBreakdown]:
         """
         Calculate deterministic print pricing based on pages, color mode, paper size,
@@ -59,13 +79,24 @@ class PricingService:
             raise PricingValidationError(
                 "INVALID_PAGE_COUNT", "page_count must be at least 1."
             )
+        if page_count > self.settings.max_page_count:
+            raise PricingValidationError(
+                "PAGE_COUNT_EXCEEDED",
+                f"page_count cannot exceed configured maximum of {self.settings.max_page_count}.",
+            )
         if copies < 1:
             raise PricingValidationError(
                 "INVALID_COPIES", "copies must be at least 1."
             )
+        if copies > self.settings.max_copies:
+            raise PricingValidationError(
+                "COPIES_EXCEEDED",
+                f"copies cannot exceed configured maximum of {self.settings.max_copies}.",
+            )
 
         norm_color = self.normalize_color_mode(color_mode)
         norm_paper = self.normalize_paper_size(paper_size)
+        norm_sidedness, is_double_sided = self.normalize_sidedness(sidedness, double_sided)
 
         # Base rate per page
         if norm_color == "color":
@@ -79,7 +110,7 @@ class PricingService:
         )
 
         # Sheets per copy
-        if double_sided:
+        if is_double_sided:
             sheets_per_copy = (page_count + 1) // 2
             double_sheets = page_count // 2
             single_sheets = page_count % 2
@@ -106,7 +137,8 @@ class PricingService:
             color_mode=norm_color,
             paper_size=norm_paper,
             copies=copies,
-            double_sided=double_sided,
+            double_sided=is_double_sided,
+            sidedness=norm_sidedness,
         )
 
         breakdown = PricingBreakdown(

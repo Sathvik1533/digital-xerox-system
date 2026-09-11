@@ -76,6 +76,19 @@ class DynamoDBRepository:
         item["SK"] = f"ORDER#{order.order_id}"
         item["created_at"] = item["created_at"].isoformat()
         item["updated_at"] = item["updated_at"].isoformat()
+        if item.get("queue_entered_at"):
+            item["queue_entered_at"] = item["queue_entered_at"].isoformat()
+        if item.get("estimated_completion_at"):
+            item["estimated_completion_at"] = item["estimated_completion_at"].isoformat()
+
+        # Flat canonical attributes for index and direct access patterns (DATA-001)
+        item["color_mode"] = order.print_config.color_mode
+        item["paper_size"] = order.print_config.paper_size
+        item["copies"] = order.print_config.copies
+        item["sidedness"] = order.print_config.sidedness
+        item["total_price_paise"] = order.pricing.total_price_paise
+        item["total_price_rupees"] = order.pricing.total_price_rupees
+
         item = _convert_floats_to_decimals(item)
 
         self.table.put_item(Item=item)

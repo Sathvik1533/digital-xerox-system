@@ -57,11 +57,12 @@ class OrderService:
                 paper_size=request.paper_size,
                 copies=request.copies,
                 double_sided=request.double_sided,
+                sidedness=request.sidedness,
             )
         except PricingValidationError as e:
             raise OrderValidationError(e.code, e.message)
 
-        # 3. Create Order entity
+        # 3. Create Order entity according to DATA-001
         order_id = f"ORD-{uuid.uuid4().hex[:12].upper()}"
         now = datetime.now(timezone.utc)
         student_id = request.student_id if request.student_id != "anonymous" else doc.student_id
@@ -71,9 +72,15 @@ class OrderService:
             document_id=doc.document_id,
             student_id=student_id,
             filename=doc.filename,
+            document_key=doc.s3_key,
+            document_name=doc.filename,
+            document_content_type=doc.content_type,
+            document_size=doc.size_bytes,
             print_config=print_config,
             pricing=pricing,
             status=OrderStatus.PENDING_PAYMENT.value,
+            payment_status="PENDING",
+            scheduled_time=request.scheduled_time,
             created_at=now,
             updated_at=now,
         )

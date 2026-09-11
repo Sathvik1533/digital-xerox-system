@@ -23,6 +23,13 @@ class OrderStatus(str, Enum):
     REJECTED = "REJECTED"
 
 
+class PaymentStatus(str, Enum):
+    PENDING = "PENDING"
+    SUCCESS = "SUCCESS"
+    FAILED = "FAILED"
+    REFUNDED = "REFUNDED"
+
+
 class PrintConfig(BaseModel):
     """Print configuration options selected by student."""
     model_config = ConfigDict(extra="ignore")
@@ -32,6 +39,7 @@ class PrintConfig(BaseModel):
     paper_size: str = Field(default="A4", description="Paper size: A4, A3, Letter")
     copies: int = Field(default=1, description="Number of physical copies")
     double_sided: bool = Field(default=False, description="Print on both sides of each sheet")
+    sidedness: str = Field(default="SINGLE", description="Sidedness: SINGLE or DOUBLE")
 
 
 class PricingBreakdown(BaseModel):
@@ -57,8 +65,18 @@ class Order(BaseModel):
     document_id: str
     student_id: str = "anonymous"
     filename: str | None = None
+    document_key: str | None = None
+    document_name: str | None = None
+    document_content_type: str | None = None
+    document_size: int | None = None
     print_config: PrintConfig
     pricing: PricingBreakdown
     status: str = OrderStatus.PENDING_PAYMENT.value
+    payment_status: str = PaymentStatus.PENDING.value
+    token_number: str | None = None
+    scheduled_time: str | None = None
+    queue_entered_at: datetime | None = None
+    estimated_completion_at: datetime | None = None
+    rejection_reason: str | None = None
     created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
     updated_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
