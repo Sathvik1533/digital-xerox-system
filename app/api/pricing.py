@@ -39,6 +39,7 @@ def get_pricing_quote(
             paper_size=request.paper_size,
             copies=request.copies,
             double_sided=request.double_sided,
+            sidedness=request.sidedness,
         )
         return QuoteResponse(
             page_count=config.page_count,
@@ -46,6 +47,7 @@ def get_pricing_quote(
             paper_size=config.paper_size,
             copies=config.copies,
             double_sided=config.double_sided,
+            sidedness=config.sidedness,
             sheets_per_copy=breakdown.sheets_per_copy,
             total_sheets=breakdown.total_sheets,
             total_pages_printed=breakdown.total_pages_printed,

@@ -622,20 +622,28 @@
             <div class="result-value" id="resOrderId">-</div>
           </div>
           <div class="result-item">
+            <div class="result-label">Payment Status (Slice 3 Prep)</div>
+            <div class="result-value" id="resOrderPaymentStatus" style="color: var(--warning); font-weight: 700;">PENDING</div>
+          </div>
+          <div class="result-item">
             <div class="result-label">Total Amount</div>
             <div class="result-value" id="resOrderAmount" style="color: var(--primary); font-weight: 700;">-</div>
+          </div>
+          <div class="result-item">
+            <div class="result-label">Physical Sheets</div>
+            <div class="result-value" id="resOrderSheets">-</div>
           </div>
           <div class="result-item" style="grid-column: span 2;">
             <div class="result-label">DynamoDB Partition & Sort Key</div>
             <div class="result-value" id="resOrderDdbKey">-</div>
           </div>
-          <div class="result-item">
+          <div class="result-item" style="grid-column: span 2;">
+            <div class="result-label">Referenced S3 Object Key (DATA-001)</div>
+            <div class="result-value" id="resOrderDocKey" style="font-size: 0.8rem; font-family: 'JetBrains Mono', monospace;">-</div>
+          </div>
+          <div class="result-item" style="grid-column: span 2;">
             <div class="result-label">Print Specification</div>
             <div class="result-value" id="resOrderConfig">-</div>
-          </div>
-          <div class="result-item">
-            <div class="result-label">Physical Sheets</div>
-            <div class="result-value" id="resOrderSheets">-</div>
           </div>
         </div>
       </div>
@@ -719,8 +727,10 @@
     const orderResultSection = document.getElementById("orderResultSection");
     const resOrderId = document.getElementById("resOrderId");
     const resOrderStatus = document.getElementById("resOrderStatus");
+    const resOrderPaymentStatus = document.getElementById("resOrderPaymentStatus");
     const resOrderAmount = document.getElementById("resOrderAmount");
     const resOrderDdbKey = document.getElementById("resOrderDdbKey");
+    const resOrderDocKey = document.getElementById("resOrderDocKey");
     const resOrderConfig = document.getElementById("resOrderConfig");
     const resOrderSheets = document.getElementById("resOrderSheets");
 
@@ -879,7 +889,8 @@
             copies: copies,
             color_mode: colorMode,
             paper_size: paperSize,
-            double_sided: doubleSided
+            double_sided: doubleSided,
+            sidedness: doubleSided ? "DOUBLE" : "SINGLE"
           })
         });
 
@@ -931,6 +942,7 @@
       orderBtnText.textContent = "Persisting Order in DynamoDB...";
 
       const studentId = studentIdInput.value.trim() || "anonymous";
+      const isDouble = doubleSidedSelect.value === "true";
       const payload = {
         document_id: docId,
         student_id: studentId,
@@ -938,7 +950,8 @@
         copies: parseInt(copiesInput.value) || 1,
         color_mode: colorModeSelect.value,
         paper_size: paperSizeSelect.value,
-        double_sided: doubleSidedSelect.value === "true"
+        double_sided: isDouble,
+        sidedness: isDouble ? "DOUBLE" : "SINGLE"
       };
 
       try {
@@ -961,8 +974,10 @@
         showAlert(`Order ${data.order_id} created successfully and saved in DynamoDB!`, "success");
         resOrderId.textContent = data.order_id;
         resOrderStatus.textContent = data.status;
+        resOrderPaymentStatus.textContent = data.payment_status || "PENDING";
         resOrderAmount.textContent = `₹${data.pricing.total_price_rupees.toFixed(2)} (${data.pricing.total_price_paise} paise)`;
         resOrderDdbKey.textContent = `PK: ORDER#${data.order_id} / SK: ORDER#${data.order_id}`;
+        resOrderDocKey.textContent = data.document_key || `DOC#${data.document_id}`;
         resOrderConfig.textContent = `${data.print_config.color_mode.toUpperCase()} • ${data.print_config.paper_size} • ${data.print_config.copies} copy(s) • ${data.print_config.double_sided ? "2-Sided" : "1-Sided"}`;
         resOrderSheets.textContent = `${data.pricing.total_sheets} total sheets (${data.pricing.sheets_per_copy} per copy)`;
 
