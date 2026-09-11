@@ -37,6 +37,10 @@ def test_create_order_success(client: TestClient, aws_env):
     assert data["student_id"] == "STU-TEST-001"
     assert data["filename"] == "project_spec.pdf"
     assert data["status"] == "PENDING_PAYMENT"
+    assert data["payment_status"] == "PENDING"
+    assert data["document_name"] == "project_spec.pdf"
+    assert data["document_key"].startswith("documents/STU-TEST-001/")
+    assert data["document_content_type"] == "application/pdf"
 
     # Verify print configuration
     print_config = data["print_config"]
@@ -45,6 +49,7 @@ def test_create_order_success(client: TestClient, aws_env):
     assert print_config["paper_size"] == "A4"
     assert print_config["copies"] == 2
     assert print_config["double_sided"] is False
+    assert print_config["sidedness"] == "SINGLE"
 
     # Verify pricing breakdown
     pricing = data["pricing"]
@@ -62,6 +67,15 @@ def test_create_order_success(client: TestClient, aws_env):
     assert item["order_id"] == order_id
     assert item["document_id"] == doc_id
     assert item["status"] == "PENDING_PAYMENT"
+    assert item["payment_status"] == "PENDING"
+    assert item["document_name"] == "project_spec.pdf"
+    assert item["document_key"].startswith("documents/STU-TEST-001/")
+    assert item["document_content_type"] == "application/pdf"
+    assert item["color_mode"] == "bw"
+    assert item["paper_size"] == "A4"
+    assert item["copies"] == 2
+    assert item["sidedness"] == "SINGLE"
+    assert item["total_price_paise"] == 2000
     assert item["student_id"] == "STU-TEST-001"
 
 
@@ -257,3 +271,69 @@ def test_multiple_orders_same_document(client: TestClient):
     assert res1.json()["order_id"] != res2.json()["order_id"]
     assert res1.json()["pricing"]["total_price_paise"] == 500
     assert res2.json()["pricing"]["total_price_paise"] == 5000
+
+
+def test_create_order_with_sidedness_and_scheduled_time(client: TestClient, aws_env):
+    """Test order creation with canonical sidedness='DOUBLE' and scheduled_time."""
+    doc_id = _upload_test_document(client, filename="scheduled_lecture.pdf")
+    payload = {
+        "document_id": doc_id,
+        "page_count": 8,
+        "sidedness": "DOUBLE",
+        "color_mode": "bw",
+        "paper_size": "A4",
+        "copies": 1,
+        "scheduled_time": "2026-09-15T10:00:00Z",
+    }
+    response = client.post("/orders", json=payload)
+    assert response.status_code == 201
+    data = response.json()
+    assert data["print_config"]["sidedness"] == "DOUBLE"
+    assert data["print_config"]["double_sided"] is True
+    assert data["scheduled_time"] == "2026-09-15T10:00:00Z"
+    assert data["payment_status"] == "PENDING"
+    # 8 pages double-sided = 4 sheets * 160 paise = 640 paise
+    assert data["pricing"]["unit_price_paise"] == 640
+
+
+def test_create_order_copies_exceeded(client: TestClient):
+    """Test creating order exceeding max_copies returns 400 COPIES_EXCEEDED."""
+    doc_id = _upload_test_document(client)
+    response = client.post("/orders", json={
+        "document_id": doc_id,
+        "page_count": 5,
+        "copies": 105,
+    })
+    assert response.status_code == 400
+    assert response.json()["detail"]["error"]["code"] == "COPIES_EXCEEDED"
+
+
+def test_create_order_page_count_exceeded(client: TestClient):
+    """Test creating order exceeding max_page_count returns 400 PAGE_COUNT_EXCEEDED."""
+    doc_id = _upload_test_document(client)
+    response = client.post("/orders", json={
+        "document_id": doc_id,
+        "page_count": 1500,
+        "copies": 1,
+    })
+    assert response.status_code == 400
+    assert response.json()["detail"]["error"]["code"] == "PAGE_COUNT_EXCEEDED"
+
+
+def test_create_order_unsupported_sidedness(client: TestClient):
+    """Test creating order with invalid sidedness returns 400 UNSUPPORTED_SIDEDNESS."""
+    doc_id = _upload_test_document(client)
+    response = client.post("/orders", json={
+        "document_id": doc_id,
+        "page_count": 5,
+        "sidedness": "OCTUPLE",
+    })
+    assert response.status_code == 400
+    assert response.json()["detail"]["error"]["code"] == "UNSUPPORTED_SIDEDNESS"
+
+
+def test_get_order_encoded_special_chars(client: TestClient):
+    """Test GET /orders/{order_id} with URL encoded characters safely returns 404."""
+    response = client.get("/orders/ORD%20INVALID%23123")
+    assert response.status_code == 404
+    assert response.json()["detail"]["error"]["code"] == "ORDER_NOT_FOUND"

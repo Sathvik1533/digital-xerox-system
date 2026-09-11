@@ -52,7 +52,8 @@
   - Live quote preview dynamically updating on any input change
   - Order submission and formatted order summary
   - Direct DynamoDB order lookup by Order ID
-- Comprehensive automated test suite: 37/37 tests passing
+- Comprehensive automated test suite: 46/46 tests passing
+- Strict compliance with DATA-001 canonical order schema (`payment_status: PENDING`, `document_key`, `document_name`, `document_content_type`, `document_size`, `color_mode`, `paper_size`, `copies`, `sidedness`, `scheduled_time`)
 
 ---
 

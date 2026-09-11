@@ -203,3 +203,57 @@ def test_api_quote_unsupported_paper_size(client: TestClient):
     response = client.post("/pricing/quote", json={"page_count": 5, "paper_size": "Tabloid"})
     assert response.status_code == 400
     assert response.json()["detail"]["error"]["code"] == "UNSUPPORTED_PAPER_SIZE"
+
+
+def test_pricing_sidedness_values():
+    """Test canonical sidedness string values ('SINGLE', 'DOUBLE', 'DUPLEX')."""
+    service = PricingService()
+    cfg_double, b_double = service.calculate_pricing(page_count=10, sidedness="DOUBLE")
+    assert cfg_double.sidedness == "DOUBLE"
+    assert cfg_double.double_sided is True
+    assert b_double.unit_price_paise == 800
+
+    cfg_single, b_single = service.calculate_pricing(page_count=10, sidedness="SINGLE")
+    assert cfg_single.sidedness == "SINGLE"
+    assert cfg_single.double_sided is False
+    assert b_single.unit_price_paise == 1000
+
+    cfg_duplex, _ = service.calculate_pricing(page_count=4, sidedness="DUPLEX")
+    assert cfg_duplex.sidedness == "DOUBLE"
+    assert cfg_duplex.double_sided is True
+
+
+def test_pricing_unsupported_sidedness():
+    """Test unsupported sidedness raises UNSUPPORTED_SIDEDNESS."""
+    service = PricingService()
+    with pytest.raises(PricingValidationError) as exc:
+        service.calculate_pricing(page_count=5, sidedness="TRIPLEX")
+    assert exc.value.code == "UNSUPPORTED_SIDEDNESS"
+
+
+def test_pricing_limits_exceeded():
+    """Test exceeding configured maximum copies and page count."""
+    service = PricingService()
+    with pytest.raises(PricingValidationError) as exc:
+        service.calculate_pricing(page_count=5, copies=101)
+    assert exc.value.code == "COPIES_EXCEEDED"
+
+    with pytest.raises(PricingValidationError) as exc:
+        service.calculate_pricing(page_count=1001, copies=1)
+    assert exc.value.code == "PAGE_COUNT_EXCEEDED"
+
+
+def test_api_quote_with_sidedness(client: TestClient):
+    """Test POST /pricing/quote using API-001 canonical sidedness parameter."""
+    res = client.post("/pricing/quote", json={
+        "page_count": 10,
+        "sidedness": "DOUBLE",
+        "color_mode": "bw",
+        "paper_size": "A4",
+        "copies": 1,
+    })
+    assert res.status_code == 200
+    data = res.json()
+    assert data["sidedness"] == "DOUBLE"
+    assert data["double_sided"] is True
+    assert data["total_price_paise"] == 800
