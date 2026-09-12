@@ -102,6 +102,18 @@ class DynamoDBRepository:
 
         self.table.put_item(Item=item)
 
+        # Maintain partitioned student order mapping for fast query (DATA-001 / Slice 6)
+        # PK: STUDENT#{student_id} / SK: ORDER#{created_at}#{order_id}
+        student_item = {
+            "PK": f"STUDENT#{order.student_id}",
+            "SK": f"ORDER#{order.created_at.isoformat()}#{order.order_id}",
+            "order_id": order.order_id,
+            "student_id": order.student_id,
+            "created_at": order.created_at.isoformat(),
+        }
+        student_item = _convert_floats_to_decimals(student_item)
+        self.table.put_item(Item=student_item)
+
     def get_order(self, order_id: str) -> Order | None:
         """Retrieve order by order_id from DynamoDB."""
         response = self.table.get_item(
@@ -604,4 +616,50 @@ class DynamoDBRepository:
             done = start_key is None
 
         orders.sort(key=lambda x: str(x.created_at), reverse=True)
+        return orders
+
+    def get_orders_by_student_id(self, student_id: str) -> list[Order]:
+        """
+        Retrieve all orders for a student sorted chronologically descending.
+        1. Queries the partitioned student index (PK: STUDENT#{student_id}, SK begins_with ORDER#)
+           with ScanIndexForward=False for reverse chronological order.
+        2. Retrieves the latest authoritative Order record for each order_id.
+        3. Falls back to table scan with student_id filter for test robustness or legacy records.
+        """
+        orders: list[Order] = []
+        seen_order_ids: set[str] = set()
+
+        # 1. Query student partition
+        done = False
+        start_key = None
+        while not done:
+            query_kwargs = {
+                "KeyConditionExpression": Key("PK").eq(f"STUDENT#{student_id}") & Key("SK").begins_with("ORDER#"),
+                "ScanIndexForward": False,
+            }
+            if start_key:
+                query_kwargs["ExclusiveStartKey"] = start_key
+            try:
+                response = self.table.query(**query_kwargs)
+                for it in response.get("Items", []):
+                    oid = it.get("order_id")
+                    if oid and oid not in seen_order_ids:
+                        seen_order_ids.add(oid)
+                        order = self.get_order(oid)
+                        if order:
+                            orders.append(order)
+                start_key = response.get("LastEvaluatedKey")
+                done = start_key is None
+            except Exception:
+                done = True
+
+        # 2. Fallback scan if no indexed orders found (e.g. unindexed/legacy mock data)
+        if not orders:
+            all_orders = self.get_all_orders()
+            for order in all_orders:
+                if order.student_id == student_id and order.order_id not in seen_order_ids:
+                    seen_order_ids.add(order.order_id)
+                    orders.append(order)
+
+        orders.sort(key=lambda o: str(o.created_at), reverse=True)
         return orders
