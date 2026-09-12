@@ -592,12 +592,198 @@
       width: 100%;
       box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.5);
     }
+    /* Slice 6: Student Tracking & History Styles */
+    .history-filter-bar {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin: 1rem 0 1.25rem 0;
+    }
+    .filter-btn {
+      background: #0f172a;
+      border: 1px solid var(--card-border);
+      color: var(--text-muted);
+      border-radius: 6px;
+      padding: 6px 12px;
+      font-size: 0.8rem;
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+    .filter-btn:hover {
+      border-color: var(--primary);
+      color: var(--text);
+    }
+    .filter-btn.active {
+      background: rgba(56, 189, 248, 0.15);
+      border-color: var(--primary);
+      color: var(--primary);
+      font-weight: 600;
+    }
+    .history-order-card {
+      background: #0f172a;
+      border: 1px solid var(--card-border);
+      border-radius: var(--radius);
+      padding: 1.5rem;
+      margin-bottom: 1.5rem;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+    .history-order-card:hover {
+      border-color: rgba(56, 189, 248, 0.35);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+    }
+    .history-order-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 12px;
+      padding-bottom: 1rem;
+      border-bottom: 1px solid var(--card-border);
+      margin-bottom: 1.25rem;
+    }
+    .history-meta-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 12px;
+      margin-bottom: 1.25rem;
+    }
+    .history-meta-card {
+      background: #1e293b;
+      border: 1px solid var(--card-border);
+      border-radius: 8px;
+      padding: 12px;
+    }
+    .history-meta-label {
+      font-size: 0.72rem;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-bottom: 4px;
+    }
+    .history-meta-value {
+      font-size: 0.88rem;
+      font-weight: 500;
+      color: var(--text);
+    }
+    .rejection-callout {
+      background: rgba(248, 113, 113, 0.1);
+      border: 1px solid var(--error);
+      border-radius: 8px;
+      padding: 12px 14px;
+      margin-bottom: 1.25rem;
+      color: #fca5a5;
+      font-size: 0.85rem;
+    }
+    .rejection-callout strong {
+      color: var(--error);
+    }
+    /* Timeline Stepper */
+    .timeline-container {
+      margin-top: 1.25rem;
+      padding-top: 1.25rem;
+      border-top: 1px solid var(--card-border);
+    }
+    .timeline-title-banner {
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: #cbd5e1;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-bottom: 1rem;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .timeline-stepper {
+      position: relative;
+      padding-left: 28px;
+    }
+    .timeline-stepper::before {
+      content: '';
+      position: absolute;
+      left: 11px;
+      top: 10px;
+      bottom: 10px;
+      width: 2px;
+      background: var(--card-border);
+    }
+    .timeline-step-item {
+      position: relative;
+      margin-bottom: 1rem;
+    }
+    .timeline-step-item:last-child {
+      margin-bottom: 0;
+    }
+    .timeline-icon-dot {
+      position: absolute;
+      left: -28px;
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.75rem;
+      background: #1e293b;
+      border: 2px solid var(--card-border);
+    }
+    .timeline-step-item.completed .timeline-icon-dot {
+      background: rgba(52, 211, 153, 0.2);
+      border-color: var(--success);
+      color: var(--success);
+    }
+    .timeline-step-item.current .timeline-icon-dot {
+      background: rgba(56, 189, 248, 0.2);
+      border-color: var(--primary);
+      color: var(--primary);
+      box-shadow: 0 0 8px rgba(56, 189, 248, 0.5);
+    }
+    .timeline-step-item.failed .timeline-icon-dot {
+      background: rgba(248, 113, 113, 0.2);
+      border-color: var(--error);
+      color: var(--error);
+    }
+    .timeline-content-card {
+      background: #1e293b;
+      border: 1px solid var(--card-border);
+      border-radius: 8px;
+      padding: 10px 14px;
+    }
+    .timeline-content-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-bottom: 4px;
+    }
+    .timeline-event-name {
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: var(--text);
+    }
+    .timeline-event-time {
+      font-size: 0.72rem;
+      color: var(--text-muted);
+      font-family: "JetBrains Mono", monospace;
+    }
+    .timeline-event-desc {
+      font-size: 0.8rem;
+      color: #94a3b8;
+      line-height: 1.4;
+    }
+    .timeline-badge-pill {
+      font-size: 0.7rem;
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-family: "JetBrains Mono", monospace;
+    }
   </style>
 </head>
 <body>
   <div class="container">
     <header>
-      <div class="badge">Slice 1: Document Upload • Slice 2: Print Options • Slice 3: Simulated Payment • Slice 4: Queue & Token • Slice 5: Staff Processing</div>
+      <div class="badge">Slice 1: Document Upload • Slice 2: Print Options • Slice 3: Simulated Payment • Slice 4: Queue & Token • Slice 5: Staff Processing • Slice 6: Student Tracking + History</div>
       <h1>Digital Xerox & Stationery System</h1>
       <p class="subtitle">Modular monolith backend with FastAPI, Amazon S3 (Document storage), and Amazon DynamoDB (Order & Queue persistence).</p>
     </header>
@@ -606,6 +792,9 @@
     <div class="portal-nav">
       <button class="portal-tab active" id="tabStudentPortal" type="button">
         <span>🎓 Student Ordering Portal</span>
+      </button>
+      <button class="portal-tab" id="tabHistoryPortal" type="button">
+        <span>📜 Order Tracking & History (Slice 6)</span>
       </button>
       <button class="portal-tab" id="tabStaffPortal" type="button">
         <span>🛠️ Staff Operations Portal (Slice 5)</span>
@@ -969,6 +1158,9 @@
             <div class="result-value" id="resQueueDdbKey" style="font-size: 0.8rem; font-family: 'JetBrains Mono', monospace;">-</div>
           </div>
         </div>
+        <button class="btn btn-outline" id="jumpToHistoryBtn" type="button" style="width: 100%; margin-top: 0.75rem;">
+          📜 View Live Timeline in Student Order History & Tracking
+        </button>
       </div>
     </div>
 
@@ -1033,6 +1225,54 @@
       <pre id="queryResult" style="display: none;"></pre>
     </div>
     <!-- END STUDENT PORTAL SECTION -->
+    </div>
+
+    <!-- STUDENT ORDER TRACKING & HISTORY PORTAL (SLICE 6) -->
+    <div id="historyPortalSection" style="display: none;">
+      <div class="card">
+        <div class="card-title" style="flex-wrap: wrap; gap: 10px;">
+          <div style="display: flex; align-items: center; gap: 10px;">
+            <span>Student Order Portal: Complete Tracking & History</span>
+            <span class="tag tag-dynamo">Slice 6: Authoritative Tracking</span>
+          </div>
+          <div class="integration-tags">
+            <span class="tag tag-s3">Presigned S3 Document Access</span>
+            <span class="tag tag-status">Lifecycle Timeline</span>
+          </div>
+        </div>
+        <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 1.25rem;">
+          Query current and past print orders for your Student ID. View authoritative order progression, chronological status timelines with timestamps, simulated payment receipts, token, live queue position, deterministic completion ETA, operator rejection notes, and re-download previously submitted documents securely via time-limited S3 presigned URLs.
+        </p>
+
+        <!-- Search Bar -->
+        <div style="display: flex; gap: 10px; margin-bottom: 1rem; flex-wrap: wrap;">
+          <input type="text" id="historyStudentId" placeholder="Enter Student ID (e.g. STU-2026-001, anonymous)" style="flex: 1; min-width: 240px;">
+          <button class="btn btn-primary" id="btnFetchHistory" type="button" style="width: auto; margin-top: 0; padding: 0.75rem 1.75rem;">
+            <span>🔍 Fetch Orders</span>
+          </button>
+        </div>
+
+        <!-- Filter Bar -->
+        <div class="history-filter-bar">
+          <button class="filter-btn active" data-filter="all" id="filterBtnAll" type="button">All Orders (<span id="countAll">0</span>)</button>
+          <button class="filter-btn" data-filter="active" id="filterBtnActive" type="button">Active / In Queue (<span id="countActive">0</span>)</button>
+          <button class="filter-btn" data-filter="ready" id="filterBtnReady" type="button">Ready for Pickup (<span id="countReady">0</span>)</button>
+          <button class="filter-btn" data-filter="completed" id="filterBtnCompleted" type="button">Completed (<span id="countCompleted">0</span>)</button>
+          <button class="filter-btn" data-filter="issues" id="filterBtnIssues" type="button">Rejected / Failed (<span id="countIssues">0</span>)</button>
+        </div>
+
+        <div id="historyAlertBox" class="alert"></div>
+
+        <!-- Orders Container -->
+        <div id="historyOrdersContainer">
+          <div style="text-align: center; color: var(--text-muted); padding: 3rem 0; background: #0f172a; border-radius: 8px; border: 1px dashed var(--card-border);">
+            <div style="font-size: 2rem; margin-bottom: 0.5rem;">📜</div>
+            <div style="font-size: 0.95rem; font-weight: 500; color: #cbd5e1; margin-bottom: 0.25rem;">Enter your Student ID above</div>
+            <div style="font-size: 0.8rem; color: var(--text-muted);">Retrieve your past and current print orders, live queue status, and payment receipts.</div>
+          </div>
+        </div>
+      </div>
+    </div>
 
     <!-- STAFF OPERATIONS PORTAL (SLICE 5) -->
     <div id="staffPortalSection" style="display: none;">
@@ -1821,23 +2061,39 @@
       }, 5000);
     }
 
+    const tabHistoryPortal = document.getElementById("tabHistoryPortal");
+    const historyPortalSection = document.getElementById("historyPortalSection");
+
     function switchPortal(mode) {
       if (mode === "staff") {
         tabStudentPortal.classList.remove("active");
+        if (tabHistoryPortal) tabHistoryPortal.classList.remove("active");
         tabStaffPortal.classList.add("active");
         studentPortalSection.style.display = "none";
+        if (historyPortalSection) historyPortalSection.style.display = "none";
         staffPortalSection.style.display = "block";
         fetchStaffOrders();
+      } else if (mode === "history") {
+        tabStudentPortal.classList.remove("active");
+        tabStaffPortal.classList.remove("active");
+        if (tabHistoryPortal) tabHistoryPortal.classList.add("active");
+        studentPortalSection.style.display = "none";
+        staffPortalSection.style.display = "none";
+        if (historyPortalSection) historyPortalSection.style.display = "block";
+        fetchStudentHistory();
       } else {
         tabStaffPortal.classList.remove("active");
+        if (tabHistoryPortal) tabHistoryPortal.classList.remove("active");
         tabStudentPortal.classList.add("active");
         staffPortalSection.style.display = "none";
+        if (historyPortalSection) historyPortalSection.style.display = "none";
         studentPortalSection.style.display = "block";
       }
     }
 
     if (tabStudentPortal) tabStudentPortal.addEventListener("click", () => switchPortal("student"));
     if (tabStaffPortal) tabStaffPortal.addEventListener("click", () => switchPortal("staff"));
+    if (tabHistoryPortal) tabHistoryPortal.addEventListener("click", () => switchPortal("history"));
     const step5IndicatorEl = document.getElementById("step5Indicator");
     if (step5IndicatorEl) {
       step5IndicatorEl.addEventListener("click", () => switchPortal("staff"));
@@ -2081,6 +2337,13 @@
     // Auto-detect route /staff or #staff
     if (window.location.pathname.endsWith("/staff") || window.location.hash === "#staff") {
       switchPortal("staff");
+    } else if (
+      window.location.pathname.endsWith("/history") ||
+      window.location.pathname.endsWith("/tracking") ||
+      window.location.hash === "#history" ||
+      window.location.hash === "#tracking"
+    ) {
+      switchPortal("history");
     } else {
       // Fetch initial count in background for badge
       fetch("/staff/orders?status=ACTIVE")
@@ -2091,6 +2354,342 @@
           }
         })
         .catch(() => {});
+    }
+
+    // ==========================================================
+    // VERTICAL SLICE 6: STUDENT ORDER PORTAL & TRACKING HISTORY
+    // ==========================================================
+    const historyStudentId = document.getElementById("historyStudentId");
+    const btnFetchHistory = document.getElementById("btnFetchHistory");
+    const historyOrdersContainer = document.getElementById("historyOrdersContainer");
+    const historyAlertBox = document.getElementById("historyAlertBox");
+    const jumpToHistoryBtn = document.getElementById("jumpToHistoryBtn");
+
+    let currentHistoryOrders = [];
+    let currentHistoryFilter = "all";
+
+    function showHistoryAlert(msg, type = "info") {
+      if (!historyAlertBox) return;
+      historyAlertBox.textContent = msg;
+      historyAlertBox.className = `alert alert-${type}`;
+      historyAlertBox.style.display = "block";
+      setTimeout(() => {
+        historyAlertBox.style.display = "none";
+      }, 5000);
+    }
+
+    function formatDateTime(isoStr) {
+      if (!isoStr) return "N/A";
+      try {
+        const d = new Date(isoStr);
+        return d.toLocaleString(undefined, {
+          month: "short",
+          day: "numeric",
+          hour: "2-digit",
+          minute: "2-digit",
+          second: "2-digit",
+        });
+      } catch (e) {
+        return isoStr;
+      }
+    }
+
+    function getTimelineIcon(event) {
+      switch (event) {
+        case "DOCUMENT_UPLOADED": return "📄";
+        case "CREATED": return "📝";
+        case "PAYMENT_PENDING": return "⏳";
+        case "PAID": return "💳";
+        case "PAYMENT_FAILED": return "❌";
+        case "QUEUED": return "🎫";
+        case "PROCESSING": return "🖨️";
+        case "READY": return "📦";
+        case "COMPLETED": return "🎉";
+        case "REJECTED": return "🚫";
+        default: return "🔹";
+      }
+    }
+
+    async function fetchStudentHistory() {
+      const studentId = (historyStudentId && historyStudentId.value ? historyStudentId.value.trim() : "") || "anonymous";
+      if (historyOrdersContainer) {
+        historyOrdersContainer.innerHTML = `<div style="text-align: center; color: var(--text-muted); padding: 3rem 0;">Loading orders for ${studentId}...</div>`;
+      }
+
+      try {
+        const res = await fetch(`/orders?student_id=${encodeURIComponent(studentId)}`);
+        if (!res.ok) {
+          const errData = await res.json().catch(() => ({}));
+          const msg = errData?.detail?.error?.message || "Failed to fetch student order history.";
+          showHistoryAlert(msg, "error");
+          if (historyOrdersContainer) {
+            historyOrdersContainer.innerHTML = `<div style="text-align: center; color: var(--error); padding: 2rem 0;">Error: ${msg}</div>`;
+          }
+          return;
+        }
+        const orders = await res.json();
+        currentHistoryOrders = orders || [];
+        updateHistoryFilterCounts(currentHistoryOrders);
+        renderHistoryOrders();
+      } catch (err) {
+        showHistoryAlert(`Network error: ${err.message}`, "error");
+        if (historyOrdersContainer) {
+          historyOrdersContainer.innerHTML = `<div style="text-align: center; color: var(--error); padding: 2rem 0;">Network error loading orders.</div>`;
+        }
+      }
+    }
+
+    function updateHistoryFilterCounts(orders) {
+      const allCount = orders.length;
+      const activeCount = orders.filter(o => o.status === "QUEUED" || o.status === "PROCESSING").length;
+      const readyCount = orders.filter(o => o.status === "READY").length;
+      const completedCount = orders.filter(o => o.status === "COMPLETED").length;
+      const issuesCount = orders.filter(o => o.status === "REJECTED" || o.status === "PAYMENT_FAILED").length;
+
+      const cAll = document.getElementById("countAll");
+      const cActive = document.getElementById("countActive");
+      const cReady = document.getElementById("countReady");
+      const cCompleted = document.getElementById("countCompleted");
+      const cIssues = document.getElementById("countIssues");
+
+      if (cAll) cAll.textContent = allCount;
+      if (cActive) cActive.textContent = activeCount;
+      if (cReady) cReady.textContent = readyCount;
+      if (cCompleted) cCompleted.textContent = completedCount;
+      if (cIssues) cIssues.textContent = issuesCount;
+    }
+
+    function renderHistoryOrders() {
+      if (!historyOrdersContainer) return;
+
+      const filtered = currentHistoryOrders.filter(o => {
+        if (currentHistoryFilter === "active") return o.status === "QUEUED" || o.status === "PROCESSING";
+        if (currentHistoryFilter === "ready") return o.status === "READY";
+        if (currentHistoryFilter === "completed") return o.status === "COMPLETED";
+        if (currentHistoryFilter === "issues") return o.status === "REJECTED" || o.status === "PAYMENT_FAILED";
+        return true;
+      });
+
+      if (!filtered.length) {
+        historyOrdersContainer.innerHTML = `
+          <div style="text-align: center; color: var(--text-muted); padding: 3rem 0; background: #0f172a; border-radius: 8px; border: 1px dashed var(--card-border);">
+            <div style="font-size: 2.2rem; margin-bottom: 0.5rem;">🔍</div>
+            <div style="font-size: 0.95rem; font-weight: 500; color: #cbd5e1; margin-bottom: 0.25rem;">No orders found</div>
+            <div style="font-size: 0.8rem; color: var(--text-muted);">
+              ${currentHistoryOrders.length === 0 ? "You haven't placed any print orders yet with this Student ID." : "No orders match the selected status filter."}
+            </div>
+          </div>
+        `;
+        return;
+      }
+
+      historyOrdersContainer.innerHTML = filtered.map(o => {
+        // Status Badge Style
+        let statusTagClass = "tag-status";
+        if (o.status === "COMPLETED" || o.status === "PAID") statusTagClass = "tag-success";
+        else if (o.status === "READY") statusTagClass = "tag-success";
+        else if (o.status === "PROCESSING") statusTagClass = "tag-dynamo";
+        else if (o.status === "REJECTED" || o.status === "PAYMENT_FAILED") statusTagClass = "tag-error";
+
+        const tokenBadge = o.token_number
+          ? `<span class="staff-token-badge">${o.token_number}</span>`
+          : "";
+
+        // Re-download Document Link (presigned S3 GET URL)
+        const docDownloadBtn = o.document_url
+          ? `<a href="${o.document_url}" target="_blank" rel="noopener noreferrer" class="btn btn-outline btn-sm" style="text-decoration: none; display: inline-flex; align-items: center; gap: 6px;">
+               <span>🔗</span> <span>Re-download Document</span>
+             </a>`
+          : `<span style="font-size: 0.8rem; color: var(--text-muted);">Document unavailable</span>`;
+
+        // Payment Receipt Block
+        let paymentBlock = "";
+        if (o.payment_receipt) {
+          const pr = o.payment_receipt;
+          const isSuccess = pr.status === "SUCCESS";
+          paymentBlock = `
+            <div class="history-meta-card" style="grid-column: span 2;">
+              <div class="history-meta-label">Payment Receipt & Details (Simulated)</div>
+              <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px; font-size: 0.82rem;">
+                <div>
+                  <span style="font-family: 'JetBrains Mono', monospace; color: var(--primary); font-weight: 600;">${pr.payment_reference || pr.payment_id}</span>
+                  <span style="color: var(--text-muted); margin-left: 8px;">• ${pr.currency} ₹${pr.amount_rupees.toFixed(2)}</span>
+                </div>
+                <div style="display: flex; align-items: center; gap: 6px;">
+                  <span class="tag ${isSuccess ? 'tag-success' : 'tag-error'}">${pr.status}</span>
+                  <span style="font-size: 0.75rem; color: var(--text-muted); font-family: 'JetBrains Mono', monospace;">${formatDateTime(pr.created_at)}</span>
+                </div>
+              </div>
+              ${pr.failure_reason ? `<div style="color: var(--error); font-size: 0.78rem; margin-top: 4px;">Reason: ${pr.failure_reason}</div>` : ""}
+            </div>
+          `;
+        }
+
+        // Live Queue Card (when QUEUED or PROCESSING)
+        let queueLiveBlock = "";
+        if ((o.status === "QUEUED" || o.status === "PROCESSING") && o.queue_position) {
+          queueLiveBlock = `
+            <div class="history-meta-card" style="grid-column: span 2; background: rgba(56, 189, 248, 0.05); border-color: rgba(56, 189, 248, 0.3);">
+              <div class="history-meta-label" style="color: var(--primary);">Live Queue & Status</div>
+              <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
+                <div>
+                  <div style="font-size: 1.1rem; font-weight: 700; color: var(--primary);">Queue Position #${o.queue_position}</div>
+                  <div style="font-size: 0.78rem; color: var(--text-muted);">Active in operational printer line</div>
+                </div>
+                <div style="text-align: right;">
+                  <div style="font-size: 0.85rem; font-weight: 600; color: var(--success);">
+                    ${o.estimated_completion_at ? formatDateTime(o.estimated_completion_at) : "Calculating..."}
+                  </div>
+                  <div style="font-size: 0.75rem; color: var(--text-muted);">
+                    ${o.estimated_wait_minutes !== null && o.estimated_wait_minutes !== undefined ? `~${o.estimated_wait_minutes} mins remaining` : "In queue"}
+                  </div>
+                </div>
+              </div>
+            </div>
+          `;
+        }
+
+        // Rejection Reason Callout (when REJECTED)
+        let rejectionBlock = "";
+        if (o.status === "REJECTED" && o.rejection_reason) {
+          rejectionBlock = `
+            <div class="rejection-callout">
+              <strong>⚠️ Rejection Notice:</strong> ${o.rejection_reason}
+              <div style="font-size: 0.75rem; color: #f87171; margin-top: 4px;">Your order could not be printed. Please review operator notes and submit a corrected file.</div>
+            </div>
+          `;
+        }
+
+        // Ready for Pickup Callout (when READY)
+        let readyBlock = "";
+        if (o.status === "READY") {
+          readyBlock = `
+            <div style="background: rgba(52, 211, 153, 0.1); border: 1px solid var(--success); border-radius: 8px; padding: 12px 14px; margin-bottom: 1.25rem; color: #6ee7b7; font-size: 0.85rem;">
+              <strong>🎉 Ready for Pickup!</strong> Your print job is complete at the stationery counter. Show Token <span style="font-family: 'JetBrains Mono', monospace; font-weight: 700; color: #34d399;">${o.token_number || o.order_id}</span> to collect.
+            </div>
+          `;
+        }
+
+        // Status Timeline Stepper
+        const timelineSteps = (o.timeline || []).map(ev => {
+          let stepClass = "completed";
+          if (ev.status === "FAILED") stepClass = "failed";
+          else if (ev.status === "CURRENT") stepClass = "current";
+
+          return `
+            <div class="timeline-step-item ${stepClass}">
+              <div class="timeline-icon-dot">${getTimelineIcon(ev.event)}</div>
+              <div class="timeline-content-card">
+                <div class="timeline-content-header">
+                  <div style="display: flex; align-items: center; gap: 8px;">
+                    <span class="timeline-event-name">${ev.title || ev.event}</span>
+                    <span class="timeline-badge-pill ${ev.status === 'FAILED' ? 'tag-error' : ev.status === 'CURRENT' ? 'tag-dynamo' : 'tag-success'}">${ev.status}</span>
+                  </div>
+                  <span class="timeline-event-time">${formatDateTime(ev.timestamp)}</span>
+                </div>
+                <div class="timeline-event-desc">${ev.description || ""}</div>
+              </div>
+            </div>
+          `;
+        }).join("");
+
+        const cfg = o.print_config || {};
+        const pr = o.pricing || {};
+
+        return `
+          <div class="history-order-card" id="history-card-${o.order_id}">
+            <div class="history-order-header">
+              <div style="display: flex; align-items: center; gap: 12px;">
+                ${tokenBadge}
+                <div>
+                  <div style="font-weight: 700; font-size: 1rem; font-family: 'JetBrains Mono', monospace; color: var(--text);">
+                    ${o.order_id}
+                  </div>
+                  <div style="font-size: 0.75rem; color: var(--text-muted);">
+                    Document: <strong style="color: #cbd5e1;">${o.filename || o.document_name || "file"}</strong> • Placed: ${formatDateTime(o.created_at)}
+                  </div>
+                </div>
+              </div>
+              <div style="display: flex; align-items: center; gap: 8px;">
+                <span class="tag ${statusTagClass}" style="font-size: 0.8rem; padding: 4px 10px; font-weight: 700;">${o.status}</span>
+              </div>
+            </div>
+
+            ${rejectionBlock}
+            ${readyBlock}
+
+            <div class="history-meta-grid">
+              <div class="history-meta-card">
+                <div class="history-meta-label">Print Configuration</div>
+                <div class="history-meta-value">
+                  ${cfg.page_count || 1} pages • ${(cfg.color_mode || 'bw').toUpperCase()} • ${cfg.paper_size || 'A4'}
+                </div>
+                <div style="font-size: 0.75rem; color: var(--text-muted); margin-top: 2px;">
+                  ${cfg.copies || 1} copy(ies) • ${cfg.sidedness || 'SINGLE'} sided
+                </div>
+              </div>
+
+              <div class="history-meta-card">
+                <div class="history-meta-label">Price & Billing</div>
+                <div class="history-meta-value" style="color: var(--primary);">
+                  ₹${pr.total_price_rupees ? pr.total_price_rupees.toFixed(2) : '-'}
+                </div>
+                <div style="font-size: 0.75rem; color: var(--text-muted); margin-top: 2px;">
+                  ${pr.total_pages_printed || '-'} printed impressions (${pr.total_sheets || '-'} sheets)
+                </div>
+              </div>
+
+              ${queueLiveBlock}
+              ${paymentBlock}
+            </div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; margin-bottom: 1rem;">
+              <div>${docDownloadBtn}</div>
+              <div style="font-size: 0.75rem; color: var(--text-muted);">
+                Authoritative DynamoDB: PK: ORDER#${o.order_id}
+              </div>
+            </div>
+
+            <!-- Visual Timeline Stepper -->
+            <div class="timeline-container">
+              <div class="timeline-title-banner">
+                <span>⏱️ Status Timeline & Lifecycle Events</span>
+                <span style="font-size: 0.75rem; color: var(--text-muted); font-weight: 400;">(${o.timeline ? o.timeline.length : 0} events)</span>
+              </div>
+              <div class="timeline-stepper">
+                ${timelineSteps}
+              </div>
+            </div>
+          </div>
+        `;
+      }).join("");
+    }
+
+    if (btnFetchHistory) btnFetchHistory.addEventListener("click", fetchStudentHistory);
+    if (historyStudentId) {
+      historyStudentId.addEventListener("keypress", (e) => {
+        if (e.key === "Enter") fetchStudentHistory();
+      });
+    }
+
+    // Filter button listeners
+    document.querySelectorAll(".history-filter-bar .filter-btn").forEach(btn => {
+      btn.addEventListener("click", () => {
+        document.querySelectorAll(".history-filter-bar .filter-btn").forEach(b => b.classList.remove("active"));
+        btn.classList.add("active");
+        currentHistoryFilter = btn.getAttribute("data-filter") || "all";
+        renderHistoryOrders();
+      });
+    });
+
+    if (jumpToHistoryBtn) {
+      jumpToHistoryBtn.addEventListener("click", () => {
+        const sidInput = document.getElementById("studentId");
+        if (sidInput && sidInput.value && historyStudentId) {
+          historyStudentId.value = sidInput.value.trim();
+        }
+        switchPortal("history");
+      });
     }
   </script>
 </body>
