@@ -121,13 +121,49 @@
 
 ---
 
+## Vertical Slice 5: Staff Processing (Completed)
+**Date:** 2026-09-12
+
+### What was delivered
+- Authoritative Backend State Machine & Lifecycle Transitions:
+  - Strict lifecycle transitions: `QUEUED` -> `PROCESSING` (Accept) or `REJECTED` (with mandatory reason)
+  - `PROCESSING` -> `READY` (marked ready for collection; automatically removes order from active print queue)
+  - `READY` -> `COMPLETED` (order collected/finished)
+  - Disallows invalid transitions with HTTP 400 (`INVALID_STATE_TRANSITION`)
+  - Enforces mandatory non-empty formal rejection reason with HTTP 400 (`REJECTION_REASON_REQUIRED`)
+- Staff Service & Endpoints (`app/api/staff.py` mounted at `/staff` and `/orders`):
+  - `GET /staff/orders` & `GET /staff/queue` — lists active queue orders with document metadata and S3 presigned URL
+  - `POST /staff/orders/{order_id}/accept` & `POST /orders/{order_id}/process` — transitions order to `PROCESSING`
+  - `POST /staff/orders/{order_id}/reject` — transitions order to `REJECTED` with formal reason, removing it from active queue
+  - `POST /staff/orders/{order_id}/ready` — transitions order to `READY`, removing it from `PK: QUEUE#ACTIVE`
+  - `POST /staff/orders/{order_id}/complete` — transitions order to `COMPLETED`
+- S3 Secure Document Access:
+  - Staff can securely inspect documents via time-limited private S3 presigned URLs (`S3Repository.generate_presigned_url`)
+- Dynamic Operational Queue Management:
+  - When an order transitions to `READY` or `REJECTED`, it is removed from `PK: QUEUE#ACTIVE`
+  - Subsequent orders dynamically move up in line (e.g. #2 becomes #1) with reduced queue depth and recalculated ETA
+- Student Tracking Visibility:
+  - Student status checks (`GET /orders/{order_id}/queue` and `GET /orders/{order_id}`) immediately reflect `PROCESSING`, `READY`, `COMPLETED`, and `REJECTED` (including rejection reason)
+- Staff Operations Dashboard UI in `app/static/index.html`:
+  - Dedicated Portal Navigation tab switcher (`Student Ordering Portal` vs `Staff Operations Portal`)
+  - Filter by status (`ACTIVE`, `QUEUED`, `PROCESSING`, `READY`, `COMPLETED`, `REJECTED`, `ALL`)
+  - Document inspection button opening presigned S3 URL in new tab
+  - One-click Accept, Ready, Complete action buttons
+  - Interactive Rejection Modal requiring non-empty formal justification
+  - Live active count badge and auto-detection on `/staff` route
+- Comprehensive automated test suite in `tests/test_staff.py`:
+  - 26 passing tests covering listing with presigned URLs, accept, reject, ready, complete, invalid transitions, dynamic queue position shift, student tracking visibility, and UI serving
+  - 107/107 total project tests passing
+
+---
+
 ### Vertical slices planned (awaiting approval)
 1. Document Upload: Student UI → FastAPI → S3 → DynamoDB → UI ✅
 2. Print Config + Order Creation: → validation → pricing → DynamoDB ✅
 3. Simulated Payment: → SUCCESS/FAILURE → DynamoDB ✅
 4. Token + Queue + ETA: → token/queue/ETA → DynamoDB ✅
-5. Staff Processing: Staff UI → accept/reject/process/READY (Awaiting approval)
-6. Student Tracking + History
+5. Staff Processing: Staff UI → accept/reject/process/READY ✅
+6. Student Tracking + History (Awaiting approval)
 7. Full End-to-End Validation
 8. Dockerization
 9. AWS Deployment (guided)
