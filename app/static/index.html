@@ -1673,7 +1673,11 @@
       const waitMins = Number(data.estimated_wait_minutes);
       resQueueWait.textContent = `~${waitMins.toFixed(1)} mins (${data.estimated_wait_seconds}s)`;
       resQueueDepth.textContent = `${data.active_queue_length} order(s) ahead/in queue`;
-      resQueueDdbKey.textContent = `PK: QUEUE#ACTIVE / SK: ORDER#${data.order_id} • PK: ORDER#${data.order_id}`;
+      if (pos > 0) {
+        resQueueDdbKey.textContent = `PK: QUEUE#ACTIVE / SK: ORDER#${data.order_id} • PK: ORDER#${data.order_id}`;
+      } else {
+        resQueueDdbKey.textContent = `PK: ORDER#${data.order_id} (Removed from active queue: ${data.status})`;
+      }
       queueResultSection.style.display = "block";
     }
 
