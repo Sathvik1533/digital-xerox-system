@@ -383,6 +383,8 @@ class DynamoDBRepository:
             "status": OrderStatus.QUEUED.value,
             "student_id": order.student_id,
             "filename": order.filename,
+            "document_id": order.document_id,
+            "document_key": order.document_key,
             "created_at": now_iso,
             "updated_at": now_iso,
         }
@@ -391,3 +393,214 @@ class DynamoDBRepository:
 
         updated_order_dict = _convert_decimals_to_native(response.get("Attributes", {}))
         return Order(**updated_order_dict)
+
+    def delete_queue_item(self, order_id: str) -> None:
+        """Remove order item from active operational queue (PK: QUEUE#ACTIVE)."""
+        try:
+            self.table.delete_item(
+                Key={
+                    "PK": "QUEUE#ACTIVE",
+                    "SK": f"ORDER#{order_id}",
+                }
+            )
+        except Exception:
+            pass
+
+    def update_order_status_accept(self, order_id: str) -> Order:
+        """
+        Atomically transition order from QUEUED to PROCESSING.
+        Updates order record and updates status in active queue item.
+        """
+        now_iso = datetime.now(timezone.utc).isoformat()
+        try:
+            response = self.table.update_item(
+                Key={
+                    "PK": f"ORDER#{order_id}",
+                    "SK": f"ORDER#{order_id}",
+                },
+                UpdateExpression="SET #st = :st_proc, #ua = :now",
+                ConditionExpression="attribute_exists(PK) AND #st = :st_queued",
+                ExpressionAttributeNames={
+                    "#st": "status",
+                    "#ua": "updated_at",
+                },
+                ExpressionAttributeValues={
+                    ":st_proc": OrderStatus.PROCESSING.value,
+                    ":st_queued": OrderStatus.QUEUED.value,
+                    ":now": now_iso,
+                },
+                ReturnValues="ALL_NEW",
+            )
+        except ClientError as e:
+            if e.response.get("Error", {}).get("Code") == "ConditionalCheckFailedException":
+                raise OrderStateConflictError(
+                    f"Order '{order_id}' cannot be accepted: must be in QUEUED status."
+                ) from e
+            raise
+
+        # Update status in PK: QUEUE#ACTIVE as well
+        try:
+            self.table.update_item(
+                Key={
+                    "PK": "QUEUE#ACTIVE",
+                    "SK": f"ORDER#{order_id}",
+                },
+                UpdateExpression="SET #st = :st_proc, #ua = :now",
+                ExpressionAttributeNames={
+                    "#st": "status",
+                    "#ua": "updated_at",
+                },
+                ExpressionAttributeValues={
+                    ":st_proc": OrderStatus.PROCESSING.value,
+                    ":now": now_iso,
+                },
+            )
+        except Exception:
+            pass
+
+        updated_dict = _convert_decimals_to_native(response.get("Attributes", {}))
+        return Order(**updated_dict)
+
+    def update_order_status_reject(self, order_id: str, rejection_reason: str) -> Order:
+        """
+        Atomically transition order from QUEUED to REJECTED with mandatory reason.
+        Removes order from active queue (PK: QUEUE#ACTIVE).
+        """
+        now_iso = datetime.now(timezone.utc).isoformat()
+        try:
+            response = self.table.update_item(
+                Key={
+                    "PK": f"ORDER#{order_id}",
+                    "SK": f"ORDER#{order_id}",
+                },
+                UpdateExpression="SET #st = :st_rej, #rr = :rr, #ua = :now",
+                ConditionExpression="attribute_exists(PK) AND #st = :st_queued",
+                ExpressionAttributeNames={
+                    "#st": "status",
+                    "#rr": "rejection_reason",
+                    "#ua": "updated_at",
+                },
+                ExpressionAttributeValues={
+                    ":st_rej": OrderStatus.REJECTED.value,
+                    ":st_queued": OrderStatus.QUEUED.value,
+                    ":rr": rejection_reason,
+                    ":now": now_iso,
+                },
+                ReturnValues="ALL_NEW",
+            )
+        except ClientError as e:
+            if e.response.get("Error", {}).get("Code") == "ConditionalCheckFailedException":
+                raise OrderStateConflictError(
+                    f"Order '{order_id}' cannot be rejected: must be in QUEUED status."
+                ) from e
+            raise
+
+        # Remove from PK: QUEUE#ACTIVE
+        self.delete_queue_item(order_id)
+
+        updated_dict = _convert_decimals_to_native(response.get("Attributes", {}))
+        return Order(**updated_dict)
+
+    def update_order_status_ready(self, order_id: str) -> Order:
+        """
+        Atomically transition order from PROCESSING to READY.
+        Removes order from active operational queue (PK: QUEUE#ACTIVE).
+        """
+        now_iso = datetime.now(timezone.utc).isoformat()
+        try:
+            response = self.table.update_item(
+                Key={
+                    "PK": f"ORDER#{order_id}",
+                    "SK": f"ORDER#{order_id}",
+                },
+                UpdateExpression="SET #st = :st_ready, #ua = :now",
+                ConditionExpression="attribute_exists(PK) AND #st = :st_proc",
+                ExpressionAttributeNames={
+                    "#st": "status",
+                    "#ua": "updated_at",
+                },
+                ExpressionAttributeValues={
+                    ":st_ready": OrderStatus.READY.value,
+                    ":st_proc": OrderStatus.PROCESSING.value,
+                    ":now": now_iso,
+                },
+                ReturnValues="ALL_NEW",
+            )
+        except ClientError as e:
+            if e.response.get("Error", {}).get("Code") == "ConditionalCheckFailedException":
+                raise OrderStateConflictError(
+                    f"Order '{order_id}' cannot be marked READY: must be in PROCESSING status."
+                ) from e
+            raise
+
+        # Remove from PK: QUEUE#ACTIVE
+        self.delete_queue_item(order_id)
+
+        updated_dict = _convert_decimals_to_native(response.get("Attributes", {}))
+        return Order(**updated_dict)
+
+    def update_order_status_complete(self, order_id: str) -> Order:
+        """
+        Atomically transition order from READY to COMPLETED.
+        Ensures order is removed from active queue if still present.
+        """
+        now_iso = datetime.now(timezone.utc).isoformat()
+        try:
+            response = self.table.update_item(
+                Key={
+                    "PK": f"ORDER#{order_id}",
+                    "SK": f"ORDER#{order_id}",
+                },
+                UpdateExpression="SET #st = :st_comp, #ua = :now",
+                ConditionExpression="attribute_exists(PK) AND #st = :st_ready",
+                ExpressionAttributeNames={
+                    "#st": "status",
+                    "#ua": "updated_at",
+                },
+                ExpressionAttributeValues={
+                    ":st_comp": OrderStatus.COMPLETED.value,
+                    ":st_ready": OrderStatus.READY.value,
+                    ":now": now_iso,
+                },
+                ReturnValues="ALL_NEW",
+            )
+        except ClientError as e:
+            if e.response.get("Error", {}).get("Code") == "ConditionalCheckFailedException":
+                raise OrderStateConflictError(
+                    f"Order '{order_id}' cannot be completed: must be in READY status."
+                ) from e
+            raise
+
+        # Ensure order is not in PK: QUEUE#ACTIVE
+        self.delete_queue_item(order_id)
+
+        updated_dict = _convert_decimals_to_native(response.get("Attributes", {}))
+        return Order(**updated_dict)
+
+    def get_all_orders(self) -> list[Order]:
+        """Scan and retrieve all order records from DynamoDB."""
+        orders: list[Order] = []
+        done = False
+        start_key = None
+        while not done:
+            scan_kwargs = {
+                "FilterExpression": "begins_with(PK, :pk_prefix) AND begins_with(SK, :sk_prefix)",
+                "ExpressionAttributeValues": {
+                    ":pk_prefix": "ORDER#",
+                    ":sk_prefix": "ORDER#",
+                },
+            }
+            if start_key:
+                scan_kwargs["ExclusiveStartKey"] = start_key
+            response = self.table.scan(**scan_kwargs)
+            for raw in response.get("Items", []):
+                native = _convert_decimals_to_native(raw)
+                try:
+                    orders.append(Order(**native))
+                except Exception:
+                    pass
+            start_key = response.get("LastEvaluatedKey")
+            done = start_key is None
+
+        orders.sort(key=lambda x: str(x.created_at), reverse=True)
+        return orders
