@@ -468,15 +468,153 @@
       color: var(--success);
       border: 1px solid rgba(52, 211, 153, 0.3);
     }
+    /* Portal Navigation Tabs */
+    .portal-nav {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 1.5rem;
+      width: 100%;
+      background: var(--card-bg);
+      padding: 6px;
+      border-radius: var(--radius);
+      border: 1px solid var(--card-border);
+    }
+    .portal-tab {
+      flex: 1;
+      padding: 10px 16px;
+      border: none;
+      background: transparent;
+      color: var(--text-muted);
+      font-weight: 600;
+      font-size: 0.9rem;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.2s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+    .portal-tab:hover {
+      color: var(--text);
+      background: rgba(255, 255, 255, 0.05);
+    }
+    .portal-tab.active {
+      background: var(--primary);
+      color: #0f172a;
+      box-shadow: 0 2px 8px rgba(56, 189, 248, 0.3);
+    }
+    .btn-sm {
+      padding: 6px 12px;
+      font-size: 0.78rem;
+    }
+    .btn-success {
+      background: var(--success);
+      color: #0f172a;
+      border: none;
+      font-weight: 600;
+    }
+    .btn-success:hover {
+      filter: brightness(1.1);
+    }
+    .btn-danger {
+      background: var(--error);
+      color: #0f172a;
+      border: none;
+      font-weight: 600;
+    }
+    .btn-danger:hover {
+      filter: brightness(1.1);
+    }
+    .staff-order-card {
+      background: rgba(15, 23, 42, 0.6);
+      border: 1px solid var(--card-border);
+      border-radius: 10px;
+      padding: 1.25rem;
+      margin-bottom: 1rem;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      transition: border-color 0.2s;
+    }
+    .staff-order-card:hover {
+      border-color: rgba(56, 189, 248, 0.4);
+    }
+    .staff-order-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+    .staff-token-badge {
+      font-size: 1.25rem;
+      font-weight: 800;
+      font-family: "JetBrains Mono", monospace;
+      color: var(--primary);
+      background: rgba(56, 189, 248, 0.15);
+      padding: 4px 12px;
+      border-radius: 6px;
+      border: 1px solid rgba(56, 189, 248, 0.3);
+    }
+    .staff-order-meta {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+      gap: 8px;
+      background: #090d16;
+      padding: 10px 14px;
+      border-radius: 8px;
+      font-size: 0.8rem;
+    }
+    .staff-actions {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+    .modal-overlay {
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(0, 0, 0, 0.75);
+      backdrop-filter: blur(4px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+      padding: 1rem;
+    }
+    .modal-card {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: var(--radius);
+      padding: 1.75rem;
+      max-width: 500px;
+      width: 100%;
+      box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.5);
+    }
   </style>
 </head>
 <body>
   <div class="container">
     <header>
-      <div class="badge">Slice 1: Document Upload • Slice 2: Print Options • Slice 3: Simulated Payment • Slice 4: Queue & Token</div>
+      <div class="badge">Slice 1: Document Upload • Slice 2: Print Options • Slice 3: Simulated Payment • Slice 4: Queue & Token • Slice 5: Staff Processing</div>
       <h1>Digital Xerox & Stationery System</h1>
       <p class="subtitle">Modular monolith backend with FastAPI, Amazon S3 (Document storage), and Amazon DynamoDB (Order & Queue persistence).</p>
     </header>
+
+    <!-- PORTAL MODE SELECTOR -->
+    <div class="portal-nav">
+      <button class="portal-tab active" id="tabStudentPortal" type="button">
+        <span>🎓 Student Ordering Portal</span>
+      </button>
+      <button class="portal-tab" id="tabStaffPortal" type="button">
+        <span>🛠️ Staff Operations Portal (Slice 5)</span>
+        <span class="badge" style="margin: 0; padding: 2px 8px; font-size: 0.65rem;" id="staffQueueCountBadge">0 active</span>
+      </button>
+    </div>
+
+    <!-- STUDENT PORTAL SECTION -->
+    <div id="studentPortalSection">
 
     <div class="stepper">
       <div class="step active" id="step1Indicator">
@@ -894,9 +1032,66 @@
       </div>
       <pre id="queryResult" style="display: none;"></pre>
     </div>
+    <!-- END STUDENT PORTAL SECTION -->
+
+    <!-- STAFF OPERATIONS PORTAL (SLICE 5) -->
+    <div id="staffPortalSection" style="display: none;">
+      <div class="card">
+        <div class="card-title" style="flex-wrap: wrap; gap: 10px;">
+          <div style="display: flex; align-items: center; gap: 10px;">
+            <span>Staff Operations Console (Slice 5)</span>
+            <span class="tag tag-dynamo">Authoritative State Machine</span>
+          </div>
+          <div style="display: flex; gap: 8px; align-items: center; flex-wrap: wrap;">
+            <select id="staffStatusFilter" style="padding: 6px 12px; font-size: 0.8rem; background: var(--bg); color: var(--text); border: 1px solid var(--card-border); border-radius: 6px;">
+              <option value="ACTIVE" selected>Active Jobs (QUEUED & PROCESSING)</option>
+              <option value="QUEUED">QUEUED (Incoming / Unprocessed)</option>
+              <option value="PROCESSING">PROCESSING (Currently Printing)</option>
+              <option value="READY">READY (Awaiting Pickup)</option>
+              <option value="COMPLETED">COMPLETED (Collected)</option>
+              <option value="REJECTED">REJECTED (Formal Reason)</option>
+              <option value="ALL">All Orders (Scan)</option>
+            </select>
+            <button class="btn btn-outline btn-sm" id="refreshStaffBtn" type="button">↻ Refresh Orders</button>
+          </div>
+        </div>
+        <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 1.25rem;">
+          View active incoming orders, inspect uploaded documents securely via time-limited S3 presigned URLs, accept orders to begin printing, mark ready for pickup, or reject with mandatory formal justification.
+        </p>
+
+        <div id="staffAlertBox" class="alert"></div>
+
+        <!-- Orders Container -->
+        <div id="staffOrdersContainer">
+          <div style="text-align: center; color: var(--text-muted); padding: 2rem 0;">Loading incoming orders...</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- REJECTION MODAL -->
+    <div id="rejectModal" class="modal-overlay" style="display: none;">
+      <div class="modal-card">
+        <div class="card-title" style="margin-bottom: 0.75rem;">
+          <span style="color: var(--error);">Reject Order</span>
+          <span id="modalOrderToken" class="staff-token-badge" style="font-size: 0.9rem;">X-101</span>
+        </div>
+        <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 1rem;">
+          A non-empty formal rejection reason is mandatory by system policy. The student will see this reason on their tracking screen and the order will be removed from the operational print queue.
+        </p>
+        <input type="hidden" id="modalOrderId" value="">
+        <div class="form-group">
+          <label for="modalRejectReason">Formal Rejection Reason</label>
+          <textarea id="modalRejectReason" rows="3" placeholder="e.g., Damaged file raster format, corrupted pages 3-4, invalid dimensions..." style="width: 100%; background: var(--bg); border: 1px solid var(--card-border); border-radius: 6px; padding: 8px 12px; color: var(--text); font-family: inherit; font-size: 0.85rem;"></textarea>
+        </div>
+        <div style="display: flex; gap: 10px; justify-content: flex-end; margin-top: 1rem;">
+          <button class="btn btn-outline" id="modalCancelBtn" type="button">Cancel</button>
+          <button class="btn btn-danger" id="modalConfirmBtn" type="button">Confirm Rejection</button>
+        </div>
+      </div>
+    </div>
 
     <footer>
-      Digital Xerox & Stationery System • Vertical Slice 4 • FastAPI + DynamoDB + S3
+      Digital Xerox & Stationery System • Vertical Slice 5 • FastAPI + DynamoDB + S3
     </footer>
   </div>
 
@@ -1407,16 +1602,68 @@
       resTokenNumber.textContent = data.token_number || "-";
 
       const pos = Number(data.queue_position);
-      if (pos > 0) {
-        resQueuePositionBanner.style.background = "rgba(52, 211, 153, 0.15)";
-        resQueuePositionBanner.style.color = "var(--success)";
-        resQueuePositionText.textContent = pos === 1 ? "★ You are #1 in line (Next up!)" : `You are #${pos} in line`;
-        resQueuePos.textContent = `#${pos} of ${data.active_queue_length} active`;
-      } else {
-        resQueuePositionBanner.style.background = "rgba(56, 189, 248, 0.15)";
+      const step5Ind = document.getElementById("step5Indicator");
+
+      if (data.status === "PROCESSING") {
+        resQueuePositionBanner.style.background = "rgba(56, 189, 248, 0.2)";
         resQueuePositionBanner.style.color = "var(--primary)";
-        resQueuePositionText.textContent = `Status: ${data.status}`;
-        resQueuePos.textContent = `Completed or Processing`;
+        resQueuePositionBanner.style.borderColor = "rgba(56, 189, 248, 0.4)";
+        resQueuePositionText.textContent = "🖨️ In Printing — Staff accepted your order and is currently printing!";
+        resQueuePos.textContent = pos > 0 ? `Printing in progress (#${pos})` : "Printing in progress";
+        queueStatusBadge.textContent = "PROCESSING";
+        queueStatusBadge.className = "tag tag-action";
+        if (step5Ind) {
+          step5Ind.classList.add("active");
+          step5Ind.classList.remove("completed");
+        }
+      } else if (data.status === "READY") {
+        resQueuePositionBanner.style.background = "rgba(52, 211, 153, 0.2)";
+        resQueuePositionBanner.style.color = "var(--success)";
+        resQueuePositionBanner.style.borderColor = "rgba(52, 211, 153, 0.4)";
+        resQueuePositionText.textContent = `🎉 READY FOR PICKUP! Token ${data.token_number} is ready at Counter 1!`;
+        resQueuePos.textContent = "Ready for Collection";
+        queueStatusBadge.textContent = "READY";
+        queueStatusBadge.className = "tag tag-success";
+        if (step5Ind) {
+          step5Ind.classList.remove("active");
+          step5Ind.classList.add("completed");
+        }
+      } else if (data.status === "COMPLETED") {
+        resQueuePositionBanner.style.background = "rgba(148, 163, 184, 0.2)";
+        resQueuePositionBanner.style.color = "#cbd5e1";
+        resQueuePositionBanner.style.borderColor = "rgba(148, 163, 184, 0.4)";
+        resQueuePositionText.textContent = "✅ COMPLETED — Order has been collected. Thank you!";
+        resQueuePos.textContent = "Completed & Collected";
+        queueStatusBadge.textContent = "COMPLETED";
+        queueStatusBadge.className = "tag tag-success";
+        if (step5Ind) {
+          step5Ind.classList.remove("active");
+          step5Ind.classList.add("completed");
+        }
+      } else if (data.status === "REJECTED") {
+        resQueuePositionBanner.style.background = "rgba(248, 113, 113, 0.2)";
+        resQueuePositionBanner.style.color = "var(--error)";
+        resQueuePositionBanner.style.borderColor = "rgba(248, 113, 113, 0.4)";
+        resQueuePositionText.textContent = `❌ ORDER REJECTED: ${data.rejection_reason || "No reason specified"}`;
+        resQueuePos.textContent = "Rejected by Staff";
+        queueStatusBadge.textContent = "REJECTED";
+        queueStatusBadge.className = "tag tag-error";
+      } else {
+        if (pos > 0) {
+          resQueuePositionBanner.style.background = "rgba(52, 211, 153, 0.15)";
+          resQueuePositionBanner.style.color = "var(--success)";
+          resQueuePositionBanner.style.borderColor = "rgba(52, 211, 153, 0.3)";
+          resQueuePositionText.textContent = pos === 1 ? "★ You are #1 in line (Next up!)" : `You are #${pos} in line`;
+          resQueuePos.textContent = `#${pos} of ${data.active_queue_length} active`;
+        } else {
+          resQueuePositionBanner.style.background = "rgba(56, 189, 248, 0.15)";
+          resQueuePositionBanner.style.color = "var(--primary)";
+          resQueuePositionBanner.style.borderColor = "rgba(56, 189, 248, 0.3)";
+          resQueuePositionText.textContent = `Status: ${data.status}`;
+          resQueuePos.textContent = data.status;
+        }
+        queueStatusBadge.textContent = data.status || "QUEUED";
+        queueStatusBadge.className = "tag tag-success";
       }
 
       const etaDate = new Date(data.estimated_completion_at);
@@ -1427,9 +1674,6 @@
       resQueueWait.textContent = `~${waitMins.toFixed(1)} mins (${data.estimated_wait_seconds}s)`;
       resQueueDepth.textContent = `${data.active_queue_length} order(s) ahead/in queue`;
       resQueueDdbKey.textContent = `PK: QUEUE#ACTIVE / SK: ORDER#${data.order_id} • PK: ORDER#${data.order_id}`;
-
-      queueStatusBadge.textContent = data.status || "QUEUED";
-      queueStatusBadge.className = "tag tag-success";
       queueResultSection.style.display = "block";
     }
 
@@ -1542,6 +1786,308 @@
         queryQueueResult.textContent = "Error querying DynamoDB queue: " + err.message;
       }
     });
+
+    // ==========================================
+    // VERTICAL SLICE 5: STAFF OPERATIONS PORTAL
+    // ==========================================
+    const tabStudentPortal = document.getElementById("tabStudentPortal");
+    const tabStaffPortal = document.getElementById("tabStaffPortal");
+    const studentPortalSection = document.getElementById("studentPortalSection");
+    const staffPortalSection = document.getElementById("staffPortalSection");
+    const staffQueueCountBadge = document.getElementById("staffQueueCountBadge");
+    const staffStatusFilter = document.getElementById("staffStatusFilter");
+    const refreshStaffBtn = document.getElementById("refreshStaffBtn");
+    const staffOrdersContainer = document.getElementById("staffOrdersContainer");
+    const staffAlertBox = document.getElementById("staffAlertBox");
+
+    // Rejection Modal Elements
+    const rejectModal = document.getElementById("rejectModal");
+    const modalOrderId = document.getElementById("modalOrderId");
+    const modalOrderToken = document.getElementById("modalOrderToken");
+    const modalRejectReason = document.getElementById("modalRejectReason");
+    const modalCancelBtn = document.getElementById("modalCancelBtn");
+    const modalConfirmBtn = document.getElementById("modalConfirmBtn");
+
+    function showStaffAlert(msg, type = "info") {
+      staffAlertBox.textContent = msg;
+      staffAlertBox.className = `alert alert-${type}`;
+      staffAlertBox.style.display = "block";
+      setTimeout(() => {
+        staffAlertBox.style.display = "none";
+      }, 5000);
+    }
+
+    function switchPortal(mode) {
+      if (mode === "staff") {
+        tabStudentPortal.classList.remove("active");
+        tabStaffPortal.classList.add("active");
+        studentPortalSection.style.display = "none";
+        staffPortalSection.style.display = "block";
+        fetchStaffOrders();
+      } else {
+        tabStaffPortal.classList.remove("active");
+        tabStudentPortal.classList.add("active");
+        staffPortalSection.style.display = "none";
+        studentPortalSection.style.display = "block";
+      }
+    }
+
+    if (tabStudentPortal) tabStudentPortal.addEventListener("click", () => switchPortal("student"));
+    if (tabStaffPortal) tabStaffPortal.addEventListener("click", () => switchPortal("staff"));
+    const step5IndicatorEl = document.getElementById("step5Indicator");
+    if (step5IndicatorEl) {
+      step5IndicatorEl.addEventListener("click", () => switchPortal("staff"));
+    }
+
+    // Modal Handlers
+    window.openRejectModal = function(orderId, tokenNumber) {
+      modalOrderId.value = orderId;
+      modalOrderToken.textContent = tokenNumber || orderId;
+      modalRejectReason.value = "";
+      rejectModal.style.display = "flex";
+      modalRejectReason.focus();
+    };
+
+    function closeRejectModal() {
+      rejectModal.style.display = "none";
+    }
+
+    if (modalCancelBtn) modalCancelBtn.addEventListener("click", closeRejectModal);
+
+    if (modalConfirmBtn) {
+      modalConfirmBtn.addEventListener("click", async () => {
+        const orderId = modalOrderId.value;
+        const reason = modalRejectReason.value.trim();
+        if (!reason) {
+          alert("Please enter a mandatory formal rejection reason.");
+          modalRejectReason.focus();
+          return;
+        }
+
+        modalConfirmBtn.disabled = true;
+        modalConfirmBtn.textContent = "Rejecting...";
+
+        try {
+          const res = await fetch(`/staff/orders/${orderId}/reject`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ rejection_reason: reason })
+          });
+          const data = await res.json();
+          if (!res.ok) {
+            const err = (data.detail && data.detail.error) ? data.detail.error.message : (data.detail || "Rejection failed");
+            showStaffAlert(err, "error");
+          } else {
+            closeRejectModal();
+            showStaffAlert(`Order ${orderId} rejected: ${reason}`, "success");
+            fetchStaffOrders();
+          }
+        } catch (err) {
+          showStaffAlert("Network error: " + err.message, "error");
+        } finally {
+          modalConfirmBtn.disabled = false;
+          modalConfirmBtn.textContent = "Confirm Rejection";
+        }
+      });
+    }
+
+    // Staff Actions
+    window.acceptStaffOrder = async function(orderId) {
+      try {
+        const res = await fetch(`/staff/orders/${orderId}/accept`, { method: "POST" });
+        const data = await res.json();
+        if (!res.ok) {
+          const err = (data.detail && data.detail.error) ? data.detail.error.message : (data.detail || "Accept failed");
+          showStaffAlert(err, "error");
+        } else {
+          showStaffAlert(`Order ${orderId} accepted! Status is now PROCESSING.`, "success");
+          fetchStaffOrders();
+        }
+      } catch (err) {
+        showStaffAlert("Network error: " + err.message, "error");
+      }
+    };
+
+    window.readyStaffOrder = async function(orderId) {
+      try {
+        const res = await fetch(`/staff/orders/${orderId}/ready`, { method: "POST" });
+        const data = await res.json();
+        if (!res.ok) {
+          const err = (data.detail && data.detail.error) ? data.detail.error.message : (data.detail || "Ready status update failed");
+          showStaffAlert(err, "error");
+        } else {
+          showStaffAlert(`Order ${orderId} marked READY for pickup! Removed from active print queue.`, "success");
+          fetchStaffOrders();
+        }
+      } catch (err) {
+        showStaffAlert("Network error: " + err.message, "error");
+      }
+    };
+
+    window.completeStaffOrder = async function(orderId) {
+      try {
+        const res = await fetch(`/staff/orders/${orderId}/complete`, { method: "POST" });
+        const data = await res.json();
+        if (!res.ok) {
+          const err = (data.detail && data.detail.error) ? data.detail.error.message : (data.detail || "Complete status update failed");
+          showStaffAlert(err, "error");
+        } else {
+          showStaffAlert(`Order ${orderId} marked COMPLETED (Collected).`, "success");
+          fetchStaffOrders();
+        }
+      } catch (err) {
+        showStaffAlert("Network error: " + err.message, "error");
+      }
+    };
+
+    async function fetchStaffOrders() {
+      if (!staffOrdersContainer) return;
+      const filterVal = staffStatusFilter ? staffStatusFilter.value : "ACTIVE";
+      if (refreshStaffBtn) {
+        refreshStaffBtn.disabled = true;
+        refreshStaffBtn.textContent = "Refreshing...";
+      }
+
+      try {
+        const url = filterVal ? `/staff/orders?status=${filterVal}` : "/staff/orders";
+        const res = await fetch(url);
+        const orders = await res.json();
+        if (!res.ok) {
+          staffOrdersContainer.innerHTML = `<div style="color: var(--error); padding: 1rem;">Failed to fetch orders: ${JSON.stringify(orders)}</div>`;
+          return;
+        }
+
+        renderStaffOrders(orders);
+
+        // Update active count badge
+        if (filterVal === "ACTIVE" && staffQueueCountBadge) {
+          staffQueueCountBadge.textContent = `${orders.length} active`;
+        }
+      } catch (err) {
+        staffOrdersContainer.innerHTML = `<div style="color: var(--error); padding: 1rem;">Error connecting to staff API: ${err.message}</div>`;
+      } finally {
+        if (refreshStaffBtn) {
+          refreshStaffBtn.disabled = false;
+          refreshStaffBtn.textContent = "↻ Refresh Orders";
+        }
+      }
+    }
+
+    function renderStaffOrders(orders) {
+      if (!orders || orders.length === 0) {
+        staffOrdersContainer.innerHTML = `
+          <div style="text-align: center; color: var(--text-muted); padding: 2.5rem 1rem; border: 1px dashed var(--card-border); border-radius: 8px;">
+            <div style="font-size: 1.5rem; margin-bottom: 0.5rem;">📭</div>
+            <div style="font-weight: 600;">No orders matching current filter</div>
+            <div style="font-size: 0.8rem; margin-top: 4px;">Orders admitted to queue by students will appear here automatically.</div>
+          </div>
+        `;
+        return;
+      }
+
+      staffOrdersContainer.innerHTML = orders.map((o) => {
+        const cfg = o.print_config || {};
+        const pr = o.pricing || {};
+        const tokenBadge = o.token_number
+          ? `<span class="staff-token-badge">${o.token_number}</span>`
+          : `<span class="tag tag-outline">No Token</span>`;
+
+        let statusBadgeClass = "tag-status";
+        if (o.status === "QUEUED") statusBadgeClass = "tag-action";
+        else if (o.status === "PROCESSING") statusBadgeClass = "tag-primary";
+        else if (o.status === "READY") statusBadgeClass = "tag-success";
+        else if (o.status === "COMPLETED") statusBadgeClass = "tag-success";
+        else if (o.status === "REJECTED") statusBadgeClass = "tag-error";
+
+        const docBtn = o.document_url
+          ? `<a href="${o.document_url}" target="_blank" class="btn btn-outline btn-sm" style="text-decoration: none; display: inline-flex; align-items: center; gap: 4px;">
+               <span>📄 Inspect Document (S3 Presigned)</span>
+             </a>`
+          : `<span style="font-size: 0.8rem; color: var(--text-muted);">S3 Doc: ${o.document_key || "None"}</span>`;
+
+        let actionBtns = "";
+        if (o.status === "QUEUED") {
+          actionBtns = `
+            <button class="btn btn-action btn-sm" type="button" onclick="acceptStaffOrder('${o.order_id}')">
+              ✅ Accept & Print
+            </button>
+            <button class="btn btn-danger btn-sm" type="button" onclick="openRejectModal('${o.order_id}', '${o.token_number || o.order_id}')">
+              ❌ Reject...
+            </button>
+          `;
+        } else if (o.status === "PROCESSING") {
+          actionBtns = `
+            <button class="btn btn-success btn-sm" type="button" onclick="readyStaffOrder('${o.order_id}')">
+              🎉 Mark Ready for Pickup
+            </button>
+          `;
+        } else if (o.status === "READY") {
+          actionBtns = `
+            <button class="btn btn-primary btn-sm" type="button" onclick="completeStaffOrder('${o.order_id}')">
+              📦 Mark Completed (Collected)
+            </button>
+          `;
+        } else if (o.status === "REJECTED") {
+          actionBtns = `
+            <span style="font-size: 0.8rem; color: var(--error); font-weight: 500;">
+              Reason: ${o.rejection_reason || "None specified"}
+            </span>
+          `;
+        } else if (o.status === "COMPLETED") {
+          actionBtns = `<span style="font-size: 0.8rem; color: var(--success); font-weight: 500;">Order Finished</span>`;
+        }
+
+        return `
+          <div class="staff-order-card">
+            <div class="staff-order-header">
+              <div style="display: flex; align-items: center; gap: 10px;">
+                ${tokenBadge}
+                <div>
+                  <div style="font-weight: 600; font-size: 0.95rem; font-family: 'JetBrains Mono', monospace;">${o.order_id}</div>
+                  <div style="font-size: 0.75rem; color: var(--text-muted);">Student: ${o.student_id || "anonymous"} • ${o.filename || "file"}</div>
+                </div>
+              </div>
+              <div style="display: flex; align-items: center; gap: 8px;">
+                ${o.queue_position > 0 ? `<span class="tag tag-dynamo">Pos #${o.queue_position}</span>` : ""}
+                <span class="tag ${statusBadgeClass}">${o.status}</span>
+              </div>
+            </div>
+
+            <div class="staff-order-meta">
+              <div><strong style="color: var(--text-muted);">Pages:</strong> ${cfg.page_count || 1} pg</div>
+              <div><strong style="color: var(--text-muted);">Copies:</strong> ${cfg.copies || 1}</div>
+              <div><strong style="color: var(--text-muted);">Color:</strong> ${(cfg.color_mode || 'bw').toUpperCase()}</div>
+              <div><strong style="color: var(--text-muted);">Paper:</strong> ${cfg.paper_size || 'A4'} (${cfg.sidedness || 'SINGLE'})</div>
+              <div><strong style="color: var(--text-muted);">Impressions:</strong> ${pr.total_pages_printed || '-'}</div>
+              <div><strong style="color: var(--text-muted);">Total:</strong> ₹${pr.total_price_rupees ? pr.total_price_rupees.toFixed(2) : '-'}</div>
+            </div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; padding-top: 4px;">
+              <div>${docBtn}</div>
+              <div class="staff-actions">${actionBtns}</div>
+            </div>
+          </div>
+        `;
+      }).join("");
+    }
+
+    if (refreshStaffBtn) refreshStaffBtn.addEventListener("click", fetchStaffOrders);
+    if (staffStatusFilter) staffStatusFilter.addEventListener("change", fetchStaffOrders);
+
+    // Auto-detect route /staff or #staff
+    if (window.location.pathname.endsWith("/staff") || window.location.hash === "#staff") {
+      switchPortal("staff");
+    } else {
+      // Fetch initial count in background for badge
+      fetch("/staff/orders?status=ACTIVE")
+        .then((r) => r.json())
+        .then((data) => {
+          if (Array.isArray(data) && staffQueueCountBadge) {
+            staffQueueCountBadge.textContent = `${data.length} active`;
+          }
+        })
+        .catch(() => {});
+    }
   </script>
 </body>
 </html>
