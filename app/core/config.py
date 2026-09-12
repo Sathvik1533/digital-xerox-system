@@ -44,6 +44,11 @@ class Settings(BaseSettings):
     double_sided_discount_factor: float = 0.8  # 20% discount for double-sided printing
     max_copies: int = 100               # Configured maximum copies per order (DATA-001)
     max_page_count: int = 1000          # Configured maximum page count per document (DATA-001)
+    # Queue & ETA Engine (Vertical Slice 4)
+    queue_token_prefix: str = "X"
+    queue_base_setup_seconds: int = 60
+    queue_bw_seconds_per_page: int = 2
+    queue_color_seconds_per_page: int = 5
 
     model_config = SettingsConfigDict(
         env_file=".env",
