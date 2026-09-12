@@ -446,6 +446,7 @@ class DynamoDBRepository:
                     "SK": f"ORDER#{order_id}",
                 },
                 UpdateExpression="SET #st = :st_proc, #ua = :now",
+                ConditionExpression="attribute_exists(PK)",
                 ExpressionAttributeNames={
                     "#st": "status",
                     "#ua": "updated_at",
