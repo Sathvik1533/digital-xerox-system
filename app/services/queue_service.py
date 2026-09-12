@@ -78,6 +78,59 @@ class QueueService:
         )
         return int(base_setup + (total_pages_printed * rate))
 
+    def _calculate_queue_schedule(
+        self,
+        active_items: list[dict],
+        now: datetime | None = None,
+    ) -> list[dict]:
+        """
+        Compute deterministic start time, completion time, and remaining seconds
+        for all active items in the operational queue.
+        Jobs run sequentially (FIFO) on the print station.
+        """
+        if now is None:
+            now = datetime.now(timezone.utc)
+
+        scheduled_items = []
+        prev_completion = None
+
+        for idx, item in enumerate(active_items):
+            pages = int(item.get("total_pages_printed", 1))
+            cm = str(item.get("color_mode", "bw"))
+            duration = self.calculate_job_duration_seconds(pages, cm)
+
+            entered_str = item.get("queue_entered_at")
+            if entered_str:
+                try:
+                    entered_at = datetime.fromisoformat(str(entered_str).replace("Z", "+00:00"))
+                    if entered_at.tzinfo is None:
+                        entered_at = entered_at.replace(tzinfo=timezone.utc)
+                except Exception:
+                    entered_at = now
+            else:
+                entered_at = now
+
+            if idx == 0:
+                # First active job: started at queue_entered_at
+                initial_est_finish = entered_at + timedelta(seconds=duration)
+                # If first job's initial estimate is in the past, printer completes any moment (max with now)
+                completion_at = initial_est_finish if initial_est_finish > now else now
+                remaining_seconds = max(0, int((initial_est_finish - now).total_seconds()))
+            else:
+                # Subsequent jobs start when previous job completes (or now if previous completed in past)
+                start_at = prev_completion if prev_completion > now else now
+                completion_at = start_at + timedelta(seconds=duration)
+                remaining_seconds = max(0, int((completion_at - now).total_seconds()))
+
+            prev_completion = completion_at
+            item_copy = dict(item)
+            item_copy["computed_completion_at"] = completion_at
+            item_copy["computed_remaining_seconds"] = remaining_seconds
+            item_copy["computed_wait_minutes"] = round(remaining_seconds / 60.0, 1)
+            scheduled_items.append(item_copy)
+
+        return scheduled_items
+
     def admit_to_queue(self, order_id: str) -> QueueAdmissionResponse:
         """
         Admit a successfully paid order to the operational queue:
@@ -106,7 +159,7 @@ class QueueService:
         active_items = self.db_repo.get_active_queue_items()
         queue_position = len(active_items) + 1
 
-        # 2. Calculate deterministic ETA
+        # 2. Deterministic ETA engine (base setup + pages printed per active job ahead + this job)
         duration_ahead_seconds = 0
         for item in active_items:
             pages = int(item.get("total_pages_printed", 1))
@@ -134,6 +187,8 @@ class QueueService:
                 estimated_completion_at=estimated_completion_at,
             )
         except OrderStateConflictError:
+            # Concurrency conflict: rollback token counter so no sequential number is wasted
+            self.db_repo.rollback_token_counter(1)
             latest = self.db_repo.get_order(order_id)
             if not latest:
                 raise OrderNotFoundError(order_id)
@@ -156,6 +211,7 @@ class QueueService:
     def get_order_queue_status(self, order_id: str) -> QueueStatusResponse:
         """
         Retrieve live queue position, deterministic ETA, and active queue length for an order.
+        Counts down remaining wait time against stored completion timestamp without drifting into future.
         """
         order = self.db_repo.get_order(order_id)
         if not order:
@@ -179,9 +235,14 @@ class QueueService:
                 break
 
         now = datetime.now(timezone.utc)
+        stored_est = order.estimated_completion_at
+        if stored_est and stored_est.tzinfo is None:
+            stored_est = stored_est.replace(tzinfo=timezone.utc)
+
         if order_idx is not None:
             queue_position = order_idx + 1
-            # Calculate remaining ETA based on jobs ahead
+
+            # Calculate theoretical duration ahead from current active items
             duration_ahead_seconds = 0
             for item in active_items[:order_idx]:
                 pages = int(item.get("total_pages_printed", 1))
@@ -191,15 +252,32 @@ class QueueService:
             this_pages = order.pricing.total_pages_printed
             this_cm = order.print_config.color_mode
             this_job_duration = self.calculate_job_duration_seconds(this_pages, this_cm)
-            remaining_seconds = duration_ahead_seconds + this_job_duration
-            estimated_completion_at = now + timedelta(seconds=remaining_seconds)
+            max_remaining = duration_ahead_seconds + this_job_duration
+
+            if stored_est:
+                # Count down from stored completion without drifting into future
+                countdown_remaining = max(0, int((stored_est - now).total_seconds()))
+                # If jobs ahead were removed/completed early, cap remaining time
+                remaining_seconds = min(countdown_remaining, max_remaining)
+                if remaining_seconds < countdown_remaining and countdown_remaining > 0:
+                    estimated_completion_at = now + timedelta(seconds=remaining_seconds)
+                else:
+                    estimated_completion_at = stored_est
+            else:
+                remaining_seconds = max_remaining
+                estimated_completion_at = now + timedelta(seconds=remaining_seconds)
+
             estimated_wait_minutes = round(remaining_seconds / 60.0, 1)
         else:
-            # Order is no longer in active queue (processed or ready)
+            # Order is no longer in active queue (processed, ready, or completed)
             queue_position = 0
             remaining_seconds = 0
             estimated_wait_minutes = 0.0
-            estimated_completion_at = order.estimated_completion_at or now
+            estimated_completion_at = stored_est or now
+
+        order_entered = order.queue_entered_at
+        if order_entered and order_entered.tzinfo is None:
+            order_entered = order_entered.replace(tzinfo=timezone.utc)
 
         return QueueStatusResponse(
             order_id=order.order_id,
@@ -210,7 +288,7 @@ class QueueService:
             estimated_wait_seconds=remaining_seconds,
             active_queue_length=active_queue_length,
             status=order.status,
-            queue_entered_at=order.queue_entered_at or now,
+            queue_entered_at=order_entered or now,
             total_pages_printed=order.pricing.total_pages_printed,
             color_mode=order.print_config.color_mode,
             paper_size=order.print_config.paper_size,
