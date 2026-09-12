@@ -163,6 +163,37 @@ class TestStaffAcceptOrder:
         assert res.status_code == 200
         assert res.json()["status"] == "PROCESSING"
 
+    def test_accept_order_via_orders_accept_alias(self, client: TestClient):
+        """POST /orders/{order_id}/accept works as alias for accept."""
+        order_info = _create_paid_and_queued_order(client)
+        order_id = order_info["order_id"]
+
+        res = client.post(f"/orders/{order_id}/accept")
+        assert res.status_code == 200
+        assert res.json()["status"] == "PROCESSING"
+
+    def test_accept_order_via_process_trailing_slash(self, client: TestClient):
+        """POST /orders/{order_id}/process/ supports trailing slash."""
+        order_info = _create_paid_and_queued_order(client)
+        order_id = order_info["order_id"]
+
+        res = client.post(f"/orders/{order_id}/process/")
+        assert res.status_code == 200
+        assert res.json()["status"] == "PROCESSING"
+
+    def test_staff_order_response_includes_payment_status(self, client: TestClient):
+        """StaffOrderResponse includes payment_status."""
+        order_info = _create_paid_and_queued_order(client)
+        order_id = order_info["order_id"]
+
+        res = client.get(f"/staff/orders?status=ACTIVE")
+        assert res.status_code == 200
+        items = res.json()
+        assert len(items) >= 1
+        matched = next(i for i in items if i["order_id"] == order_id)
+        assert matched["payment_status"] == "SUCCESS"
+
+
 
 class TestStaffRejectOrder:
     """Tests for POST /staff/orders/{order_id}/reject."""
@@ -193,12 +224,25 @@ class TestStaffRejectOrder:
         assert order_res.json()["rejection_reason"] == payload["rejection_reason"]
 
     def test_reject_order_missing_reason_fails(self, client: TestClient):
-        """Rejecting without rejection_reason body field returns 422 or 400."""
+        """Rejecting without rejection_reason body field strictly returns 400 REJECTION_REASON_REQUIRED."""
         order_info = _create_paid_and_queued_order(client)
         order_id = order_info["order_id"]
 
+        # Missing field in JSON
         res = client.post(f"/staff/orders/{order_id}/reject", json={})
-        assert res.status_code in (400, 422)
+        assert res.status_code == 400
+        assert res.json()["detail"]["error"]["code"] == "REJECTION_REASON_REQUIRED"
+
+        # Completely empty request body
+        res_empty = client.post(f"/staff/orders/{order_id}/reject")
+        assert res_empty.status_code == 400
+        assert res_empty.json()["detail"]["error"]["code"] == "REJECTION_REASON_REQUIRED"
+
+        # Explicit null rejection_reason
+        res_null = client.post(f"/staff/orders/{order_id}/reject", json={"rejection_reason": None})
+        assert res_null.status_code == 400
+        assert res_null.json()["detail"]["error"]["code"] == "REJECTION_REASON_REQUIRED"
+
 
     def test_reject_order_empty_or_whitespace_reason_fails(self, client: TestClient):
         """Rejecting with empty string or whitespace reason returns 400 REJECTION_REASON_REQUIRED."""
@@ -214,6 +258,18 @@ class TestStaffRejectOrder:
         res2 = client.post(f"/staff/orders/{order_id}/reject", json={"rejection_reason": "   \n\t  "})
         assert res2.status_code == 400
         assert res2.json()["detail"]["error"]["code"] == "REJECTION_REASON_REQUIRED"
+
+    def test_reject_order_via_orders_alias(self, client: TestClient):
+        """POST /orders/{order_id}/reject works as alias for reject."""
+        order_info = _create_paid_and_queued_order(client)
+        order_id = order_info["order_id"]
+
+        payload = {"rejection_reason": "Rejected via /orders alias route"}
+        res = client.post(f"/orders/{order_id}/reject", json=payload)
+        assert res.status_code == 200
+        assert res.json()["status"] == "REJECTED"
+        assert res.json()["rejection_reason"] == payload["rejection_reason"]
+
 
 
 class TestStaffReadyAndComplete:
@@ -250,6 +306,38 @@ class TestStaffReadyAndComplete:
         final_order = client.get(f"/orders/{order_id}")
         assert final_order.status_code == 200
         assert final_order.json()["status"] == "COMPLETED"
+
+    def test_ready_and_complete_via_orders_alias(self, client: TestClient):
+        """POST /orders/{order_id}/ready and /orders/{order_id}/complete work as aliases."""
+        order_info = _create_paid_and_queued_order(client)
+        order_id = order_info["order_id"]
+
+        # Accept via /orders/accept
+        client.post(f"/orders/{order_id}/accept")
+
+        # Ready via /orders/ready
+        ready_res = client.post(f"/orders/{order_id}/ready")
+        assert ready_res.status_code == 200
+        assert ready_res.json()["status"] == "READY"
+
+        # Complete via /orders/complete
+        comp_res = client.post(f"/orders/{order_id}/complete")
+        assert comp_res.status_code == 200
+        assert comp_res.json()["status"] == "COMPLETED"
+
+    def test_phantom_item_not_created_in_active_queue_when_accepting(self, client: TestClient):
+        """When an order is accepted, no phantom active queue item is created if not already in queue."""
+        repo = DynamoDBRepository()
+        initial_items = repo.get_active_queue_items()
+
+        # Try to accept a nonexistent order
+        res = client.post("/staff/orders/ORD-GHOST-999/accept")
+        assert res.status_code == 404
+
+        after_items = repo.get_active_queue_items()
+        assert len(after_items) == len(initial_items)
+        assert repo.get_queue_item("ORD-GHOST-999") is None
+
 
 
 class TestStaffInvalidStateTransitions:

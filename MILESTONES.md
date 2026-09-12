@@ -152,8 +152,8 @@
   - Interactive Rejection Modal requiring non-empty formal justification
   - Live active count badge and auto-detection on `/staff` route
 - Comprehensive automated test suite in `tests/test_staff.py`:
-  - 26 passing tests covering listing with presigned URLs, accept, reject, ready, complete, invalid transitions, dynamic queue position shift, student tracking visibility, and UI serving
-  - 107/107 total project tests passing
+  - 32 passing tests covering listing with presigned URLs, accept, reject, ready, complete, invalid transitions, dynamic queue position shift, student tracking visibility, missing reason validation, endpoint aliases, and UI serving
+  - 113/113 total project tests passing
 
 ---
 
