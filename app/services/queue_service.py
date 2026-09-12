@@ -219,7 +219,14 @@ class QueueService:
 
         # Guard: Must have entered queue
         if (
-            order.status not in (OrderStatus.QUEUED.value, OrderStatus.PROCESSING.value, OrderStatus.READY.value, OrderStatus.COMPLETED.value)
+            order.status
+            not in (
+                OrderStatus.QUEUED.value,
+                OrderStatus.PROCESSING.value,
+                OrderStatus.READY.value,
+                OrderStatus.COMPLETED.value,
+                OrderStatus.REJECTED.value,
+            )
             and not order.token_number
         ):
             raise OrderNotQueuedError(order_id)
@@ -293,4 +300,5 @@ class QueueService:
             color_mode=order.print_config.color_mode,
             paper_size=order.print_config.paper_size,
             copies=order.print_config.copies,
+            rejection_reason=order.rejection_reason,
         )
