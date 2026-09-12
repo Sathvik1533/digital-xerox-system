@@ -2411,7 +2411,26 @@
     }
 
     async function fetchStudentHistory() {
-      const studentId = (historyStudentId && historyStudentId.value ? historyStudentId.value.trim() : "") || "anonymous";
+      const mainStudentIdInput = document.getElementById("studentId");
+      if (historyStudentId && !historyStudentId.value && mainStudentIdInput && mainStudentIdInput.value) {
+        historyStudentId.value = mainStudentIdInput.value.trim();
+      }
+
+      const studentId = historyStudentId && historyStudentId.value ? historyStudentId.value.trim() : "";
+      if (!studentId) {
+        showHistoryAlert("Please enter your Student ID above to view your print order history.", "info");
+        if (historyOrdersContainer) {
+          historyOrdersContainer.innerHTML = `
+            <div style="text-align: center; color: var(--text-muted); padding: 3rem 0; background: #0f172a; border-radius: 8px; border: 1px dashed var(--card-border);">
+              <div style="font-size: 2rem; margin-bottom: 0.5rem;">📜</div>
+              <div style="font-size: 0.95rem; font-weight: 500; color: #cbd5e1; margin-bottom: 0.25rem;">Enter your Student ID above</div>
+              <div style="font-size: 0.8rem; color: var(--text-muted);">Retrieve your past and current print orders, live queue status, and payment receipts.</div>
+            </div>
+          `;
+        }
+        return;
+      }
+
       if (historyOrdersContainer) {
         historyOrdersContainer.innerHTML = `<div style="text-align: center; color: var(--text-muted); padding: 3rem 0;">Loading orders for ${studentId}...</div>`;
       }
