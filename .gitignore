@@ -47,7 +47,7 @@ aws-credentials.json
 *.DS_Store
 
 # Docker
-.dockerignore
+# (.dockerignore is tracked in git)
 
 # Pytest
 .pytest_cache/
