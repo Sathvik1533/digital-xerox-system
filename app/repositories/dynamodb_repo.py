@@ -306,6 +306,7 @@ class DynamoDBRepository:
             ":qe": q_entered_iso,
             ":ec": est_completion_iso,
             ":ua": now_iso,
+            ":null": None,
         }
 
         try:
@@ -315,7 +316,7 @@ class DynamoDBRepository:
                     "SK": f"ORDER#{order.order_id}",
                 },
                 UpdateExpression=update_expr,
-                ConditionExpression="attribute_exists(PK) AND #st = :st_paid AND #ps = :ps_success AND attribute_not_exists(#token)",
+                ConditionExpression="attribute_exists(PK) AND #st = :st_paid AND #ps = :ps_success AND (#token = :null OR attribute_not_exists(#token))",
                 ExpressionAttributeNames=expr_names,
                 ExpressionAttributeValues=expr_values,
                 ReturnValues="ALL_NEW",

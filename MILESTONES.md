@@ -81,7 +81,43 @@
   - Interactive payment execution button with live feedback
   - Formatted payment result summary (Payment ID, Reference, charged amount, order status, DynamoDB keys)
   - Dedicated DynamoDB payment verification lookup section (`GET /orders/{order_id}/payment`)
-- Comprehensive automated test suite in `tests/test_payments.py`: 13 passing tests (59/59 total project tests passing)
+- Comprehensive automated test suite in `tests/test_payments.py`: 18 passing tests (64/64 total project tests passing)
+
+---
+
+## Milestone 4 — Vertical Slice 4: Token + Queue + ETA
+**Status:** ✅ Complete  
+**Date:** 2026-09-12
+
+### What was delivered
+- Concurrency-safe atomic token generator (`DynamoDBRepository.generate_next_token`):
+  - Uses atomic DynamoDB `ADD` counter on dedicated item (`PK: COUNTER#TOKEN`, `SK: COUNTER#TOKEN`)
+  - Issues clean, sequential, human-friendly tokens (`X-101`, `X-102`, `X-103`...) with zero duplicate or collision risk
+- Operational Queue Admission engine (`QueueService.admit_to_queue`):
+  - Strict admission guard: Only successfully paid orders (`status == 'PAID'` and `payment_status == 'SUCCESS'`) can enter the queue
+  - Rejects unpaid (`PENDING_PAYMENT`) and failed (`PAYMENT_FAILED`) orders with HTTP 400 (`ORDER_NOT_PAID`)
+  - Idempotent duplicate admission rejection with HTTP 400 (`ORDER_ALREADY_QUEUED`) preventing multiple tokens or queue entries
+  - Transitions order status to `QUEUED`
+- Deterministic ETA Engine (`QueueService.calculate_job_duration_seconds`):
+  - 100% backend-calculated ETA (never client-calculated)
+  - Evaluates active queue depth and job complexity: base setup time (60s) + pages printed per active job ahead (B&W: 2s/page, Color: 5s/page)
+  - Computes exact `queue_position` (1-based), `estimated_wait_seconds`, `estimated_wait_minutes`, and ISO `estimated_completion_at`
+- DynamoDB single-table persistence:
+  - Atomic conditional update on order record (`PK: ORDER#{order_id}`, `SK: ORDER#{order_id}`)
+  - Active operational queue partition (`PK: QUEUE#ACTIVE`, `SK: ORDER#{order_id}`) storing real-time print metadata for staff processing
+- REST API endpoints in `app/api/queue.py` (mounted under `/orders` router):
+  - `POST /orders/{order_id}/queue` — admits paid order, issues token, returns queue position and ETA
+  - `GET /orders/{order_id}/queue` — returns live queue position, updated ETA, and active queue length
+- Student UI integration in `app/static/index.html`:
+  - Step 4 Operational Queue & Token card with auto-advance from successful Step 3 payment
+  - Prominent, luminous Token Number display (`X-101`) in monospace hero banner
+  - Live Queue Position badge ("You are #1 in line")
+  - Real-time Estimated Ready Time (ETA) and remaining minutes
+  - Dedicated "Refresh Live ETA & Position" button (`GET /orders/{order_id}/queue`)
+  - Direct DynamoDB queue verification inspection tool
+- Comprehensive automated test suite in `tests/test_queue.py`:
+  - 13 passing tests covering sequential token generation, admission guards, duplicate admission rejection, queue position across multiple orders, deterministic ETA accuracy, and DynamoDB persistence
+  - 77/77 total project tests passing
 
 ---
 
@@ -89,8 +125,8 @@
 1. Document Upload: Student UI → FastAPI → S3 → DynamoDB → UI ✅
 2. Print Config + Order Creation: → validation → pricing → DynamoDB ✅
 3. Simulated Payment: → SUCCESS/FAILURE → DynamoDB ✅
-4. Token + Queue + ETA: → token/queue/ETA → DynamoDB (Awaiting approval)
-5. Staff Processing: Staff UI → accept/reject/process/READY
+4. Token + Queue + ETA: → token/queue/ETA → DynamoDB ✅
+5. Staff Processing: Staff UI → accept/reject/process/READY (Awaiting approval)
 6. Student Tracking + History
 7. Full End-to-End Validation
 8. Dockerization
