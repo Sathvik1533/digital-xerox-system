@@ -245,17 +245,55 @@ class DynamoDBRepository:
         counter_val = int(response["Attributes"]["last_token_number"])
         return f"{prefix}-{100 + counter_val}"
 
+    def rollback_token_counter(self, amount: int = 1) -> None:
+        """Atomically decrement token counter in case admission fails after token generation."""
+        now_iso = datetime.now(timezone.utc).isoformat()
+        try:
+            self.table.update_item(
+                Key={
+                    "PK": "COUNTER#TOKEN",
+                    "SK": "COUNTER#TOKEN",
+                },
+                UpdateExpression="ADD last_token_number :dec SET updated_at = :now",
+                ExpressionAttributeValues={
+                    ":dec": -amount,
+                    ":now": now_iso,
+                },
+            )
+        except Exception:
+            pass
+
     def get_active_queue_items(self) -> list[dict]:
         """
         Retrieve all operational items currently in active queue (PK: QUEUE#ACTIVE),
-        sorted chronologically by queue_entered_at.
+        with pagination handling and sorted chronologically by queue_entered_at and token sequence.
         """
-        response = self.table.query(
-            KeyConditionExpression=Key("PK").eq("QUEUE#ACTIVE")
-        )
-        raw_items = response.get("Items", [])
+        raw_items = []
+        done = False
+        start_key = None
+        while not done:
+            query_kwargs = {"KeyConditionExpression": Key("PK").eq("QUEUE#ACTIVE")}
+            if start_key:
+                query_kwargs["ExclusiveStartKey"] = start_key
+            response = self.table.query(**query_kwargs)
+            raw_items.extend(response.get("Items", []))
+            start_key = response.get("LastEvaluatedKey")
+            done = start_key is None
+
+        def _token_sort_key(token_str: str) -> int:
+            try:
+                parts = str(token_str).split("-")
+                return int(parts[-1])
+            except Exception:
+                return 0
+
         items = [_convert_decimals_to_native(item) for item in raw_items]
-        items.sort(key=lambda x: (str(x.get("queue_entered_at", "")), str(x.get("token_number", ""))))
+        items.sort(
+            key=lambda x: (
+                str(x.get("queue_entered_at", "")),
+                _token_sort_key(str(x.get("token_number", ""))),
+            )
+        )
         return items
 
     def get_queue_item(self, order_id: str) -> dict | None:
