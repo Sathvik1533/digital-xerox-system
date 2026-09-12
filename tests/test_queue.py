@@ -378,3 +378,105 @@ def test_queue_status_when_order_is_no_longer_in_active_queue(client: TestClient
     assert data["queue_position"] == 0
     assert data["estimated_wait_seconds"] == 0
     assert data["estimated_wait_minutes"] == 0.0
+
+
+def test_eta_countdown_and_zero_drift_over_time(client: TestClient, aws_env):
+    """
+    Verify that polling GET /orders/{order_id}/queue over time:
+    1. Preserves the stored estimated_completion_at (does not drift into future).
+    2. Decreases remaining wait seconds as time elapses.
+    """
+    from datetime import datetime, timedelta, timezone
+
+    order_id = _create_and_pay_test_order(client, page_count=10, color_mode="bw")
+    adm_res = client.post(f"/orders/{order_id}/queue")
+    assert adm_res.status_code == 200
+    adm_data = adm_res.json()
+    orig_completion_iso = adm_data["estimated_completion_at"]
+    orig_wait_seconds = adm_data["estimated_wait_seconds"]
+    assert orig_wait_seconds == 80
+
+    # Simulate that 30 seconds have passed by adjusting order's timestamps in DynamoDB
+    repo = DynamoDBRepository()
+    now = datetime.now(timezone.utc)
+    future_completion = now + timedelta(seconds=50)
+
+    repo.table.update_item(
+        Key={"PK": f"ORDER#{order_id}", "SK": f"ORDER#{order_id}"},
+        UpdateExpression="SET estimated_completion_at = :ec",
+        ExpressionAttributeValues={":ec": future_completion.isoformat()},
+    )
+
+    status_res = client.get(f"/orders/{order_id}/queue")
+    assert status_res.status_code == 200
+    status_data = status_res.json()
+
+    # Verify ETA countdown (should now be ~50 seconds, not original 80)
+    assert 48 <= status_data["estimated_wait_seconds"] <= 51
+    # Verify estimated_completion_at is fixed to the stored timestamp
+    parsed_returned = datetime.fromisoformat(status_data["estimated_completion_at"].replace("Z", "+00:00"))
+    assert abs((parsed_returned - future_completion).total_seconds()) < 1.0
+
+
+def test_token_counter_rollback_on_conflict(aws_env):
+    """
+    Verify that rollback_token_counter atomically rolls back the counter
+    so that failed operations or races do not leave gaps in token sequence.
+    """
+    repo = DynamoDBRepository()
+
+    t1 = repo.generate_next_token(prefix="X")
+    assert t1 == "X-101"
+
+    t2 = repo.generate_next_token(prefix="X")
+    assert t2 == "X-102"
+
+    # Simulate conflict causing rollback of 1 token
+    repo.rollback_token_counter(1)
+
+    # Next token should reuse 102
+    t3 = repo.generate_next_token(prefix="X")
+    assert t3 == "X-102"
+
+
+def test_active_queue_numeric_sort_and_pagination(aws_env):
+    """
+    Verify that get_active_queue_items sorts tokens numerically (e.g. X-101 before X-1000)
+    and handles multiple items.
+    """
+    repo = DynamoDBRepository()
+    now_iso = "2026-09-12T00:00:00+00:00"
+
+    # Insert items with same queue_entered_at but different token numbers
+    items = [
+        {"PK": "QUEUE#ACTIVE", "SK": "ORDER#3", "order_id": "3", "token_number": "X-1000", "queue_entered_at": now_iso},
+        {"PK": "QUEUE#ACTIVE", "SK": "ORDER#1", "order_id": "1", "token_number": "X-101", "queue_entered_at": now_iso},
+        {"PK": "QUEUE#ACTIVE", "SK": "ORDER#2", "order_id": "2", "token_number": "X-102", "queue_entered_at": now_iso},
+    ]
+    for it in items:
+        repo.table.put_item(Item=it)
+
+    active = repo.get_active_queue_items()
+    tokens = [a["token_number"] for a in active]
+    assert tokens == ["X-101", "X-102", "X-1000"]
+
+
+def test_student_ui_serves_step4_elements(client: TestClient):
+    """
+    Verify that GET / serves the Student UI containing Step 4 Operational Queue card,
+    token badge, live position banner, and ETA controls.
+    """
+    response = client.get("/")
+    assert response.status_code == 200
+    html = response.text
+
+    assert 'id="step4Card"' in html
+    assert 'id="resTokenNumber"' in html
+    assert 'id="resQueuePositionBanner"' in html
+    assert 'id="resQueuePos"' in html
+    assert 'id="resQueueEta"' in html
+    assert 'id="resQueueWait"' in html
+    assert 'id="enterQueueBtn"' in html
+    assert 'id="refreshQueueBtn"' in html
+    assert 'id="queryQueueBtn"' in html
+
