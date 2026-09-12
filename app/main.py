@@ -21,6 +21,7 @@ from app.api.documents import router as documents_router
 from app.api.orders import router as orders_router
 from app.api.pricing import router as pricing_router
 from app.api.payments import router as payments_router
+from app.api.queue import router as queue_router
 
 settings = get_settings()
 
@@ -66,7 +67,7 @@ app.include_router(documents_router, prefix="/documents", tags=["Documents"])
 app.include_router(pricing_router, prefix="/pricing", tags=["Pricing"])
 app.include_router(orders_router, prefix="/orders", tags=["Orders"])
 app.include_router(payments_router, prefix="/orders", tags=["Payments"])
+app.include_router(queue_router, prefix="/orders", tags=["Queue"])
 
 # Placeholder: future routers registered here as slices are implemented
-# app.include_router(queue_router, prefix="/queue", tags=["Queue"])
 # app.include_router(staff_router, prefix="/staff", tags=["Staff"])
