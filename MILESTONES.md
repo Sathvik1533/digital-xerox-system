@@ -161,7 +161,7 @@
 - DynamoDB Single-Table Student Order Indexing:
   - Partitioned student order mapping `PK: STUDENT#{student_id}`, `SK: ORDER#{created_at}#{order_id}`
   - Authoritative repository query `get_orders_by_student_id(student_id: str) -> list[Order]` returning orders sorted chronologically descending
-  - Resilient fallback scan with student_id filter for test robustness
+  - Pure partitioned index querying without costly or unauthorized table scans on empty history
 - Domain & Schemas (`app/schemas/history.py`):
   - `TimelineEvent`: Ordered lifecycle events with UTC timestamps, status (`COMPLETED`, `CURRENT`, `FAILED`), and event-specific metadata (token, queue position, ETA, rejection reason, payment ID)
   - `OrderTimelineResponse`: Comprehensive status timeline inspection schema
@@ -177,10 +177,10 @@
   - `GET /students/{student_id}/orders`: Canonical student-scoped REST resource endpoint
   - `GET /orders/{order_id}/timeline`: Standalone lifecycle timeline inspection endpoint
   - Route handlers for `/tracking` and `/history` serving student tracking portal
-  - Strict 400 `STUDENT_ID_REQUIRED` validation when `student_id` is omitted
+  - Strict 400 `STUDENT_ID_REQUIRED` validation when `student_id` is omitted or whitespace
 - Student Portal UI (`app/static/index.html`):
   - Dedicated "Order Tracking & History (Slice 6)" portal tab in header navigation
-  - Student ID input with instant search and enter-key submission
+  - Student ID input with instant search, enter-key submission, and pre-fill from upload form
   - Filter pills: All, Active / In Queue, Ready for Pickup, Completed, Rejected / Failed
   - Visual status timeline stepper with chronological event icons, timestamps, status badges, and descriptions
   - 🔗 Re-download Document action button opening secure presigned S3 URL
@@ -189,8 +189,8 @@
   - Prominent operator rejection reason callout box for rejected orders
   - Direct "Track Order in History" jump link from Step 4 Queue view
 - Automated Test Suite (`tests/test_history.py`):
-  - 13 comprehensive tests covering empty history `[]`, missing student_id rejection (400), cross-student isolation, chronological sorting, fresh presigned S3 URLs, payment receipts, payment failures, queue token & live position, operator rejection reasons, complete status timeline across all 8 lifecycle states, 404 handling, endpoint alias parity, and static UI routes
-  - 126/126 total project tests passing
+  - 17 comprehensive tests covering empty history `[]`, missing student_id rejection (400), whitespace student_id rejection (400), cross-student isolation, chronological sorting, fresh presigned S3 URLs, payment receipts, payment failures, queue token & live position, operator rejection reasons, complete status timeline across all 8 lifecycle states, standalone timeline inspection for rejected and payment-failed orders, 404 handling, endpoint alias parity, partition query scan prevention, pagination integrity, and static UI routes
+  - 130/130 total project tests passing
 
 ---
 
