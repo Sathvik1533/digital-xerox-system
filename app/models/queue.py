@@ -20,3 +20,6 @@ class QueueItem(BaseModel):
     status: str = "QUEUED"
     student_id: str = "anonymous"
     filename: str | None = None
+    document_id: str | None = None
+    document_key: str | None = None
+    rejection_reason: str | None = None

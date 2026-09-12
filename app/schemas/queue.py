@@ -34,3 +34,4 @@ class QueueStatusResponse(BaseModel):
     color_mode: str | None = None
     paper_size: str | None = None
     copies: int | None = None
+    rejection_reason: str | None = None

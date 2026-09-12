@@ -37,5 +37,6 @@ class OrderResponse(BaseModel):
     payment_id: str | None = None
     scheduled_time: str | None = None
     token_number: str | None = None
+    rejection_reason: str | None = None
     created_at: datetime
     updated_at: datetime
