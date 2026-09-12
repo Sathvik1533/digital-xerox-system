@@ -17,6 +17,7 @@ class PaperSize(str, Enum):
 class OrderStatus(str, Enum):
     PENDING_PAYMENT = "PENDING_PAYMENT"
     PAID = "PAID"
+    QUEUED = "QUEUED"
     PROCESSING = "PROCESSING"
     READY = "READY"
     COMPLETED = "COMPLETED"
