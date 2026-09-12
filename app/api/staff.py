@@ -121,12 +121,13 @@ def accept_order(
 )
 def reject_order(
     order_id: str,
-    request: RejectOrderRequest,
+    request: RejectOrderRequest | None = None,
     service: StaffService = Depends(get_staff_service),
 ):
     """Transition order from QUEUED to REJECTED with mandatory reason."""
+    reason = request.rejection_reason if request else None
     try:
-        return service.reject_order(order_id, request.rejection_reason)
+        return service.reject_order(order_id, reason)
     except OrderNotFoundError as e:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
