@@ -1,0 +1,56 @@
+# Git
+.git
+.gitignore
+
+# Python cache & build artifacts
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# Virtual environments
+venv/
+ENV/
+env/
+.venv/
+
+# Environment files and credentials — NEVER bake secrets into image
+.env
+.env.*
+*.pem
+*.key
+~/.aws/
+aws-credentials.json
+
+# Pytest and coverage artifacts
+.pytest_cache/
+.coverage
+htmlcov/
+tests/
+
+# Editor and OS metadata
+.vscode/
+.idea/
+*.swp
+*.swo
+*.DS_Store
+
+# Logs
+*.log
+logs/
