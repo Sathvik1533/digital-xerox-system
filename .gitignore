@@ -48,6 +48,7 @@ aws-credentials.json
 
 # Docker
 # (.dockerignore is tracked in git)
+.chrome_tmp/
 
 # Pytest
 .pytest_cache/

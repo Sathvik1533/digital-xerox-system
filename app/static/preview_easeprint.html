@@ -1,0 +1,1900 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>EasePrint — The Autonomous Campus Print Cloud</title>
+  
+  <!-- Modern Display & UI Typography (Inter & Plus Jakarta Sans) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  
+  <!-- Lucide Icons CDN -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <!-- Three.js for 3D Xerox Station -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+
+  <style>
+    /* ==========================================================================
+       EASEPRINT PRODUCT DESIGN SYSTEM (APPROVED BASELINE)
+       Light, clean canvas • Sky-to-Indigo gradient • Bold Sans-Serif • SaaS Hierarchy
+       ========================================================================== */
+    :root {
+      /* Brand Color Palette */
+      --brand-sky: #0284C7;
+      --brand-sky-light: #38BDF8;
+      --brand-indigo: #4F46E5;
+      --brand-indigo-light: #6366F1;
+      --brand-blue: #2563EB;
+      --brand-gradient: linear-gradient(135deg, #0284C7 0%, #4F46E5 100%);
+      --brand-gradient-hover: linear-gradient(135deg, #0369A1 0%, #4338CA 100%);
+      --brand-subtle-glow: rgba(2, 132, 199, 0.15);
+
+      /* Canvas & Neutral Surfaces */
+      --canvas-bg: #F8FAFC;
+      --canvas-subtle: #F1F5F9;
+      --surface-card: #FFFFFF;
+      --surface-card-hover: #FFFFFF;
+      --surface-inset: #F8FAFC;
+      --surface-glass: rgba(255, 255, 255, 0.82);
+      
+      /* Linework & Dividers */
+      --border-light: #E2E8F0;
+      --border-subtle: #F1F5F9;
+      --border-focus: #38BDF8;
+      
+      /* Typography Colors */
+      --text-main: #0F172A;
+      --text-muted: #475569;
+      --text-subtle: #94A3B8;
+      --text-inverse: #FFFFFF;
+
+      /* Semantic Status Colors */
+      --status-success: #059669;
+      --status-success-bg: #ECFDF5;
+      --status-success-border: #A7F3D0;
+      
+      --status-warn: #D97706;
+      --status-warn-bg: #FFFBEB;
+      --status-warn-border: #FDE68A;
+      
+      --status-error: #DC2626;
+      --status-error-bg: #FEF2F2;
+      --status-error-border: #FECACA;
+      
+      --status-info: #0284C7;
+      --status-info-bg: #F0F9FF;
+      --status-info-border: #BAE6FD;
+
+      /* Geometry & Radii */
+      --radius-sm: 8px;
+      --radius-md: 12px;
+      --radius-lg: 16px;
+      --radius-xl: 24px;
+      --radius-full: 9999px;
+
+      /* Elevation & Shadows */
+      --shadow-sm: 0 1px 2px 0 rgba(15, 23, 42, 0.05);
+      --shadow-md: 0 4px 6px -1px rgba(15, 23, 42, 0.08), 0 2px 4px -2px rgba(15, 23, 42, 0.05);
+      --shadow-card: 0 10px 25px -5px rgba(15, 23, 42, 0.05), 0 8px 10px -6px rgba(15, 23, 42, 0.03);
+      --shadow-hover: 0 20px 30px -10px rgba(15, 23, 42, 0.10), 0 10px 15px -5px rgba(15, 23, 42, 0.04);
+      --shadow-glow: 0 12px 28px -6px rgba(2, 132, 199, 0.28);
+      
+      /* Transitions */
+      --transition-fast: 150ms cubic-bezier(0.16, 1, 0.3, 1);
+      --transition-base: 250ms cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    /* Reset & Base Setup */
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Plus Jakarta Sans', 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background-color: var(--canvas-bg);
+      color: var(--text-main);
+      line-height: 1.5;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+      overflow-x: hidden;
+      min-height: 100vh;
+    }
+
+    /* Background Ambient Gradients */
+    .ambient-bg {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      pointer-events: none;
+      z-index: 0;
+      background: 
+        radial-gradient(circle at 10% 20%, rgba(2, 132, 199, 0.04) 0%, transparent 40%),
+        radial-gradient(circle at 90% 15%, rgba(79, 70, 229, 0.04) 0%, transparent 40%),
+        radial-gradient(circle at 50% 80%, rgba(2, 132, 199, 0.03) 0%, transparent 50%);
+    }
+
+    /* Layout Containers */
+    .container {
+      max-width: 1240px;
+      margin: 0 auto;
+      padding: 0 1.5rem;
+      position: relative;
+      z-index: 10;
+    }
+
+    /* ==========================================================================
+       HEADER & NAVIGATION BAR (AUTHENTIC EASEPRINT)
+       ========================================================================== */
+    .navbar-header {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: rgba(255, 255, 255, 0.88);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border-bottom: 1px solid var(--border-light);
+      height: 70px;
+      display: flex;
+      align-items: center;
+    }
+
+    .nav-inner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      width: 100%;
+    }
+
+    /* Brand Block */
+    .nav-brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      text-decoration: none;
+      cursor: pointer;
+    }
+
+    .brand-icon-box {
+      width: 42px;
+      height: 42px;
+      border-radius: var(--radius-md);
+      background: var(--brand-gradient);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #FFFFFF;
+      box-shadow: 0 4px 12px rgba(2, 132, 199, 0.3);
+      transition: transform var(--transition-fast);
+    }
+
+    .nav-brand:hover .brand-icon-box {
+      transform: scale(1.04);
+    }
+
+    .brand-text-col {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .brand-title-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .brand-title {
+      font-size: 1.25rem;
+      font-weight: 800;
+      letter-spacing: -0.025em;
+      color: var(--text-main);
+    }
+
+    .brand-badge {
+      display: inline-flex;
+      align-items: center;
+      padding: 2px 8px;
+      border-radius: var(--radius-full);
+      font-size: 0.68rem;
+      font-weight: 700;
+      background: var(--status-info-bg);
+      color: var(--brand-sky);
+      border: 1px solid var(--status-info-border);
+      letter-spacing: 0.02em;
+      text-transform: uppercase;
+    }
+
+    .brand-campus-sub {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      font-weight: 500;
+    }
+
+    .map-dot {
+      color: #EF4444;
+      display: flex;
+      align-items: center;
+    }
+
+    /* Navigation Tabs */
+    .portal-nav-pill-box {
+      display: flex;
+      align-items: center;
+      background: var(--canvas-subtle);
+      padding: 4px;
+      border-radius: var(--radius-lg);
+      border: 1px solid var(--border-light);
+    }
+
+    .nav-tab-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      padding: 8px 16px;
+      border-radius: var(--radius-md);
+      font-size: 0.86rem;
+      font-weight: 600;
+      color: var(--text-muted);
+      border: none;
+      background: transparent;
+      cursor: pointer;
+      transition: all var(--transition-fast);
+      text-decoration: none;
+    }
+
+    .nav-tab-btn:hover {
+      color: var(--text-main);
+    }
+
+    .nav-tab-btn.active {
+      background: var(--surface-card);
+      color: var(--brand-sky);
+      box-shadow: var(--shadow-sm);
+    }
+
+    .nav-tab-btn.staff-tab.active {
+      color: var(--brand-indigo);
+    }
+
+    .nav-tab-badge {
+      padding: 2px 6px;
+      font-size: 0.7rem;
+      font-weight: 700;
+      border-radius: var(--radius-full);
+      background: var(--status-info-bg);
+      color: var(--brand-sky);
+      margin-left: 2px;
+    }
+
+    /* Live Telemetry Pill */
+    .nav-telemetry {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.78rem;
+      font-weight: 600;
+      color: var(--text-muted);
+    }
+
+    .pulse-dot-container {
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 10px;
+      height: 10px;
+    }
+
+    .pulse-ring {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      border-radius: 50%;
+      background: #10B981;
+      opacity: 0.75;
+      animation: ping 1.8s cubic-bezier(0, 0, 0.2, 1) infinite;
+    }
+
+    .pulse-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: #059669;
+    }
+
+    @keyframes ping {
+      75%, 100% {
+        transform: scale(2.2);
+        opacity: 0;
+      }
+    }
+
+    /* ==========================================================================
+       HERO SECTION (EASEPRINT HERO & SAAS COMPOSITION)
+       ========================================================================== */
+    .hero-section {
+      padding: 4.5rem 0 3.5rem;
+      position: relative;
+    }
+
+    .hero-grid {
+      display: grid;
+      grid-template-columns: 1.15fr 0.85fr;
+      gap: 3.5rem;
+      align-items: center;
+    }
+
+    .hero-left {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 1.5rem;
+    }
+
+    /* Hero Eyebrow Pill */
+    .hero-eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 14px;
+      border-radius: var(--radius-full);
+      background: var(--surface-card);
+      border: 1px solid rgba(2, 132, 199, 0.2);
+      box-shadow: 0 2px 8px rgba(2, 132, 199, 0.08);
+      font-size: 0.82rem;
+      font-weight: 700;
+      color: var(--brand-sky);
+    }
+
+    .sparkle-icon {
+      color: var(--brand-sky);
+      animation: pulse-glow 2s infinite ease-in-out;
+    }
+
+    @keyframes pulse-glow {
+      0%, 100% { opacity: 0.8; transform: scale(1); }
+      50% { opacity: 1; transform: scale(1.15); }
+    }
+
+    /* Main Display Headline */
+    .hero-headline {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: 3.6rem;
+      font-weight: 900;
+      line-height: 1.08;
+      letter-spacing: -0.035em;
+      color: var(--text-main);
+    }
+
+    .gradient-text {
+      background: var(--brand-gradient);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      display: inline-block;
+    }
+
+    .hero-subhead {
+      font-size: 1.15rem;
+      color: var(--text-muted);
+      line-height: 1.6;
+      max-width: 540px;
+      font-weight: 400;
+    }
+
+    /* Hero CTA Row */
+    .hero-cta-group {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      flex-wrap: wrap;
+      margin-top: 0.5rem;
+    }
+
+    .btn-primary-hero {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      padding: 14px 28px;
+      border-radius: var(--radius-md);
+      background: var(--brand-gradient);
+      color: #FFFFFF;
+      font-size: 1rem;
+      font-weight: 700;
+      border: none;
+      cursor: pointer;
+      box-shadow: var(--shadow-glow);
+      transition: all var(--transition-fast);
+      text-decoration: none;
+    }
+
+    .btn-primary-hero:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 16px 32px -4px rgba(2, 132, 199, 0.38);
+      background: var(--brand-gradient-hover);
+    }
+
+    .btn-secondary-hero {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 14px 24px;
+      border-radius: var(--radius-md);
+      background: var(--surface-card);
+      color: var(--text-main);
+      font-size: 0.95rem;
+      font-weight: 600;
+      border: 1px solid var(--border-light);
+      cursor: pointer;
+      box-shadow: var(--shadow-sm);
+      transition: all var(--transition-fast);
+      text-decoration: none;
+    }
+
+    .btn-secondary-hero:hover {
+      background: var(--canvas-subtle);
+      border-color: #CBD5E1;
+      transform: translateY(-1px);
+    }
+
+    /* Trust Chips */
+    .hero-trust-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 0.5rem;
+    }
+
+    .trust-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 12px;
+      border-radius: var(--radius-full);
+      background: rgba(255, 255, 255, 0.75);
+      border: 1px solid var(--border-light);
+      font-size: 0.78rem;
+      font-weight: 600;
+      color: var(--text-muted);
+      backdrop-filter: blur(8px);
+    }
+
+    .trust-check {
+      color: #10B981;
+      width: 14px;
+      height: 14px;
+    }
+
+    /* Hero Right: Interactive 3D Station & Floating Cards */
+    .hero-visual-col {
+      position: relative;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 440px;
+    }
+
+    .station-canvas-container {
+      width: 100%;
+      height: 440px;
+      border-radius: var(--radius-xl);
+      background: linear-gradient(180deg, rgba(255, 255, 255, 0.6) 0%, rgba(241, 245, 249, 0.6) 100%);
+      border: 1px solid var(--border-light);
+      box-shadow: var(--shadow-card);
+      position: relative;
+      overflow: hidden;
+    }
+
+    #threeCanvas {
+      width: 100%;
+      height: 100%;
+      display: block;
+    }
+
+    /* Floating Capability Badges */
+    .floating-pill {
+      position: absolute;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 16px;
+      border-radius: var(--radius-lg);
+      background: rgba(255, 255, 255, 0.9);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border: 1px solid rgba(255, 255, 255, 0.95);
+      box-shadow: 0 10px 25px -4px rgba(15, 23, 42, 0.12);
+      font-size: 0.82rem;
+      font-weight: 700;
+      color: var(--text-main);
+      z-index: 15;
+      animation: float-slow 4s ease-in-out infinite alternate;
+    }
+
+    .pill-pos-1 {
+      top: 24px;
+      left: -20px;
+      animation-delay: 0s;
+    }
+
+    .pill-pos-2 {
+      top: 50%;
+      right: -24px;
+      transform: translateY(-50%);
+      animation-delay: 1.5s;
+    }
+
+    .pill-pos-3 {
+      bottom: 24px;
+      left: 10px;
+      animation-delay: 2.5s;
+    }
+
+    @keyframes float-slow {
+      0% { transform: translateY(0px); }
+      100% { transform: translateY(-8px); }
+    }
+
+    .pill-badge-icon {
+      width: 32px;
+      height: 32px;
+      border-radius: var(--radius-sm);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .icon-sky { background: #E0F2FE; color: var(--brand-sky); }
+    .icon-amber { background: #FEF3C7; color: #D97706; }
+    .icon-emerald { background: #D1FAE5; color: #059669; }
+
+    /* ==========================================================================
+       CAMPUS METRICS PULSE BAR
+       ========================================================================== */
+    .metrics-section {
+      margin: 1.5rem 0 3.5rem;
+    }
+
+    .metrics-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 1.25rem;
+    }
+
+    .metric-card {
+      background: var(--surface-card);
+      border: 1px solid var(--border-light);
+      border-radius: var(--radius-lg);
+      padding: 1.5rem 1.25rem;
+      text-align: center;
+      box-shadow: var(--shadow-sm);
+      transition: transform var(--transition-fast), box-shadow var(--transition-fast);
+    }
+
+    .metric-card:hover {
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-card);
+      border-color: #CBD5E1;
+    }
+
+    .metric-value {
+      font-size: 2.4rem;
+      font-weight: 900;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      letter-spacing: -0.03em;
+      line-height: 1;
+    }
+
+    .metric-blue { color: var(--brand-sky); }
+    .metric-green { color: #059669; }
+    .metric-amber { color: #D97706; }
+    .metric-indigo { color: var(--brand-indigo); }
+
+    .metric-title {
+      font-size: 0.82rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      color: var(--text-main);
+      margin-top: 0.5rem;
+    }
+
+    .metric-sub {
+      font-size: 0.78rem;
+      color: var(--text-muted);
+      margin-top: 0.25rem;
+    }
+
+    /* ==========================================================================
+       PORTAL CONTENT PANELS (STUDENT, STAFF, HISTORY)
+       ========================================================================== */
+    .portal-section-panel {
+      display: none;
+      animation: fadeIn 200ms ease-out;
+      margin-bottom: 4rem;
+    }
+
+    .portal-section-panel.active {
+      display: block;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(6px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Flow Stepper Bar */
+    .flow-stepper {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: var(--surface-card);
+      border: 1px solid var(--border-light);
+      border-radius: var(--radius-lg);
+      padding: 1rem 1.5rem;
+      margin-bottom: 2rem;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .flow-step {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 0.88rem;
+      font-weight: 600;
+      color: var(--text-subtle);
+      cursor: pointer;
+      transition: color var(--transition-fast);
+    }
+
+    .flow-step-circle {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background: var(--canvas-subtle);
+      color: var(--text-muted);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.85rem;
+      font-weight: 700;
+      border: 1px solid var(--border-light);
+      transition: all var(--transition-fast);
+    }
+
+    .flow-step.active {
+      color: var(--brand-sky);
+    }
+
+    .flow-step.active .flow-step-circle {
+      background: var(--brand-sky);
+      color: #FFFFFF;
+      border-color: var(--brand-sky);
+      box-shadow: 0 0 0 4px rgba(2, 132, 199, 0.15);
+    }
+
+    .flow-step.completed {
+      color: #059669;
+    }
+
+    .flow-step.completed .flow-step-circle {
+      background: #059669;
+      color: #FFFFFF;
+      border-color: #059669;
+    }
+
+    .flow-separator {
+      height: 2px;
+      flex: 1;
+      background: var(--border-light);
+      margin: 0 1rem;
+    }
+
+    /* Card Panels */
+    .ease-card {
+      background: var(--surface-card);
+      border: 1px solid var(--border-light);
+      border-radius: var(--radius-xl);
+      padding: 2rem;
+      margin-bottom: 1.75rem;
+      box-shadow: var(--shadow-card);
+      transition: box-shadow var(--transition-fast);
+    }
+
+    .ease-card:hover {
+      box-shadow: var(--shadow-hover);
+    }
+
+    .ease-card-title {
+      font-size: 1.25rem;
+      font-weight: 800;
+      color: var(--text-main);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 1.25rem;
+    }
+
+    .title-left {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    /* Dropzone */
+    .dropzone-box {
+      border: 2px dashed #CBD5E1;
+      border-radius: var(--radius-lg);
+      padding: 3rem 2rem;
+      text-align: center;
+      cursor: pointer;
+      background: var(--canvas-bg);
+      transition: all var(--transition-fast);
+    }
+
+    .dropzone-box:hover, .dropzone-box.dragover {
+      border-color: var(--brand-sky);
+      background: var(--status-info-bg);
+    }
+
+    .dropzone-icon-wrap {
+      width: 56px;
+      height: 56px;
+      border-radius: var(--radius-full);
+      background: #E0F2FE;
+      color: var(--brand-sky);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 1rem;
+    }
+
+    .dropzone-heading {
+      font-size: 1.05rem;
+      font-weight: 700;
+      color: var(--text-main);
+      margin-bottom: 0.25rem;
+    }
+
+    .dropzone-subtext {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+    }
+
+    /* Forms & Inputs */
+    .form-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.25rem;
+      margin-bottom: 1.25rem;
+    }
+
+    .form-group {
+      margin-bottom: 1.25rem;
+    }
+
+    .form-label {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 0.85rem;
+      font-weight: 700;
+      color: var(--text-main);
+      margin-bottom: 0.5rem;
+    }
+
+    .form-input, .form-select {
+      width: 100%;
+      padding: 10px 14px;
+      border-radius: var(--radius-md);
+      border: 1px solid var(--border-light);
+      background: var(--surface-card);
+      font-family: inherit;
+      font-size: 0.92rem;
+      color: var(--text-main);
+      transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
+    }
+
+    .form-input:focus, .form-select:focus {
+      outline: none;
+      border-color: var(--brand-sky);
+      box-shadow: 0 0 0 3px rgba(2, 132, 199, 0.15);
+    }
+
+    /* Live Quote Calculator Panel */
+    .live-quote-card {
+      background: linear-gradient(135deg, #F0F9FF 0%, #EEF2FF 100%);
+      border: 1px solid #BAE6FD;
+      border-radius: var(--radius-lg);
+      padding: 1.5rem;
+      margin: 1.5rem 0;
+    }
+
+    .quote-top-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 0.75rem;
+    }
+
+    .quote-title {
+      font-size: 0.85rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--brand-sky);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .quote-price-hero {
+      font-size: 2.8rem;
+      font-weight: 900;
+      color: var(--text-main);
+      line-height: 1;
+      display: flex;
+      align-items: baseline;
+      gap: 8px;
+    }
+
+    .quote-paise-sub {
+      font-size: 0.95rem;
+      font-weight: 600;
+      color: var(--text-muted);
+    }
+
+    .quote-stats-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 1rem;
+      margin-top: 1.25rem;
+      padding-top: 1rem;
+      border-top: 1px solid rgba(186, 230, 253, 0.8);
+    }
+
+    .quote-stat-label {
+      font-size: 0.72rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--text-muted);
+      font-weight: 700;
+    }
+
+    .quote-stat-val {
+      font-size: 1rem;
+      font-weight: 800;
+      color: var(--text-main);
+      margin-top: 2px;
+    }
+
+    /* Action Buttons */
+    .btn-action-primary {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      width: 100%;
+      padding: 13px 20px;
+      border-radius: var(--radius-md);
+      background: var(--brand-gradient);
+      color: #FFFFFF;
+      font-weight: 700;
+      font-size: 0.95rem;
+      border: none;
+      cursor: pointer;
+      box-shadow: var(--shadow-sm);
+      transition: all var(--transition-fast);
+    }
+
+    .btn-action-primary:hover {
+      background: var(--brand-gradient-hover);
+      box-shadow: var(--shadow-glow);
+    }
+
+    .btn-action-primary:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+      box-shadow: none;
+    }
+
+    /* Status Tags & Badges */
+    .status-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      padding: 4px 10px;
+      border-radius: var(--radius-full);
+      font-size: 0.75rem;
+      font-weight: 700;
+    }
+
+    .pill-success { background: var(--status-success-bg); color: var(--status-success); border: 1px solid var(--status-success-border); }
+    .pill-warn { background: var(--status-warn-bg); color: var(--status-warn); border: 1px solid var(--status-warn-border); }
+    .pill-error { background: var(--status-error-bg); color: var(--status-error); border: 1px solid var(--status-error-border); }
+    .pill-info { background: var(--status-info-bg); color: var(--status-info); border: 1px solid var(--status-info-border); }
+
+    /* Result Box & Key-Value Grid */
+    .result-box {
+      margin-top: 1.5rem;
+      padding: 1.5rem;
+      background: var(--canvas-subtle);
+      border-radius: var(--radius-lg);
+      border: 1px solid var(--border-light);
+    }
+
+    .kv-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-top: 1rem;
+    }
+
+    .kv-item {
+      padding: 10px 14px;
+      background: var(--surface-card);
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--border-light);
+    }
+
+    .kv-label {
+      font-size: 0.72rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--text-muted);
+      font-weight: 700;
+    }
+
+    .kv-value {
+      font-size: 0.92rem;
+      font-weight: 700;
+      color: var(--text-main);
+      margin-top: 2px;
+      word-break: break-all;
+    }
+
+    /* Queue Token Hero Banner */
+    .token-hero-box {
+      text-align: center;
+      padding: 2.5rem 1.5rem;
+      background: linear-gradient(180deg, #FFFFFF 0%, #F8FAFC 100%);
+      border: 1px solid var(--border-light);
+      border-radius: var(--radius-xl);
+      box-shadow: var(--shadow-sm);
+      margin-bottom: 1.5rem;
+    }
+
+    .token-hero-label {
+      font-size: 0.8rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--brand-sky);
+      margin-bottom: 0.5rem;
+    }
+
+    .token-hero-num {
+      font-size: 4rem;
+      font-weight: 900;
+      letter-spacing: -0.04em;
+      color: var(--text-main);
+      line-height: 1;
+      margin-bottom: 1rem;
+    }
+
+    .queue-live-banner {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 20px;
+      border-radius: var(--radius-full);
+      font-size: 0.92rem;
+      font-weight: 700;
+    }
+
+    /* Reusable Alert */
+    .alert-banner {
+      padding: 1rem 1.25rem;
+      border-radius: var(--radius-md);
+      font-size: 0.9rem;
+      font-weight: 600;
+      margin-bottom: 1.5rem;
+      display: none;
+    }
+
+    .alert-banner.error { background: var(--status-error-bg); color: var(--status-error); border: 1px solid var(--status-error-border); }
+    .alert-banner.success { background: var(--status-success-bg); color: var(--status-success); border: 1px solid var(--status-success-border); }
+    .alert-banner.info { background: var(--status-info-bg); color: var(--status-info); border: 1px solid var(--status-info-border); }
+
+    /* Footer */
+    footer {
+      border-top: 1px solid var(--border-light);
+      background: #FFFFFF;
+      padding: 2.5rem 0;
+      margin-top: 5rem;
+      text-align: center;
+      color: var(--text-muted);
+      font-size: 0.85rem;
+    }
+
+    /* Responsive */
+    @media (max-width: 1024px) {
+      .hero-grid { grid-template-columns: 1fr; gap: 2.5rem; }
+      .hero-headline { font-size: 2.8rem; }
+      .metrics-grid { grid-template-columns: 1fr 1fr; }
+    }
+
+    @media (max-width: 640px) {
+      .hero-headline { font-size: 2.2rem; }
+      .form-grid { grid-template-columns: 1fr; }
+      .quote-stats-grid { grid-template-columns: 1fr 1fr; }
+      .metrics-grid { grid-template-columns: 1fr; }
+      .portal-nav-pill-box { overflow-x: auto; max-width: 100%; }
+    }
+  </style>
+</head>
+<body>
+  <!-- Ambient Gradient Layers -->
+  <div class="ambient-bg"></div>
+
+  <!-- STICKY NAVBAR -->
+  <header class="navbar-header">
+    <div class="container nav-inner">
+      <!-- EasePrint Brand -->
+      <div class="nav-brand" onclick="switchPortal('landing')">
+        <div class="brand-icon-box">
+          <i data-lucide="printer" style="width: 22px; height: 22px;"></i>
+        </div>
+        <div class="brand-text-col">
+          <div class="brand-title-row">
+            <span class="brand-title">EasePrint</span>
+            <span class="brand-badge">AI Station</span>
+          </div>
+          <div class="brand-campus-sub">
+            <span class="map-dot"><i data-lucide="map-pin" style="width: 12px; height: 12px;"></i></span>
+            <span>Hyderabad Campus Xerox &amp; Stationery</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Pill Nav Switcher -->
+      <div class="portal-nav-pill-box">
+        <button class="nav-tab-btn active" id="tabHome" onclick="switchPortal('landing')">
+          <i data-lucide="home" style="width: 16px; height: 16px;"></i>
+          <span>Home</span>
+        </button>
+        <button class="nav-tab-btn" id="tabStudentPortal" onclick="switchPortal('student')">
+          <i data-lucide="user" style="width: 16px; height: 16px;"></i>
+          <span>Student Portal</span>
+        </button>
+        <button class="nav-tab-btn" id="tabHistoryPortal" onclick="switchPortal('history')">
+          <i data-lucide="clock" style="width: 16px; height: 16px;"></i>
+          <span>Track Order</span>
+        </button>
+        <button class="nav-tab-btn staff-tab" id="tabStaffPortal" onclick="switchPortal('staff')">
+          <i data-lucide="shield" style="width: 16px; height: 16px;"></i>
+          <span>Staff Command</span>
+          <span class="nav-tab-badge" id="staffQueueCountBadge">0</span>
+        </button>
+      </div>
+
+      <!-- Live Pulse Status -->
+      <div class="nav-telemetry">
+        <div class="pulse-dot-container">
+          <div class="pulse-ring"></div>
+          <div class="pulse-dot"></div>
+        </div>
+        <span>FastAPI &amp; DynamoDB Active</span>
+      </div>
+    </div>
+  </header>
+
+  <main class="container">
+    <!-- ==================================================================== -->
+    <!-- VIEW 1: PRODUCT-LED HERO & HOMEPAGE (APPROVED EASEPRINT VISUAL)      -->
+    <!-- ==================================================================== -->
+    <section id="landingPageSection" class="portal-section-panel active">
+      <div class="hero-section">
+        <div class="hero-grid">
+          <!-- Left Content Column -->
+          <div class="hero-left">
+            <div class="hero-eyebrow">
+              <i data-lucide="sparkles" class="sparkle-icon" style="width: 15px; height: 15px;"></i>
+              <span>Next-Gen Campus Print Ecosystem • AWS Bedrock AI</span>
+            </div>
+
+            <h1 class="hero-headline">
+              The Autonomous <br>
+              <span class="gradient-text">Campus Print Cloud</span>
+            </h1>
+
+            <p class="hero-subhead">
+              Eliminate WhatsApp queue chaos, USB malware risks, and lost printouts. Upload directly from your phone or laptop, receive instant sub-second AI quoting, pay securely, and pick up hot off the press.
+            </p>
+
+            <div class="hero-cta-group">
+              <button class="btn-primary-hero" onclick="switchPortal('student')">
+                <i data-lucide="file-up" style="width: 18px; height: 18px;"></i>
+                <span>Launch Student Portal</span>
+              </button>
+              <button class="btn-secondary-hero" onclick="switchPortal('staff')">
+                <i data-lucide="shield-check" style="width: 18px; height: 18px;"></i>
+                <span>Staff Command Center</span>
+              </button>
+            </div>
+
+            <!-- Trust Badges -->
+            <div class="hero-trust-row">
+              <div class="trust-chip">
+                <i data-lucide="check-circle-2" class="trust-check"></i>
+                <span>Zero USB Pendrive Malware</span>
+              </div>
+              <div class="trust-chip">
+                <i data-lucide="check-circle-2" class="trust-check"></i>
+                <span>Instant S3 Digital Shredder</span>
+              </div>
+              <div class="trust-chip">
+                <i data-lucide="check-circle-2" class="trust-check"></i>
+                <span>Instant Live Queue ETAs</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Right Interactive 3D Workstation Column -->
+          <div class="hero-visual-col">
+            <!-- Floating Capability Pill 1 -->
+            <div class="floating-pill pill-pos-1">
+              <div class="pill-badge-icon icon-sky">
+                <i data-lucide="printer" style="width: 18px; height: 18px;"></i>
+              </div>
+              <div>
+                <div>Dual Xerox Engines</div>
+                <div style="font-size: 0.72rem; color: var(--text-muted); font-weight: 500;">Heavyweight 75 GSM Stock</div>
+              </div>
+            </div>
+
+            <!-- Floating Capability Pill 2 -->
+            <div class="floating-pill pill-pos-2">
+              <div class="pill-badge-icon icon-amber">
+                <i data-lucide="zap" style="width: 18px; height: 18px;"></i>
+              </div>
+              <div>
+                <div>Sub-Second Quoting</div>
+                <div style="font-size: 0.72rem; color: var(--text-muted); font-weight: 500;">Exact Campus Rates</div>
+              </div>
+            </div>
+
+            <!-- Floating Capability Pill 3 -->
+            <div class="floating-pill pill-pos-3">
+              <div class="pill-badge-icon icon-emerald">
+                <i data-lucide="shield-check" style="width: 18px; height: 18px;"></i>
+              </div>
+              <div>
+                <div>100% Zero-Retention</div>
+                <div style="font-size: 0.72rem; color: var(--text-muted); font-weight: 500;">Military-grade shredding</div>
+              </div>
+            </div>
+
+            <!-- 3D Interactive Canvas -->
+            <div class="station-canvas-container">
+              <canvas id="threeCanvas"></canvas>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- CAMPUS METRICS PULSE -->
+      <section class="metrics-section">
+        <div class="metrics-grid">
+          <div class="metric-card">
+            <div class="metric-value metric-blue">&lt; 10s</div>
+            <div class="metric-title">Order Time</div>
+            <div class="metric-sub">From upload to queue confirmation</div>
+          </div>
+          <div class="metric-card">
+            <div class="metric-value metric-green">100%</div>
+            <div class="metric-title">Zero-Retention Privacy</div>
+            <div class="metric-sub">S3 files shredded on pickup</div>
+          </div>
+          <div class="metric-card">
+            <div class="metric-value metric-amber">₹0</div>
+            <div class="metric-title">Hidden Fees</div>
+            <div class="metric-sub">Exact Hyderabad student rates</div>
+          </div>
+          <div class="metric-card">
+            <div class="metric-value metric-indigo">Single Table</div>
+            <div class="metric-title">DynamoDB Architecture</div>
+            <div class="metric-sub">Sub-5ms queue orchestration</div>
+          </div>
+        </div>
+      </section>
+    </section>
+
+    <!-- ==================================================================== -->
+    <!-- VIEW 2: STUDENT ORDERING PORTAL (PRODUCTION-READY FLOW)              -->
+    <!-- ==================================================================== -->
+    <section id="studentPortalSection" class="portal-section-panel">
+      <!-- Flow Stepper -->
+      <div class="flow-stepper">
+        <div class="flow-step active" id="step1Indicator" onclick="jumpToStep(1)">
+          <div class="flow-step-circle" id="step1Circle">1</div>
+          <span>Upload Document</span>
+        </div>
+        <div class="flow-separator"></div>
+        <div class="flow-step" id="step2Indicator" onclick="jumpToStep(2)">
+          <div class="flow-step-circle" id="step2Circle">2</div>
+          <span>Print Config</span>
+        </div>
+        <div class="flow-separator"></div>
+        <div class="flow-step" id="step3Indicator" onclick="jumpToStep(3)">
+          <div class="flow-step-circle" id="step3Circle">3</div>
+          <span>Payment</span>
+        </div>
+        <div class="flow-separator"></div>
+        <div class="flow-step" id="step4Indicator" onclick="jumpToStep(4)">
+          <div class="flow-step-circle" id="step4Circle">4</div>
+          <span>Queue &amp; Token</span>
+        </div>
+      </div>
+
+      <div id="alertBox" class="alert-banner"></div>
+
+      <!-- STEP 1: UPLOAD -->
+      <div class="ease-card" id="step1Card">
+        <div class="ease-card-title">
+          <div class="title-left">
+            <i data-lucide="file-up" style="color: var(--brand-sky);"></i>
+            <span>Step 1: Choose Your Document</span>
+          </div>
+          <span class="status-pill pill-info">Max 25 MB • PDF, DOCX, Images</span>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="studentId"><i data-lucide="user"></i> Student ID</label>
+          <input type="text" id="studentId" class="form-input" value="STU-2026-001" placeholder="e.g. STU-2026-001">
+        </div>
+
+        <div class="dropzone-box" id="dropzone">
+          <div class="dropzone-icon-wrap">
+            <i data-lucide="upload-cloud" style="width: 28px; height: 28px;"></i>
+          </div>
+          <div class="dropzone-heading">Click to upload or drag &amp; drop document</div>
+          <div class="dropzone-subtext">Supported: PDF, DOCX, DOC, TXT, PNG, JPG</div>
+          <input type="file" id="fileInput" style="display: none;" accept=".pdf,.docx,.doc,.txt,.png,.jpg,.jpeg">
+        </div>
+
+        <div id="filePreview" style="display: none; padding: 1rem; background: var(--canvas-subtle); border-radius: var(--radius-md); border: 1px solid var(--border-light); margin-top: 1rem; align-items: center; justify-content: space-between;">
+          <div style="display: flex; align-items: center; gap: 12px;">
+            <div style="width: 40px; height: 40px; border-radius: var(--radius-sm); background: #FFFFFF; display: flex; align-items: center; justify-content: center; color: var(--brand-sky); border: 1px solid var(--border-light);">
+              <i data-lucide="file-text"></i>
+            </div>
+            <div>
+              <div id="previewName" style="font-weight: 700; color: var(--text-main);">document.pdf</div>
+              <div id="previewMeta" style="font-size: 0.8rem; color: var(--text-muted);">2.4 MB • application/pdf</div>
+            </div>
+          </div>
+          <button type="button" id="removeFileBtn" class="btn-secondary-hero" style="padding: 6px 14px; font-size: 0.8rem;">Change File</button>
+        </div>
+
+        <button class="btn-action-primary" id="uploadBtn" disabled style="margin-top: 1.5rem;">
+          <i data-lucide="cloud-upload"></i>
+          <span id="btnText">Upload Document to EasePrint S3</span>
+        </button>
+
+        <div id="uploadResultSection" class="result-box" style="display: none;">
+          <div style="display: flex; align-items: center; justify-content: space-between;">
+            <div style="display: flex; align-items: center; gap: 8px; font-weight: 800; color: #059669;">
+              <i data-lucide="check-circle-2"></i> Document Uploaded &amp; Stored
+            </div>
+            <span class="status-pill pill-success">Amazon S3 Verified</span>
+          </div>
+          <div class="kv-grid">
+            <div class="kv-item">
+              <div class="kv-label">Document ID</div>
+              <div class="kv-value" id="resDocId">-</div>
+            </div>
+            <div class="kv-item">
+              <div class="kv-label">Filename</div>
+              <div class="kv-value" id="resFilename">-</div>
+            </div>
+            <div class="kv-item" style="grid-column: span 2;">
+              <div class="kv-label">S3 Object Key</div>
+              <div class="kv-value" id="resS3Key" style="font-size: 0.8rem; font-family: monospace;">-</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- STEP 2: PRINT CONFIGURATION -->
+      <div class="ease-card" id="step2Card">
+        <div class="ease-card-title">
+          <div class="title-left">
+            <i data-lucide="sliders" style="color: var(--brand-sky);"></i>
+            <span>Step 2: Print Configuration &amp; Instant AI Quote</span>
+          </div>
+          <span class="status-pill pill-info">Live Campus Rate Matrix</span>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="orderDocId"><i data-lucide="link"></i> Referenced Document ID</label>
+          <input type="text" id="orderDocId" class="form-input" placeholder="Upload document above or paste Document ID">
+        </div>
+
+        <div class="form-grid">
+          <div class="form-group">
+            <label class="form-label" for="pageCount"><i data-lucide="files"></i> Page Count (per copy)</label>
+            <input type="number" id="pageCount" class="form-input" value="10" min="1">
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="copies"><i data-lucide="copy"></i> Copies</label>
+            <input type="number" id="copies" class="form-input" value="1" min="1">
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="colorMode"><i data-lucide="palette"></i> Color Mode</label>
+            <select id="colorMode" class="form-select">
+              <option value="bw" selected>Black &amp; White (₹1.00 / page)</option>
+              <option value="color">Full Color (₹5.00 / page)</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="paperSize"><i data-lucide="file"></i> Paper Size</label>
+            <select id="paperSize" class="form-select">
+              <option value="A4" selected>A4 (Standard 1.0x)</option>
+              <option value="A3">A3 (Large 2.0x)</option>
+              <option value="Letter">Letter (Standard 1.0x)</option>
+            </select>
+          </div>
+          <div class="form-group" style="grid-column: span 2;">
+            <label class="form-label" for="doubleSided"><i data-lucide="book-open"></i> Sidedness</label>
+            <select id="doubleSided" class="form-select">
+              <option value="false" selected>Single-Sided (1 sheet per page)</option>
+              <option value="true">Double-Sided (2 sides per sheet, 20% discount)</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- LIVE QUOTE PREVIEW -->
+        <div class="live-quote-card">
+          <div class="quote-top-row">
+            <div class="quote-title">
+              <i data-lucide="calculator" style="width: 16px; height: 16px;"></i>
+              <span>Live Calculated Quote</span>
+            </div>
+            <span class="status-pill pill-success" id="quoteStatus">● Ready</span>
+          </div>
+
+          <div class="quote-price-hero">
+            <span id="quoteRupees">₹10.00</span>
+            <span class="quote-paise-sub" id="quotePaise">(1000 paise)</span>
+          </div>
+
+          <div class="quote-stats-grid">
+            <div>
+              <div class="quote-stat-label">Base Rate</div>
+              <div class="quote-stat-val" id="statBaseRate">₹1.00/pg</div>
+            </div>
+            <div>
+              <div class="quote-stat-label">Sheets / Copy</div>
+              <div class="quote-stat-val" id="statSheets">10 / 10</div>
+            </div>
+            <div>
+              <div class="quote-stat-label">Total Impressions</div>
+              <div class="quote-stat-val" id="statImpressions">10 pgs</div>
+            </div>
+            <div>
+              <div class="quote-stat-label">Unit Price / Copy</div>
+              <div class="quote-stat-val" id="statUnitPrice">₹10.00</div>
+            </div>
+          </div>
+        </div>
+
+        <button class="btn-action-primary" id="createOrderBtn">
+          <i data-lucide="check-circle-2"></i>
+          <span id="orderBtnText">Create Order in DynamoDB</span>
+        </button>
+
+        <!-- ORDER CREATED SUMMARY -->
+        <div id="orderResultSection" class="result-box" style="display: none;">
+          <div style="display: flex; align-items: center; justify-content: space-between;">
+            <div style="display: flex; align-items: center; gap: 8px; font-weight: 800; color: #059669;">
+              <i data-lucide="check-check"></i> Order Successfully Registered
+            </div>
+            <span class="status-pill pill-info" id="resOrderStatus">PENDING_PAYMENT</span>
+          </div>
+          <div class="kv-grid">
+            <div class="kv-item">
+              <div class="kv-label">Order ID</div>
+              <div class="kv-value" id="resOrderId">-</div>
+            </div>
+            <div class="kv-item">
+              <div class="kv-label">Total Amount</div>
+              <div class="kv-value" id="resOrderAmount" style="color: var(--brand-sky);">-</div>
+            </div>
+            <div class="kv-item">
+              <div class="kv-label">Physical Sheets</div>
+              <div class="kv-value" id="resOrderSheets">-</div>
+            </div>
+            <div class="kv-item">
+              <div class="kv-label">Payment Status</div>
+              <div class="kv-value" id="resOrderPaymentStatus">-</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- STEP 3: SIMULATED PAYMENT -->
+      <div class="ease-card" id="step3Card">
+        <div class="ease-card-title">
+          <div class="title-left">
+            <i data-lucide="credit-card" style="color: var(--brand-sky);"></i>
+            <span>Step 3: Instant Payment Simulation</span>
+          </div>
+          <span class="status-pill pill-warn" id="paymentStatusBadge">PENDING</span>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="paymentOrderId"><i data-lucide="hash"></i> Order ID to Settle</label>
+          <input type="text" id="paymentOrderId" class="form-input" placeholder="Create order above or paste ORD-...">
+        </div>
+
+        <div class="form-group">
+          <label class="form-label"><i data-lucide="shield"></i> Payment Simulation Mode</label>
+          <div style="display: flex; gap: 12px; margin-top: 6px;">
+            <label style="display: flex; align-items: center; gap: 10px; cursor: pointer; background: var(--canvas-subtle); border: 1px solid var(--border-light); padding: 12px 18px; border-radius: var(--radius-md); flex: 1;">
+              <input type="radio" name="paymentOutcome" value="SUCCESS" checked style="accent-color: #059669;">
+              <span style="font-weight: 700; color: #059669; display: flex; align-items: center; gap: 6px;">
+                <i data-lucide="check-circle-2" style="width: 16px; height: 16px;"></i> Simulate SUCCESS
+              </span>
+            </label>
+            <label style="display: flex; align-items: center; gap: 10px; cursor: pointer; background: var(--canvas-subtle); border: 1px solid var(--border-light); padding: 12px 18px; border-radius: var(--radius-md); flex: 1;">
+              <input type="radio" name="paymentOutcome" value="FAILURE" style="accent-color: #DC2626;">
+              <span style="font-weight: 700; color: #DC2626; display: flex; align-items: center; gap: 6px;">
+                <i data-lucide="x-circle" style="width: 16px; height: 16px;"></i> Simulate FAILURE
+              </span>
+            </label>
+          </div>
+        </div>
+
+        <button class="btn-action-primary" id="simulatePaymentBtn">
+          <i data-lucide="zap"></i>
+          <span id="paymentBtnText">Authorize Payment</span>
+        </button>
+      </div>
+
+      <!-- STEP 4: QUEUE & TOKEN -->
+      <div class="ease-card" id="step4Card">
+        <div class="ease-card-title">
+          <div class="title-left">
+            <i data-lucide="ticket" style="color: var(--brand-sky);"></i>
+            <span>Step 4: Live Print Queue &amp; Pickup Token</span>
+          </div>
+          <span class="status-pill pill-info" id="queueStatusBadge">QUEUED</span>
+        </div>
+
+        <div class="token-hero-box">
+          <div class="token-hero-label">Your Live Pickup Token</div>
+          <div class="token-hero-num" id="resTokenNumber">#--</div>
+          <div>
+            <span class="queue-live-banner pill-success" id="resQueuePositionBanner">
+              <i data-lucide="clock" style="width: 16px; height: 16px;"></i>
+              <span id="resQueuePositionText">Awaiting queue entry</span>
+            </span>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="queueOrderId"><i data-lucide="hash"></i> Order ID</label>
+          <input type="text" id="queueOrderId" class="form-input" placeholder="ORD-...">
+        </div>
+
+        <div style="display: flex; gap: 12px;">
+          <button class="btn-action-primary" id="enterQueueBtn" style="flex: 1;">
+            <i data-lucide="ticket"></i>
+            <span id="queueBtnText">Admit Order to Queue</span>
+          </button>
+          <button class="btn-secondary-hero" id="refreshQueueBtn" style="padding: 12px 20px;">
+            <i data-lucide="rotate-cw"></i>
+            <span id="refreshBtnText">Refresh ETA</span>
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==================================================================== -->
+    <!-- VIEW 3: STAFF COMMAND CENTER                                         -->
+    <!-- ==================================================================== -->
+    <section id="staffPortalSection" class="portal-section-panel">
+      <div class="portal-header-bar">
+        <div class="portal-header-title">
+          <div class="portal-header-icon" style="background: #EEF2FF; color: var(--brand-indigo);">
+            <i data-lucide="shield" style="width: 24px; height: 24px;"></i>
+          </div>
+          <div>
+            <h2 style="font-size: 1.4rem; font-weight: 800; color: var(--text-main);">Staff Command Center</h2>
+            <p style="font-size: 0.85rem; color: var(--text-muted);">Stationery Counter 1 • Active Print Dispatch Engine</p>
+          </div>
+        </div>
+        <div>
+          <button class="btn-secondary-hero" id="refreshStaffBtn" style="padding: 8px 16px; font-size: 0.85rem;">
+            <i data-lucide="rotate-cw" style="width: 14px; height: 14px;"></i>
+            <span>Refresh Active Queue</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Staff Metrics KPI Strip -->
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin-bottom: 1.5rem;">
+        <div class="ease-card" style="padding: 1.25rem;">
+          <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.5rem;">
+            <span style="font-size: 0.8rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text-muted);">Active Jobs</span>
+            <div style="width: 32px; height: 32px; border-radius: 8px; background: #EEF2FF; color: var(--brand-indigo); display: flex; align-items: center; justify-content: center;">
+              <i data-lucide="layers" style="width: 16px; height: 16px;"></i>
+            </div>
+          </div>
+          <div style="font-size: 1.8rem; font-weight: 800; color: var(--text-main); font-family: 'JetBrains Mono', monospace;">4</div>
+          <div style="font-size: 0.75rem; color: var(--status-success); font-weight: 600; margin-top: 0.25rem;">● 2 ready for counter pickup</div>
+        </div>
+
+        <div class="ease-card" style="padding: 1.25rem;">
+          <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.5rem;">
+            <span style="font-size: 0.8rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text-muted);">Printing Now</span>
+            <div style="width: 32px; height: 32px; border-radius: 8px; background: #F0F9FF; color: var(--brand-sky); display: flex; align-items: center; justify-content: center;">
+              <i data-lucide="printer" style="width: 16px; height: 16px;"></i>
+            </div>
+          </div>
+          <div style="font-size: 1.8rem; font-weight: 800; color: var(--brand-sky); font-family: 'JetBrains Mono', monospace;">1</div>
+          <div style="font-size: 0.75rem; color: var(--text-muted); margin-top: 0.25rem;">Laser Bed #1 • 45 ppm</div>
+        </div>
+
+        <div class="ease-card" style="padding: 1.25rem;">
+          <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.5rem;">
+            <span style="font-size: 0.8rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text-muted);">Awaiting Pickup</span>
+            <div style="width: 32px; height: 32px; border-radius: 8px; background: #ECFDF5; color: var(--status-success); display: flex; align-items: center; justify-content: center;">
+              <i data-lucide="package-check" style="width: 16px; height: 16px;"></i>
+            </div>
+          </div>
+          <div style="font-size: 1.8rem; font-weight: 800; color: var(--status-success); font-family: 'JetBrains Mono', monospace;">2</div>
+          <div style="font-size: 0.75rem; color: var(--text-muted); margin-top: 0.25rem;">Tray B • Counter 1</div>
+        </div>
+
+        <div class="ease-card" style="padding: 1.25rem;">
+          <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.5rem;">
+            <span style="font-size: 0.8rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text-muted);">Today's Revenue</span>
+            <div style="width: 32px; height: 32px; border-radius: 8px; background: #FEF3C7; color: #D97706; display: flex; align-items: center; justify-content: center;">
+              <i data-lucide="credit-card" style="width: 16px; height: 16px;"></i>
+            </div>
+          </div>
+          <div style="font-size: 1.8rem; font-weight: 800; color: var(--text-main); font-family: 'JetBrains Mono', monospace;">₹1,480</div>
+          <div style="font-size: 0.75rem; color: var(--status-success); font-weight: 600; margin-top: 0.25rem;">+18% vs yesterday</div>
+        </div>
+      </div>
+
+      <!-- Queue Table Card -->
+      <div class="ease-card" style="padding: 0; overflow: hidden;">
+        <div style="padding: 1rem 1.5rem; border-bottom: 1px solid var(--border-light); display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 1rem; background: #FAFAFC;">
+          <div style="display: flex; align-items: center; gap: 0.5rem;">
+            <button class="filter-tab active" style="padding: 6px 12px; border-radius: 9999px; font-size: 0.8rem; font-weight: 600; border: 1px solid var(--brand-sky); background: var(--brand-sky-surface); color: var(--brand-sky); cursor: pointer;">All Orders (4)</button>
+            <button class="filter-tab" style="padding: 6px 12px; border-radius: 9999px; font-size: 0.8rem; font-weight: 600; border: 1px solid var(--border-light); background: #FFFFFF; color: var(--text-muted); cursor: pointer;">Queued (1)</button>
+            <button class="filter-tab" style="padding: 6px 12px; border-radius: 9999px; font-size: 0.8rem; font-weight: 600; border: 1px solid var(--border-light); background: #FFFFFF; color: var(--text-muted); cursor: pointer;">Printing (1)</button>
+            <button class="filter-tab" style="padding: 6px 12px; border-radius: 9999px; font-size: 0.8rem; font-weight: 600; border: 1px solid var(--border-light); background: #FFFFFF; color: var(--text-muted); cursor: pointer;">Ready (2)</button>
+          </div>
+          <div style="font-size: 0.8rem; color: var(--text-muted); display: flex; align-items: center; gap: 0.4rem;">
+            <i data-lucide="clock" style="width: 14px; height: 14px;"></i>
+            <span>Avg. Turnaround: <strong>4.2 mins</strong></span>
+          </div>
+        </div>
+
+        <div style="overflow-x: auto;">
+          <table style="width: 100%; border-collapse: collapse; text-align: left; font-size: 0.875rem;">
+            <thead>
+              <tr style="border-bottom: 1px solid var(--border-light); background: #F8FAFC; color: var(--text-muted); font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.05em;">
+                <th style="padding: 12px 16px;">Token</th>
+                <th style="padding: 12px 16px;">Student</th>
+                <th style="padding: 12px 16px;">Document</th>
+                <th style="padding: 12px 16px;">Specs</th>
+                <th style="padding: 12px 16px;">Amount</th>
+                <th style="padding: 12px 16px;">Status</th>
+                <th style="padding: 12px 16px; text-align: right;">Action</th>
+              </tr>
+            </thead>
+            <tbody style="divide-y: 1px solid var(--border-subtle);">
+              <!-- Order 1: Printing -->
+              <tr style="border-bottom: 1px solid var(--border-light); background: #FAFDFE;">
+                <td style="padding: 14px 16px; font-family: 'JetBrains Mono', monospace; font-weight: 800; color: var(--brand-sky); font-size: 1rem;">X-101</td>
+                <td style="padding: 14px 16px;">
+                  <div style="font-weight: 600; color: var(--text-main);">24R21A0501</div>
+                  <div style="font-size: 0.75rem; color: var(--text-subtle);">CSE Dept • 3rd Year</div>
+                </td>
+                <td style="padding: 14px 16px;">
+                  <div style="font-weight: 600; color: var(--text-main); display: flex; align-items: center; gap: 0.35rem;">
+                    <i data-lucide="file-text" style="width: 14px; height: 14px; color: var(--brand-sky);"></i>
+                    <span>OS_Lab_Record.pdf</span>
+                  </div>
+                  <div style="font-size: 0.75rem; color: var(--text-subtle);">32 pgs • 1.8 MB</div>
+                </td>
+                <td style="padding: 14px 16px;">
+                  <span style="display: inline-block; padding: 2px 8px; border-radius: 4px; background: #F1F5F9; font-size: 0.75rem; font-weight: 600; color: var(--text-muted);">B&amp;W • 2-Sided</span>
+                </td>
+                <td style="padding: 14px 16px; font-family: 'JetBrains Mono', monospace; font-weight: 700; color: var(--text-main);">₹25.60</td>
+                <td style="padding: 14px 16px;">
+                  <span style="display: inline-flex; align-items: center; gap: 0.35rem; padding: 4px 10px; border-radius: 9999px; background: #F0F9FF; color: var(--brand-sky); font-size: 0.75rem; font-weight: 700; border: 1px solid #BAE6FD;">
+                    <span style="width: 6px; height: 6px; border-radius: 50%; background: var(--brand-sky); animation: pulse-dot 1.5s infinite;"></span>
+                    PRINTING
+                  </span>
+                </td>
+                <td style="padding: 14px 16px; text-align: right;">
+                  <button class="btn-primary-hero" style="padding: 6px 14px; font-size: 0.75rem; border-radius: 8px;">
+                    <i data-lucide="check" style="width: 12px; height: 12px;"></i>
+                    <span>Mark Ready</span>
+                  </button>
+                </td>
+              </tr>
+
+              <!-- Order 2: Queued -->
+              <tr style="border-bottom: 1px solid var(--border-light);">
+                <td style="padding: 14px 16px; font-family: 'JetBrains Mono', monospace; font-weight: 800; color: #D97706; font-size: 1rem;">X-102</td>
+                <td style="padding: 14px 16px;">
+                  <div style="font-weight: 600; color: var(--text-main);">24R21A0542</div>
+                  <div style="font-size: 0.75rem; color: var(--text-subtle);">ECE Dept • 2nd Year</div>
+                </td>
+                <td style="padding: 14px 16px;">
+                  <div style="font-weight: 600; color: var(--text-main); display: flex; align-items: center; gap: 0.35rem;">
+                    <i data-lucide="file-text" style="width: 14px; height: 14px; color: var(--text-muted);"></i>
+                    <span>Signals_Assignment.pdf</span>
+                  </div>
+                  <div style="font-size: 0.75rem; color: var(--text-subtle);">14 pgs • 820 KB</div>
+                </td>
+                <td style="padding: 14px 16px;">
+                  <span style="display: inline-block; padding: 2px 8px; border-radius: 4px; background: #FEF3C7; font-size: 0.75rem; font-weight: 600; color: #92400E;">Color • 1-Sided</span>
+                </td>
+                <td style="padding: 14px 16px; font-family: 'JetBrains Mono', monospace; font-weight: 700; color: var(--text-main);">₹70.00</td>
+                <td style="padding: 14px 16px;">
+                  <span style="display: inline-flex; align-items: center; gap: 0.35rem; padding: 4px 10px; border-radius: 9999px; background: #FFFBEB; color: #D97706; font-size: 0.75rem; font-weight: 700; border: 1px solid #FDE68A;">
+                    <span style="width: 6px; height: 6px; border-radius: 50%; background: #D97706;"></span>
+                    QUEUED (#1)
+                  </span>
+                </td>
+                <td style="padding: 14px 16px; text-align: right;">
+                  <button class="btn-primary-hero" style="padding: 6px 14px; font-size: 0.75rem; border-radius: 8px; background: var(--brand-sky);">
+                    <i data-lucide="play" style="width: 12px; height: 12px;"></i>
+                    <span>Start Print</span>
+                  </button>
+                </td>
+              </tr>
+
+              <!-- Order 3: Ready -->
+              <tr style="border-bottom: 1px solid var(--border-light); background: #FBFDFB;">
+                <td style="padding: 14px 16px; font-family: 'JetBrains Mono', monospace; font-weight: 800; color: var(--status-success); font-size: 1rem;">X-100</td>
+                <td style="padding: 14px 16px;">
+                  <div style="font-weight: 600; color: var(--text-main);">24R21A0518</div>
+                  <div style="font-size: 0.75rem; color: var(--text-subtle);">IT Dept • 4th Year</div>
+                </td>
+                <td style="padding: 14px 16px;">
+                  <div style="font-weight: 600; color: var(--text-main); display: flex; align-items: center; gap: 0.35rem;">
+                    <i data-lucide="file-text" style="width: 14px; height: 14px; color: var(--status-success);"></i>
+                    <span>Major_Project_Synopsis.pdf</span>
+                  </div>
+                  <div style="font-size: 0.75rem; color: var(--text-subtle);">8 pgs • 450 KB</div>
+                </td>
+                <td style="padding: 14px 16px;">
+                  <span style="display: inline-block; padding: 2px 8px; border-radius: 4px; background: #F1F5F9; font-size: 0.75rem; font-weight: 600; color: var(--text-muted);">B&amp;W • 2-Sided</span>
+                </td>
+                <td style="padding: 14px 16px; font-family: 'JetBrains Mono', monospace; font-weight: 700; color: var(--text-main);">₹6.40</td>
+                <td style="padding: 14px 16px;">
+                  <span style="display: inline-flex; align-items: center; gap: 0.35rem; padding: 4px 10px; border-radius: 9999px; background: #ECFDF5; color: var(--status-success); font-size: 0.75rem; font-weight: 700; border: 1px solid #A7F3D0;">
+                    <span style="width: 6px; height: 6px; border-radius: 50%; background: var(--status-success);"></span>
+                    READY (Tray B)
+                  </span>
+                </td>
+                <td style="padding: 14px 16px; text-align: right;">
+                  <button class="btn-secondary-hero" style="padding: 6px 14px; font-size: 0.75rem; border-radius: 8px;">
+                    <i data-lucide="package-check" style="width: 12px; height: 12px;"></i>
+                    <span>Hand Over</span>
+                  </button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==================================================================== -->
+    <!-- VIEW 4: ORDER TRACKING & HISTORY                                     -->
+    <!-- ==================================================================== -->
+    <section id="historyPortalSection" class="portal-section-panel">
+      <div class="portal-header-bar">
+        <div class="portal-header-title">
+          <div class="portal-header-icon" style="background: #E0F2FE; color: var(--brand-sky);">
+            <i data-lucide="history" style="width: 24px; height: 24px;"></i>
+          </div>
+          <div>
+            <h2 style="font-size: 1.4rem; font-weight: 800; color: var(--text-main);">Order Tracking &amp; History</h2>
+            <p style="font-size: 0.85rem; color: var(--text-muted);">Retrieve your past print jobs, live queue status, and receipts</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="ease-card">
+        <div class="form-group" style="margin-bottom: 0;">
+          <label class="form-label" for="historyStudentId"><i data-lucide="search"></i> Lookup by Student ID</label>
+          <div style="display: flex; gap: 10px;">
+            <input type="text" id="historyStudentId" class="form-input" value="STU-2026-001" placeholder="e.g. STU-2026-001">
+            <button class="btn-primary-hero" id="btnFetchHistory" style="padding: 10px 20px; font-size: 0.9rem;">Search</button>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="container">
+      <div style="display: flex; align-items: center; justify-content: center; gap: 8px; margin-bottom: 0.5rem; font-weight: 700; color: var(--text-main);">
+        <i data-lucide="printer" style="width: 18px; height: 18px; color: var(--brand-sky);"></i>
+        <span>EasePrint AI Autonomous Campus Cloud</span>
+      </div>
+      <p>Hyderabad Campus Xerox &amp; Stationery • Zero-Retention Privacy Architecture • Powered by AWS DynamoDB &amp; S3</p>
+    </div>
+  </footer>
+
+  <!-- Scripts -->
+  <script>
+    // Initialize Lucide Icons
+    lucide.createIcons();
+
+    // Portal Switching Architecture
+    function switchPortal(portal) {
+      document.querySelectorAll('.portal-section-panel').forEach(el => el.classList.remove('active'));
+      document.querySelectorAll('.nav-tab-btn').forEach(el => el.classList.remove('active'));
+
+      if (portal === 'student') {
+        document.getElementById('studentPortalSection').classList.add('active');
+        document.getElementById('tabStudentPortal').classList.add('active');
+      } else if (portal === 'staff') {
+        document.getElementById('staffPortalSection').classList.add('active');
+        document.getElementById('tabStaffPortal').classList.add('active');
+      } else if (portal === 'history') {
+        document.getElementById('historyPortalSection').classList.add('active');
+        document.getElementById('tabHistoryPortal').classList.add('active');
+      } else {
+        document.getElementById('landingPageSection').classList.add('active');
+        document.getElementById('tabHome').classList.add('active');
+      }
+      lucide.createIcons();
+    }
+
+    function jumpToStep(step) {
+      const card = document.getElementById(`step${step}Card`);
+      if (card) {
+        card.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }
+    }
+
+    // 3D Three.js Xerox Station Kiosk
+    (function initThreeScene() {
+      const canvas = document.getElementById('threeCanvas');
+      if (!canvas) return;
+
+      const renderer = new THREE.WebGLRenderer({ canvas: canvas, antialias: true, alpha: true });
+      renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+      const width = canvas.clientWidth || 400;
+      const height = canvas.clientHeight || 440;
+      renderer.setSize(width, height);
+
+      const scene = new THREE.Scene();
+      const camera = new THREE.PerspectiveCamera(40, width / height, 0.1, 100);
+      camera.position.set(4.5, 3.5, 6);
+      camera.lookAt(0, 0.5, 0);
+
+      // Lights
+      const ambientLight = new THREE.AmbientLight(0xffffff, 0.8);
+      scene.add(ambientLight);
+
+      const dirLight = new THREE.DirectionalLight(0x0284c7, 1.4);
+      dirLight.position.set(5, 8, 5);
+      scene.add(dirLight);
+
+      const pointLight = new THREE.PointLight(0x4f46e5, 1.8, 10);
+      pointLight.position.set(-2, 2, 2);
+      scene.add(pointLight);
+
+      // Kiosk Machine Model Geometry
+      const group = new THREE.Group();
+
+      // Base Station Body (Pearl White)
+      const bodyMat = new THREE.MeshStandardMaterial({ color: 0xF8FAFC, roughness: 0.2, metalness: 0.1 });
+      const bodyGeo = new THREE.BoxGeometry(2.2, 1.8, 1.6);
+      const bodyMesh = new THREE.Mesh(bodyGeo, bodyMat);
+      bodyMesh.position.y = 0.9;
+      group.add(bodyMesh);
+
+      // Hardware Control Plinth
+      const plinthMat = new THREE.MeshStandardMaterial({ color: 0x1E293B, roughness: 0.3, metalness: 0.7 });
+      const plinthGeo = new THREE.BoxGeometry(2.25, 0.15, 1.65);
+      const plinthMesh = new THREE.Mesh(plinthGeo, plinthMat);
+      plinthMesh.position.y = 1.85;
+      group.add(plinthMesh);
+
+      // Glass Scanner Bed
+      const glassMat = new THREE.MeshPhysicalMaterial({
+        color: 0x38BDF8,
+        transparent: true,
+        opacity: 0.6,
+        roughness: 0.1,
+        metalness: 0.1,
+        transmission: 0.9
+      });
+      const glassGeo = new THREE.BoxGeometry(1.8, 0.08, 1.2);
+      const glassMesh = new THREE.Mesh(glassGeo, glassMat);
+      glassMesh.position.set(-0.1, 1.95, 0);
+      group.add(glassMesh);
+
+      // Glowing Scanning Laser Bar
+      const laserMat = new THREE.MeshBasicMaterial({ color: 0x0284C7 });
+      const laserGeo = new THREE.CylinderGeometry(0.04, 0.04, 1.15, 16);
+      laserGeo.rotateX(Math.PI / 2);
+      const laserMesh = new THREE.Mesh(laserGeo, laserMat);
+      laserMesh.position.set(0, 1.96, 0);
+      group.add(laserMesh);
+
+      // Paper Tray Cassette
+      const trayMat = new THREE.MeshStandardMaterial({ color: 0x0284C7, metalness: 0.6, roughness: 0.2 });
+      const trayGeo = new THREE.BoxGeometry(1.4, 0.12, 0.8);
+      const trayMesh = new THREE.Mesh(trayGeo, trayMat);
+      trayMesh.position.set(0.9, 1.1, 0);
+      group.add(trayMesh);
+
+      // Articulated HUD Display Panel
+      const screenMat = new THREE.MeshStandardMaterial({ color: 0x0F172A, roughness: 0.2 });
+      const screenGeo = new THREE.BoxGeometry(0.7, 0.5, 0.06);
+      const screenMesh = new THREE.Mesh(screenGeo, screenMat);
+      screenMesh.position.set(-0.8, 2.3, 0.4);
+      screenMesh.rotation.y = 0.35;
+      screenMesh.rotation.x = -0.2;
+      group.add(screenMesh);
+
+      // Screen Glow Element
+      const glowMat = new THREE.MeshBasicMaterial({ color: 0x38BDF8 });
+      const glowGeo = new THREE.PlaneGeometry(0.62, 0.42);
+      const glowMesh = new THREE.Mesh(glowGeo, glowMat);
+      glowMesh.position.set(-0.8, 2.3, 0.44);
+      glowMesh.rotation.y = 0.35;
+      glowMesh.rotation.x = -0.2;
+      group.add(glowMesh);
+
+      scene.add(group);
+
+      // Continuous Slow Rotation Animation
+      let laserDir = 1;
+      function animate() {
+        requestAnimationFrame(animate);
+        group.rotation.y += 0.004;
+
+        // Laser scan sweep animation
+        laserMesh.position.x += 0.012 * laserDir;
+        if (laserMesh.position.x > 0.7) laserDir = -1;
+        if (laserMesh.position.x < -0.7) laserDir = 1;
+
+        renderer.render(scene, camera);
+      }
+      animate();
+
+      // Responsive Resize
+      window.addEventListener('resize', () => {
+        const w = canvas.clientWidth;
+        const h = canvas.clientHeight;
+        camera.aspect = w / h;
+        camera.updateProjectionMatrix();
+        renderer.setSize(w, h);
+      });
+    })();
+  </script>
+</body>
+</html>

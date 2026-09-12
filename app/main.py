@@ -66,6 +66,15 @@ def serve_student_ui():
     return {"message": f"Welcome to {settings.app_name}"}
 
 
+@app.get("/preview", include_in_schema=False)
+def serve_preview_ui():
+    """Serve the EasePrint restored preview UI."""
+    preview_path = os.path.join(static_dir, "preview_easeprint.html")
+    if os.path.exists(preview_path):
+        return FileResponse(preview_path)
+    return {"message": "Preview file not found"}
+
+
 # Routers — each feature area gets its own router
 app.include_router(health_router, tags=["Health"])
 app.include_router(documents_router, prefix="/documents", tags=["Documents"])
