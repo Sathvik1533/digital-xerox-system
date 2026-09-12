@@ -157,13 +157,50 @@
 
 ---
 
+## Vertical Slice 6: Complete Student Tracking + History ✅
+- DynamoDB Single-Table Student Order Indexing:
+  - Partitioned student order mapping `PK: STUDENT#{student_id}`, `SK: ORDER#{created_at}#{order_id}`
+  - Authoritative repository query `get_orders_by_student_id(student_id: str) -> list[Order]` returning orders sorted chronologically descending
+  - Resilient fallback scan with student_id filter for test robustness
+- Domain & Schemas (`app/schemas/history.py`):
+  - `TimelineEvent`: Ordered lifecycle events with UTC timestamps, status (`COMPLETED`, `CURRENT`, `FAILED`), and event-specific metadata (token, queue position, ETA, rejection reason, payment ID)
+  - `OrderTimelineResponse`: Comprehensive status timeline inspection schema
+  - `PaymentReceipt`: Structured payment details and audit record
+  - `StudentOrderHistoryItem`: Complete order record including print config, pricing breakdown, payment receipt, live queue position, ETA, rejection reason, full status timeline, and fresh presigned S3 download URL
+- Authoritative History Service (`app/services/history_service.py`):
+  - Strictly isolated to requesting student (zero cross-student data leakage)
+  - Returns `[]` when student has no history
+  - Dynamic live queue position and ETA integration for active orders
+  - Generates time-limited presigned S3 GET URLs for secure document re-access/download
+- REST API Endpoints:
+  - `GET /orders?student_id={student_id}`: Primary query endpoint for student order history
+  - `GET /students/{student_id}/orders`: Canonical student-scoped REST resource endpoint
+  - `GET /orders/{order_id}/timeline`: Standalone lifecycle timeline inspection endpoint
+  - Route handlers for `/tracking` and `/history` serving student tracking portal
+  - Strict 400 `STUDENT_ID_REQUIRED` validation when `student_id` is omitted
+- Student Portal UI (`app/static/index.html`):
+  - Dedicated "Order Tracking & History (Slice 6)" portal tab in header navigation
+  - Student ID input with instant search and enter-key submission
+  - Filter pills: All, Active / In Queue, Ready for Pickup, Completed, Rejected / Failed
+  - Visual status timeline stepper with chronological event icons, timestamps, status badges, and descriptions
+  - 🔗 Re-download Document action button opening secure presigned S3 URL
+  - Simulated payment receipt cards with transaction references and failure details
+  - Live queue position and completion ETA banner for active print jobs
+  - Prominent operator rejection reason callout box for rejected orders
+  - Direct "Track Order in History" jump link from Step 4 Queue view
+- Automated Test Suite (`tests/test_history.py`):
+  - 13 comprehensive tests covering empty history `[]`, missing student_id rejection (400), cross-student isolation, chronological sorting, fresh presigned S3 URLs, payment receipts, payment failures, queue token & live position, operator rejection reasons, complete status timeline across all 8 lifecycle states, 404 handling, endpoint alias parity, and static UI routes
+  - 126/126 total project tests passing
+
+---
+
 ### Vertical slices planned (awaiting approval)
 1. Document Upload: Student UI → FastAPI → S3 → DynamoDB → UI ✅
 2. Print Config + Order Creation: → validation → pricing → DynamoDB ✅
 3. Simulated Payment: → SUCCESS/FAILURE → DynamoDB ✅
 4. Token + Queue + ETA: → token/queue/ETA → DynamoDB ✅
 5. Staff Processing: Staff UI → accept/reject/process/READY ✅
-6. Student Tracking + History (Awaiting approval)
-7. Full End-to-End Validation
+6. Student Tracking + History: → history/timeline/presigned S3/UI ✅
+7. Full End-to-End Validation (Awaiting approval)
 8. Dockerization
 9. AWS Deployment (guided)
