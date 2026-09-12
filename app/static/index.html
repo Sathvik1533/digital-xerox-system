@@ -5,65 +5,65 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Digital Xerox &amp; Stationery System — Institutional Campus Print Operations</title>
   
-  <!-- Premium Institutional Typography: Instrument Serif + DM Mono + System UI -->
+  <!-- Engineered Display & UI Typography: Plus Jakarta Sans + Inter + JetBrains Mono -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=DM+Mono:ital,wght@0,300;0,400;0,500;1,400&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:ital,wght@0,400;0,500;0,600;1,400&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap" rel="stylesheet">
   
   <!-- Lucide Icons CDN with resilient offline inline SVG engine -->
   <script src="https://unpkg.com/lucide@latest"></script>
 
   <style>
     /* ==========================================================================
-       SYSTEM C: PARCHMENT INTELLIGENCE DESIGN SYSTEM
-       Single Source of Truth: DESIGN-BIBLE.md Part 2 (System C) & INTERACTION-PATTERNS.md
-       Aged Blueprint + Telegraph + Institutional Scientific Instrument
-       Strict Light Palette: Parchment, Vellum, Aged White, Limestone, Deep Ink, Old Gold
-       Zero Black/Dark Mode • WCAG AAA Contrast Calibrated
+       EASEPRINT LIGHT & BLUE-LED DESIGN SYSTEM
+       Single Source of Truth: DESIGN.md & docs/design/
+       Autonomous Campus Print Operations
+       Strict Light Palette: Cool White, Ice Blue, Blue-Gray Mist, Laser Electric Blue, Cyan
+       Zero Black/Dark Mode • Zero Parchment/Beige • WCAG AAA Contrast Calibrated
        ========================================================================== */
     :root {
-      /* Base Canvas & Paper Surfaces (System C Specification) */
-      --parchment: #F7F3EB;          /* Canvas page backdrop */
-      --vellum: #EDE8DC;             /* Warm vellum / secondary containers */
-      --aged-white: #FAF8F4;         /* Crisp archival paper card surface */
+      /* Base Canvas & Paper Surfaces (Permitted Background Families ONLY) */
+      --parchment: #F8FAFC;          /* Canvas page backdrop (Cool White) */
+      --vellum: #F1F5F9;             /* Secondary containers / tabs (Blue-Gray Mist) */
+      --aged-white: #FFFFFF;         /* Crisp white card surface */
       --surface-elevated: #FFFFFF;   /* Elevated panels & modal sheets */
-      --surface-inset: #F4EFE6;      /* Tactile inset channel */
+      --surface-inset: #F1F5F9;      /* Tactile inset channel (Blue-gray mist) */
 
       /* Structural Linework & Borders */
-      --limestone: #D9D2C4;          /* Refined 1px architectural rule */
-      --slate: #B8B0A0;              /* Structural dividers & strong rules */
+      --limestone: #E2E8F0;          /* Refined 1px architectural rule */
+      --slate: #CBD5E1;              /* Structural dividers & strong rules */
       --rule-subtle: var(--limestone);
       --rule-strong: var(--slate);
 
       /* Typography & Ink Tokens (Strictly Never Pure #000) */
-      --ink: #1C1A16;                /* Deep warm espresso ink (15.8:1 contrast AAA) */
-      --ink-mid: #3D3A34;            /* Primary body ink (10.1:1 contrast AAA) */
-      --ink-light: #5C5850;          /* Secondary text (6.2:1 contrast AA) */
-      --fieldstone: #7A7264;         /* Captions & metadata */
+      --ink: #0F172A;                /* Deep aerospace navy ink (17.8:1 contrast AAA) */
+      --ink-mid: #1E293B;            /* Primary body ink (14.8:1 contrast AAA) */
+      --ink-light: #475569;          /* Secondary text (7.6:1 contrast AAA) */
+      --fieldstone: #64748B;         /* Captions & metadata (4.77:1 contrast AA) */
 
-      /* Interactive Accent: Burnished Old Gold / Institutional Brass (Max 10% Usage) */
-      --accent: #8B6914;             /* Old gold accent */
-      --accent-warm: #A07820;        /* Warm gold hover */
-      --accent-glow: rgba(196, 151, 26, 0.22); /* Focus ring pulse */
-      --accent-surface: #F9F3E5;     /* Delicate golden parchment wash */
-      --accent-border: #E5D5AA;      /* Accent rule */
+      /* Interactive Accent: Electric Blue & Cyan (Light & Blue-Led Mandate) */
+      --accent: #2563EB;             /* Laser electric blue accent */
+      --accent-warm: #1D4ED8;        /* Blue hover */
+      --accent-glow: rgba(37, 99, 235, 0.22); /* Focus ring pulse */
+      --accent-surface: #EFF6FF;     /* Pale ice-blue wash */
+      --accent-border: #BFDBFE;      /* Light blue accent rule */
 
       /* Semantic Status Tokens (Institutional Restraint) */
-      --status-pass: #2D6A3F;        /* Reconciled emerald (6.1:1 AAA) */
-      --status-pass-bg: #EBF4EE;
-      --status-pass-border: #A3CFB4;
+      --status-pass: #059669;        /* Reconciled emerald (6.1:1 AAA) */
+      --status-pass-bg: #ECFDF5;
+      --status-pass-border: #A7F3D0;
 
-      --status-warn: #8B5E14;        /* Burnished amber (5.3:1 AA) */
-      --status-warn-bg: #F9F0E0;
-      --status-warn-border: #E8D3A7;
+      --status-warn: #D97706;        /* Telemetry amber (5.3:1 AA) */
+      --status-warn-bg: #FFFBEB;
+      --status-warn-border: #FDE68A;
 
-      --status-fail: #8B2020;        /* Oxide red (6.4:1 AAA) */
-      --status-fail-bg: #F4EBEB;
-      --status-fail-border: #E0B4B4;
+      --status-fail: #DC2626;        /* Laser error red (6.4:1 AAA) */
+      --status-fail-bg: #FEF2F2;
+      --status-fail-border: #FECACA;
 
-      --status-info: #1D4ED8;        /* Telemetry blue (6.5:1 AAA) */
-      --status-info-bg: #EFF6FF;
-      --status-info-border: #BFDBFE;
+      --status-info: #0284C7;        /* Telemetry sky blue (6.5:1 AAA) */
+      --status-info-bg: #F0F9FF;
+      --status-info-border: #BAE6FD;
 
       /* Backward Compatibility Variables */
       --bg: var(--parchment);
@@ -80,20 +80,20 @@
       --warning: var(--status-warn);
       --warning-bg: var(--status-warn-bg);
 
-      /* Radius Tokens (DESIGN-BIBLE Part 4: 4px tags, 8px inputs/cards, 12px modals) */
+      /* Radius Tokens (4px tags, 8px inputs/cards, 12px modals) */
       --radius-sm: 4px;
       --radius-md: 8px;
       --radius-lg: 12px;
       --radius-full: 9999px;
       --radius: var(--radius-md);
 
-      /* Tactile Layered Paper Shadows */
-      --shadow-sm: 0 1px 2px rgba(28, 26, 22, 0.04);
-      --shadow-card: 0 1px 3px rgba(28, 26, 22, 0.04), 0 6px 16px -2px rgba(28, 26, 22, 0.05);
-      --shadow-hover: 0 3px 6px -1px rgba(28, 26, 22, 0.05), 0 10px 24px -3px rgba(28, 26, 22, 0.07);
-      --shadow-modal: 0 20px 48px -8px rgba(28, 26, 22, 0.18), 0 0 1px rgba(28, 26, 22, 0.12);
+      /* Tactile Layered Paper Shadows in Deep Aerospace Navy */
+      --shadow-sm: 0 1px 2px rgba(15, 23, 42, 0.04);
+      --shadow-card: 0 1px 3px rgba(15, 23, 42, 0.04), 0 6px 16px -2px rgba(15, 23, 42, 0.05);
+      --shadow-hover: 0 3px 6px -1px rgba(15, 23, 42, 0.05), 0 10px 24px -3px rgba(15, 23, 42, 0.07);
+      --shadow-modal: 0 20px 48px -8px rgba(15, 23, 42, 0.18), 0 0 1px rgba(15, 23, 42, 0.12);
 
-      /* Validated Easing Tokens (DESIGN-BIBLE Part 5) */
+      /* Validated Easing Tokens */
       --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
       --ease-in: cubic-bezier(0.7, 0, 0.84, 0);
       --ease-in-out: cubic-bezier(0.83, 0, 0.17, 1);
@@ -113,11 +113,11 @@
     }
 
     body {
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
       background-color: var(--parchment);
       background-image: 
-        radial-gradient(ellipse 65% 35% at 50% -8%, rgba(139, 105, 20, 0.04), transparent 70%),
-        linear-gradient(to bottom, #F7F3EB 0%, #F2ECE0 100%);
+        radial-gradient(ellipse 65% 35% at 50% -8%, rgba(2, 132, 199, 0.04), transparent 70%),
+        linear-gradient(to bottom, #F8FAFC 0%, #F1F5F9 100%);
       background-attachment: fixed;
       color: var(--ink-mid);
       min-height: 100vh;
@@ -134,29 +134,29 @@
       max-width: 920px;
     }
 
-    /* Editorial Display Typography (Instrument Serif for Headings) */
+    /* High-Performance Display Typography (Plus Jakarta Sans for Headings) */
     h1 {
-      font-family: "Instrument Serif", Georgia, "Times New Roman", serif;
+      font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
       font-size: clamp(2.2rem, 4.5vw, 3.1rem);
-      font-weight: 400;
-      letter-spacing: -0.015em;
+      font-weight: 700;
+      letter-spacing: -0.025em;
       color: var(--ink);
-      line-height: 1.12;
+      line-height: 1.15;
       margin-bottom: 0.6rem;
       text-wrap: balance;
     }
 
     .card-title {
-      font-family: "Instrument Serif", Georgia, serif;
-      font-size: 1.5rem;
-      font-weight: 400;
+      font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      font-size: 1.35rem;
+      font-weight: 600;
       color: var(--ink);
       margin-bottom: 1.25rem;
       display: flex;
       align-items: center;
       justify-content: space-between;
       gap: 12px;
-      letter-spacing: -0.01em;
+      letter-spacing: -0.015em;
     }
 
     .card-title span:first-child {
@@ -165,9 +165,9 @@
       gap: 8px;
     }
 
-    /* Numbers & Metrics (DM Mono Tabular Precision) */
+    /* Numbers & Metrics (JetBrains Mono & Tabular Precision) */
     .mono, .tabular-num, .quote-amount, .quote-paise, .quote-stat-val, .result-value, .token-display, .staff-token-badge, pre {
-      font-family: "DM Mono", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      font-family: 'JetBrains Mono', 'DM Mono', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
       font-variant-numeric: tabular-nums;
       font-feature-settings: "tnum" 1;
     }
@@ -257,7 +257,7 @@
       padding: 5px;
       gap: 5px;
       margin-bottom: 2rem;
-      box-shadow: inset 0 1px 2px rgba(28, 26, 22, 0.04);
+      box-shadow: inset 0 1px 2px rgba(15, 23, 42, 0.04);
     }
 
     .portal-tab {
@@ -293,7 +293,7 @@
       color: var(--ink);
       font-weight: 600;
       border-color: var(--limestone);
-      box-shadow: var(--shadow-sm), 0 2px 8px rgba(28, 26, 22, 0.04);
+      box-shadow: var(--shadow-sm), 0 2px 8px rgba(15, 23, 42, 0.04);
     }
 
     .portal-tab i, .portal-tab svg {
@@ -392,7 +392,7 @@
       background: var(--accent);
       color: #FFFFFF;
       border-color: var(--accent);
-      box-shadow: 0 0 0 3px rgba(139, 105, 20, 0.18);
+      box-shadow: 0 0 0 3px var(--accent-glow);
       transform: scale(1.08);
     }
 
@@ -464,7 +464,7 @@
       color: var(--ink);
       font-family: inherit;
       font-size: 0.92rem;
-      box-shadow: inset 0 1px 2px rgba(28, 26, 22, 0.03);
+      box-shadow: inset 0 1px 2px rgba(15, 23, 42, 0.03);
       transition: background-color var(--duration-fast) var(--ease-out),
                   border-color var(--duration-fast) var(--ease-out),
                   box-shadow var(--duration-fast) var(--ease-out);
@@ -474,7 +474,7 @@
       outline: none;
       background: #FFFFFF;
       border-color: var(--accent);
-      box-shadow: 0 0 0 3px var(--accent-glow), inset 0 1px 2px rgba(28, 26, 22, 0.02);
+      box-shadow: 0 0 0 3px var(--accent-glow), inset 0 1px 2px rgba(15, 23, 42, 0.02);
     }
 
     /* Dropzone: Tactile Paper Deposit Slot */
@@ -607,32 +607,32 @@
       pointer-events: none;
     }
 
-    /* Primary Old Gold Accent Button */
+    /* Primary Laser Electric Blue Accent Button */
     .btn-primary {
       background: var(--accent);
       color: #FFFFFF;
-      border: 1px solid #755710;
-      box-shadow: 0 1px 3px rgba(139, 105, 20, 0.25), inset 0 1px 0 rgba(255, 255, 255, 0.2);
+      border: 1px solid #1D4ED8;
+      box-shadow: 0 1px 3px rgba(37, 99, 235, 0.25), inset 0 1px 0 rgba(255, 255, 255, 0.2);
     }
 
     .btn-primary:hover {
       background: var(--accent-warm);
-      box-shadow: 0 3px 10px rgba(139, 105, 20, 0.3);
+      box-shadow: 0 3px 10px rgba(37, 99, 235, 0.3);
       transform: translateY(-1px);
     }
 
-    /* Authoritative Deep Espresso Action Button */
+    /* Authoritative Deep Indigo Action Button */
     .btn-action {
       background: var(--ink);
       color: #FFFFFF;
-      border: 1px solid #14120F;
-      box-shadow: 0 1px 3px rgba(28, 26, 22, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.15);
+      border: 1px solid #0F172A;
+      box-shadow: 0 1px 3px rgba(15, 23, 42, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.15);
       width: 100%;
     }
 
     .btn-action:hover {
-      background: #2E2A24;
-      box-shadow: 0 4px 12px rgba(28, 26, 22, 0.25);
+      background: #1E293B;
+      box-shadow: 0 4px 12px rgba(15, 23, 42, 0.25);
       transform: translateY(-1px);
     }
 
@@ -718,7 +718,7 @@
       border-radius: var(--radius-md);
       padding: 1.5rem;
       margin: 1.5rem 0;
-      box-shadow: inset 0 1px 2px rgba(28, 26, 22, 0.03);
+      box-shadow: inset 0 1px 2px rgba(15, 23, 42, 0.03);
     }
 
     .quote-header {
@@ -795,7 +795,7 @@
       background: var(--surface-inset);
       border: 1px solid var(--limestone);
       border-radius: var(--radius-md);
-      box-shadow: inset 0 1px 2px rgba(28, 26, 22, 0.03);
+      box-shadow: inset 0 1px 2px rgba(15, 23, 42, 0.03);
       animation: portal-enter var(--duration-enter) var(--ease-out);
     }
 
@@ -1157,7 +1157,7 @@
       background: var(--accent);
       border-color: var(--accent);
       color: #FFFFFF;
-      box-shadow: 0 0 0 3px rgba(139, 105, 20, 0.18);
+      box-shadow: 0 0 0 3px var(--accent-glow);
     }
 
     .timeline-content-card {
@@ -1265,7 +1265,7 @@
     .modal-overlay {
       position: fixed;
       top: 0; left: 0; right: 0; bottom: 0;
-      background: rgba(28, 26, 22, 0.45);
+      background: rgba(15, 23, 42, 0.45);
       backdrop-filter: blur(4px);
       display: flex;
       align-items: center;
