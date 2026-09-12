@@ -430,14 +430,52 @@
       font-size: 0.8rem;
       color: var(--text-muted);
     }
+    .token-hero {
+      background: radial-gradient(circle at top, rgba(56, 189, 248, 0.18) 0%, rgba(15, 23, 42, 0.95) 80%);
+      border: 2px solid rgba(56, 189, 248, 0.45);
+      border-radius: 12px;
+      padding: 1.75rem 1.25rem;
+      text-align: center;
+      margin: 1.25rem 0;
+      box-shadow: 0 0 25px rgba(56, 189, 248, 0.15);
+    }
+    .token-label {
+      font-size: 0.8rem;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: var(--text-muted);
+      margin-bottom: 8px;
+    }
+    .token-display {
+      font-size: 3.2rem;
+      font-weight: 800;
+      font-family: "JetBrains Mono", monospace;
+      color: var(--primary);
+      letter-spacing: 0.05em;
+      text-shadow: 0 0 24px rgba(56, 189, 248, 0.4);
+      line-height: 1.1;
+    }
+    .queue-position-banner {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      margin-top: 12px;
+      padding: 6px 18px;
+      border-radius: 9999px;
+      font-size: 0.95rem;
+      font-weight: 600;
+      background: rgba(52, 211, 153, 0.15);
+      color: var(--success);
+      border: 1px solid rgba(52, 211, 153, 0.3);
+    }
   </style>
 </head>
 <body>
   <div class="container">
     <header>
-      <div class="badge">Slice 1: Document Upload • Slice 2: Print Options & Order Creation</div>
+      <div class="badge">Slice 1: Upload • Slice 2: Config • Slice 3: Payment • Slice 4: Queue & Token</div>
       <h1>Digital Xerox & Stationery System</h1>
-      <p class="subtitle">Modular monolith backend with FastAPI, Amazon S3 (Document storage), and Amazon DynamoDB (Order persistence).</p>
+      <p class="subtitle">Modular monolith backend with FastAPI, Amazon S3 (Document storage), and Amazon DynamoDB (Order & Queue persistence).</p>
     </header>
 
     <div class="stepper">
@@ -734,6 +772,84 @@
       </div>
     </div>
 
+    <!-- STEP 4: OPERATIONAL QUEUE & TOKEN -->
+    <div class="card" id="step4Card">
+      <div class="card-title">
+        <span>Step 4: Operational Queue & Token (Slice 4)</span>
+        <div class="integration-tags">
+          <span class="tag tag-status" id="queueStatusBadge">READY_TO_QUEUE</span>
+          <span class="tag tag-dynamo">PK: QUEUE#ACTIVE</span>
+        </div>
+      </div>
+      <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 1.25rem;">
+        Successfully paid orders enter the operational print queue. The backend atomically issues a clean, sequential token (e.g. X-101) and calculates deterministic ETA based on active queue depth and pages printed ahead.
+      </p>
+
+      <div class="form-group">
+        <label for="queueOrderId">Order ID to Queue</label>
+        <input type="text" id="queueOrderId" placeholder="Complete Step 3 payment above or paste Order ID (ORD-...) here">
+      </div>
+
+      <div style="display: flex; gap: 10px; margin-bottom: 1rem;">
+        <button class="btn btn-action" id="enterQueueBtn" style="flex: 1;">
+          <span id="queueBtnText">Admit Order to Queue (POST /orders/{order_id}/queue)</span>
+        </button>
+        <button class="btn btn-outline" id="refreshQueueBtn" type="button">
+          <span id="refreshBtnText">↻ Refresh Live ETA & Position</span>
+        </button>
+      </div>
+
+      <!-- QUEUE RESULT SECTION -->
+      <div class="result-section" id="queueResultSection" style="display: none;">
+        <div class="token-hero">
+          <div class="token-label">Issued Sequential Print Token</div>
+          <div class="token-display" id="resTokenNumber">X-101</div>
+          <div class="queue-position-banner" id="resQueuePositionBanner">
+            <span id="resQueuePositionText">You are #1 in line</span>
+          </div>
+        </div>
+
+        <div class="result-grid">
+          <div class="result-item">
+            <div class="result-label">Live Queue Position</div>
+            <div class="result-value" id="resQueuePos" style="color: var(--primary); font-weight: 700;">-</div>
+          </div>
+          <div class="result-item">
+            <div class="result-label">Estimated Ready Time (ETA)</div>
+            <div class="result-value" id="resQueueEta" style="color: var(--success); font-weight: 700;">-</div>
+          </div>
+          <div class="result-item">
+            <div class="result-label">Estimated Wait Remaining</div>
+            <div class="result-value" id="resQueueWait">-</div>
+          </div>
+          <div class="result-item">
+            <div class="result-label">Active Queue Depth</div>
+            <div class="result-value" id="resQueueDepth">-</div>
+          </div>
+          <div class="result-item" style="grid-column: span 2;">
+            <div class="result-label">DynamoDB Partition & Keys</div>
+            <div class="result-value" id="resQueueDdbKey" style="font-size: 0.8rem; font-family: 'JetBrains Mono', monospace;">-</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- VERIFY QUEUE IN DYNAMODB -->
+    <div class="card">
+      <div class="card-title">
+        <span>Verify Queue Status in DynamoDB</span>
+        <span style="font-size: 0.8rem; color: var(--text-muted); font-weight: 400;">GET /orders/{order_id}/queue</span>
+      </div>
+      <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 1rem;">
+        Query live queue position, deterministic ETA, and active queue length directly from DynamoDB via the backend API.
+      </p>
+      <div class="query-section">
+        <input type="text" id="queryQueueOrderId" placeholder="Paste Order ID here...">
+        <button class="btn btn-outline" id="queryQueueBtn" type="button">Fetch Queue Status</button>
+      </div>
+      <pre id="queryQueueResult" style="display: none;"></pre>
+    </div>
+
     <!-- VERIFY PAYMENT IN DYNAMODB -->
     <div class="card">
       <div class="card-title">
@@ -780,7 +896,7 @@
     </div>
 
     <footer>
-      Digital Xerox & Stationery System • Vertical Slice 3 • FastAPI + DynamoDB + S3
+      Digital Xerox & Stationery System • Vertical Slice 4 • FastAPI + DynamoDB + S3
     </footer>
   </div>
 
@@ -861,6 +977,29 @@
     const queryPaymentOrderId = document.getElementById("queryPaymentOrderId");
     const queryPaymentBtn = document.getElementById("queryPaymentBtn");
     const queryPaymentResult = document.getElementById("queryPaymentResult");
+
+    // Elements - Step 4 Queue & Token
+    const step4Indicator = document.getElementById("step4Indicator");
+    const queueOrderId = document.getElementById("queueOrderId");
+    const enterQueueBtn = document.getElementById("enterQueueBtn");
+    const queueBtnText = document.getElementById("queueBtnText");
+    const refreshQueueBtn = document.getElementById("refreshQueueBtn");
+    const refreshBtnText = document.getElementById("refreshBtnText");
+    const queueStatusBadge = document.getElementById("queueStatusBadge");
+    const queueResultSection = document.getElementById("queueResultSection");
+    const resTokenNumber = document.getElementById("resTokenNumber");
+    const resQueuePositionBanner = document.getElementById("resQueuePositionBanner");
+    const resQueuePositionText = document.getElementById("resQueuePositionText");
+    const resQueuePos = document.getElementById("resQueuePos");
+    const resQueueEta = document.getElementById("resQueueEta");
+    const resQueueWait = document.getElementById("resQueueWait");
+    const resQueueDepth = document.getElementById("resQueueDepth");
+    const resQueueDdbKey = document.getElementById("resQueueDdbKey");
+
+    // Elements - Query Queue
+    const queryQueueOrderId = document.getElementById("queryQueueOrderId");
+    const queryQueueBtn = document.getElementById("queryQueueBtn");
+    const queryQueueResult = document.getElementById("queryQueueResult");
 
     let selectedFile = null;
     let latestQuote = null;
@@ -1176,8 +1315,10 @@
           resOrderStatus.textContent = "PAID";
           step3Indicator.classList.remove("active");
           step3Indicator.classList.add("completed");
-          const step4 = document.getElementById("step4Indicator");
-          if (step4) step4.classList.add("active");
+          if (step4Indicator) step4Indicator.classList.add("active");
+          queueOrderId.value = data.order_id;
+          queryQueueOrderId.value = data.order_id;
+          admitOrderToQueue(data.order_id);
         } else {
           showAlert(`Simulated payment failed: ${data.failure_reason || "Simulation failure"}. You may retry payment.`, "error");
           paymentStatusBadge.textContent = "PAYMENT_FAILED";
@@ -1258,6 +1399,147 @@
       } catch (err) {
         queryResult.style.display = "block";
         queryResult.textContent = "Error querying DynamoDB: " + err.message;
+      }
+    });
+
+    // --- Step 4 Queue Management & Helper Functions ---
+    function renderQueueData(data) {
+      resTokenNumber.textContent = data.token_number || "-";
+
+      const pos = Number(data.queue_position);
+      if (pos > 0) {
+        resQueuePositionBanner.style.background = "rgba(52, 211, 153, 0.15)";
+        resQueuePositionBanner.style.color = "var(--success)";
+        resQueuePositionText.textContent = pos === 1 ? "★ You are #1 in line (Next up!)" : `You are #${pos} in line`;
+        resQueuePos.textContent = `#${pos} of ${data.active_queue_length} active`;
+      } else {
+        resQueuePositionBanner.style.background = "rgba(56, 189, 248, 0.15)";
+        resQueuePositionBanner.style.color = "var(--primary)";
+        resQueuePositionText.textContent = `Status: ${data.status}`;
+        resQueuePos.textContent = `Completed or Processing`;
+      }
+
+      const etaDate = new Date(data.estimated_completion_at);
+      const etaTimeStr = isNaN(etaDate.getTime()) ? data.estimated_completion_at : etaDate.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+      resQueueEta.textContent = etaTimeStr;
+
+      const waitMins = Number(data.estimated_wait_minutes);
+      resQueueWait.textContent = `~${waitMins.toFixed(1)} mins (${data.estimated_wait_seconds}s)`;
+      resQueueDepth.textContent = `${data.active_queue_length} order(s) ahead/in queue`;
+      resQueueDdbKey.textContent = `PK: QUEUE#ACTIVE / SK: ORDER#${data.order_id} • PK: ORDER#${data.order_id}`;
+
+      queueStatusBadge.textContent = data.status || "QUEUED";
+      queueStatusBadge.className = "tag tag-success";
+      queueResultSection.style.display = "block";
+    }
+
+    async function admitOrderToQueue(orderId) {
+      if (!orderId) return;
+      enterQueueBtn.disabled = true;
+      queueBtnText.textContent = "Admitting to queue...";
+
+      try {
+        const res = await fetch(`/orders/${orderId}/queue`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" }
+        });
+        const data = await res.json();
+
+        if (!res.ok) {
+          if (data.detail && data.detail.error && data.detail.error.code === "ORDER_ALREADY_QUEUED") {
+            // If already queued, retrieve live queue status
+            await refreshOrderQueue(orderId);
+            enterQueueBtn.disabled = false;
+            queueBtnText.textContent = "Admit Order to Queue (POST /orders/{order_id}/queue)";
+            return;
+          }
+          const msg = data.detail && data.detail.error ? data.detail.error.message : (data.detail || "Queue admission failed");
+          showAlert(msg, "error");
+          enterQueueBtn.disabled = false;
+          queueBtnText.textContent = "Admit Order to Queue (POST /orders/{order_id}/queue)";
+          return;
+        }
+
+        renderQueueData(data);
+        showAlert(`Order ${data.order_id} admitted to queue! Token: ${data.token_number}, Position: #${data.queue_position}.`, "success");
+        enterQueueBtn.disabled = false;
+        queueBtnText.textContent = "Admit Order to Queue (POST /orders/{order_id}/queue)";
+      } catch (err) {
+        showAlert("Network error during queue admission: " + err.message, "error");
+        enterQueueBtn.disabled = false;
+        queueBtnText.textContent = "Admit Order to Queue (POST /orders/{order_id}/queue)";
+      }
+    }
+
+    async function refreshOrderQueue(orderId) {
+      if (!orderId) {
+        showAlert("Please enter an Order ID to check queue status.", "error");
+        return;
+      }
+      refreshQueueBtn.disabled = true;
+      refreshBtnText.textContent = "Refreshing...";
+
+      try {
+        const res = await fetch(`/orders/${orderId}/queue`);
+        const data = await res.json();
+
+        if (!res.ok) {
+          const msg = data.detail && data.detail.error ? data.detail.error.message : (data.detail || "Queue lookup failed");
+          showAlert(msg, "error");
+          refreshQueueBtn.disabled = false;
+          refreshBtnText.textContent = "↻ Refresh Live ETA & Position";
+          return;
+        }
+
+        renderQueueData(data);
+        showAlert(`Live queue updated for ${orderId}: Token ${data.token_number}, #${data.queue_position} in line.`, "success");
+        refreshQueueBtn.disabled = false;
+        refreshBtnText.textContent = "↻ Refresh Live ETA & Position";
+      } catch (err) {
+        showAlert("Network error refreshing queue: " + err.message, "error");
+        refreshQueueBtn.disabled = false;
+        refreshBtnText.textContent = "↻ Refresh Live ETA & Position";
+      }
+    }
+
+    // Step 4 Event Listeners
+    enterQueueBtn.addEventListener("click", () => {
+      const orderId = queueOrderId.value.trim();
+      if (!orderId) {
+        showAlert("Please specify an Order ID to admit to the queue.", "error");
+        queueOrderId.focus();
+        return;
+      }
+      hideAlert();
+      admitOrderToQueue(orderId);
+    });
+
+    refreshQueueBtn.addEventListener("click", () => {
+      const orderId = queueOrderId.value.trim();
+      if (!orderId) {
+        showAlert("Please specify an Order ID to refresh queue status.", "error");
+        queueOrderId.focus();
+        return;
+      }
+      hideAlert();
+      refreshOrderQueue(orderId);
+    });
+
+    // --- Query Queue in DynamoDB ---
+    queryQueueBtn.addEventListener("click", async () => {
+      const orderId = queryQueueOrderId.value.trim();
+      if (!orderId) {
+        showAlert("Please enter an Order ID to query queue status.", "error");
+        return;
+      }
+      try {
+        const res = await fetch(`/orders/${orderId}/queue`);
+        const data = await res.json();
+        queryQueueResult.style.display = "block";
+        queryQueueResult.textContent = JSON.stringify(data, null, 2);
+      } catch (err) {
+        queryQueueResult.style.display = "block";
+        queryQueueResult.textContent = "Error querying DynamoDB queue: " + err.message;
       }
     });
   </script>
