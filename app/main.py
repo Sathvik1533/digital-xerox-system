@@ -22,6 +22,7 @@ from app.api.orders import router as orders_router
 from app.api.pricing import router as pricing_router
 from app.api.payments import router as payments_router
 from app.api.queue import router as queue_router
+from app.api.staff import router as staff_router
 
 settings = get_settings()
 
@@ -53,8 +54,9 @@ if os.path.exists(static_dir):
 
 @app.get("/", include_in_schema=False)
 @app.get("/upload", include_in_schema=False)
+@app.get("/staff", include_in_schema=False)
 def serve_student_ui():
-    """Serve the student document upload UI."""
+    """Serve the student document upload & staff operations UI."""
     index_path = os.path.join(static_dir, "index.html")
     if os.path.exists(index_path):
         return FileResponse(index_path)
@@ -68,6 +70,4 @@ app.include_router(pricing_router, prefix="/pricing", tags=["Pricing"])
 app.include_router(orders_router, prefix="/orders", tags=["Orders"])
 app.include_router(payments_router, prefix="/orders", tags=["Payments"])
 app.include_router(queue_router, prefix="/orders", tags=["Queue"])
-
-# Placeholder: future routers registered here as slices are implemented
-# app.include_router(staff_router, prefix="/staff", tags=["Staff"])
+app.include_router(staff_router, prefix="/staff", tags=["Staff"])
