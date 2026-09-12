@@ -1,7 +1,9 @@
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException, Query, status
+from app.schemas.history import OrderTimelineResponse, StudentOrderHistoryItem
 from app.schemas.order import CreateOrderRequest, OrderResponse
 from app.schemas.staff import RejectOrderRequest
 from app.services.document_service import DocumentNotFoundError
+from app.services.history_service import HistoryService, StudentIdRequiredError
 from app.services.order_service import OrderNotFoundError, OrderService, OrderValidationError
 
 router = APIRouter()
@@ -9,6 +11,10 @@ router = APIRouter()
 
 def get_order_service() -> OrderService:
     return OrderService()
+
+
+def get_history_service() -> HistoryService:
+    return HistoryService()
 
 
 @router.post(
@@ -67,6 +73,89 @@ def create_order(
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail={"error": {"code": "ORDER_CREATION_FAILED", "message": str(e)}},
+        )
+
+
+@router.get(
+    "",
+    response_model=list[StudentOrderHistoryItem],
+    status_code=status.HTTP_200_OK,
+    summary="Query orders by student_id for student tracking and history",
+)
+@router.get(
+    "/",
+    response_model=list[StudentOrderHistoryItem],
+    status_code=status.HTTP_200_OK,
+    include_in_schema=False,
+)
+def list_orders(
+    student_id: str | None = Query(default=None, description="Student ID to query orders for"),
+    service: HistoryService = Depends(get_history_service),
+):
+    """
+    Vertical Slice 6: Query orders by student_id.
+    - Returns chronologically descending orders for the requested student.
+    - Exposes complete timeline, payment receipt, live queue position, ETA, and fresh presigned document URL.
+    - Returns [] when no orders exist for the student.
+    - Returns 400 STUDENT_ID_REQUIRED if student_id is omitted (prevents cross-student data leakage).
+    """
+    if not student_id or not student_id.strip():
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail={"error": {"code": "STUDENT_ID_REQUIRED", "message": "student_id parameter is required to access student orders."}},
+        )
+    try:
+        return service.get_student_order_history(student_id.strip())
+    except StudentIdRequiredError as e:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail={"error": {"code": e.code, "message": e.message}},
+        )
+    except Exception as e:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail={"error": {"code": "HISTORY_QUERY_FAILED", "message": str(e)}},
+        )
+
+
+@router.get(
+    "/{order_id}/timeline",
+    response_model=OrderTimelineResponse,
+    status_code=status.HTTP_200_OK,
+    summary="Get complete status timeline for an order",
+)
+@router.get(
+    "/{order_id}/timeline/",
+    response_model=OrderTimelineResponse,
+    status_code=status.HTTP_200_OK,
+    include_in_schema=False,
+)
+def get_order_timeline(
+    order_id: str,
+    service: HistoryService = Depends(get_history_service),
+):
+    """
+    Vertical Slice 6: Complete Status Timeline for an order.
+    Returns ordered lifecycle events with timestamps:
+    - CREATED / DOCUMENT_UPLOADED
+    - PAYMENT_PENDING / PAID / PAYMENT_FAILED
+    - QUEUED (with token, position, ETA)
+    - PROCESSING
+    - READY (pickup ready)
+    - COMPLETED
+    - REJECTED (with rejection reason)
+    """
+    try:
+        return service.get_order_timeline(order_id)
+    except OrderNotFoundError as e:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail={"error": {"code": e.code, "message": e.message}},
+        )
+    except Exception as e:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail={"error": {"code": "TIMELINE_QUERY_FAILED", "message": str(e)}},
         )
 
 
