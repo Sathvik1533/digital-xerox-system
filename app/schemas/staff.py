@@ -7,7 +7,10 @@ class RejectOrderRequest(BaseModel):
     """Request payload for staff rejecting an order."""
     model_config = ConfigDict(extra="ignore")
 
-    rejection_reason: str = Field(..., description="Formal mandatory reason for rejecting the print order")
+    rejection_reason: str | None = Field(
+        default=None,
+        description="Formal mandatory reason for rejecting the print order",
+    )
 
 
 class StaffOrderResponse(BaseModel):
@@ -17,6 +20,7 @@ class StaffOrderResponse(BaseModel):
     order_id: str
     token_number: str | None = None
     status: str
+    payment_status: str | None = Field(default="SUCCESS", description="Payment status of the order")
     student_id: str
     document_id: str
     document_key: str | None = None
@@ -30,3 +34,4 @@ class StaffOrderResponse(BaseModel):
     estimated_completion_at: datetime | None = None
     created_at: datetime
     updated_at: datetime
+

@@ -77,6 +77,7 @@ class StaffService:
             order_id=order.order_id,
             token_number=order.token_number,
             status=order.status,
+            payment_status=order.payment_status,
             student_id=order.student_id,
             document_id=order.document_id,
             document_key=order.document_key,
