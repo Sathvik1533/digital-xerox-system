@@ -3,752 +3,1120 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Digital Xerox & Stationery — Print Configuration & Ordering</title>
+  <title>Digital Xerox &amp; Stationery System — High-Craft Campus Print Operations</title>
+  
+  <!-- Premium Editorial Typography -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&family=JetBrains+Mono:wght@400;500;600;700&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600;1,6..72,400&display=swap" rel="stylesheet">
+  
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+
   <style>
+    /* ==========================================================================
+       WARM LIGHT GALLERY / PAPER INTELLIGENCE DESIGN SYSTEM
+       Strict Light Palette — Alabaster, Warm Cream, Deep Espresso Ink, Brass & Emerald
+       WCAG AAA / AA Verified via Coolors Contrast Standards
+       ========================================================================== */
     :root {
-      --bg: #0f172a;
-      --card-bg: #1e293b;
-      --card-border: #334155;
-      --primary: #38bdf8;
-      --primary-hover: #0284c7;
-      --accent: #818cf8;
-      --text: #f8fafc;
-      --text-muted: #94a3b8;
-      --success: #34d399;
-      --success-bg: rgba(52, 211, 153, 0.1);
-      --error: #f87171;
-      --error-bg: rgba(248, 113, 113, 0.1);
-      --warning: #fbbf24;
-      --warning-bg: rgba(251, 191, 36, 0.1);
-      --radius: 12px;
+      /* Base Canvas & Paper Surfaces */
+      --canvas: #FAF8F5;            /* Warm alabaster gallery background */
+      --surface: #FFFFFF;           /* Crisp heavyweight archival paper */
+      --surface-subtle: #F5EFEB;    /* Warm vellum / mineral tone */
+      --surface-inset: #F8F5F0;     /* Inset reading channel */
+      --surface-elevated: #FFFFFF;  /* Modals and floating panels */
+
+      /* Structural Linework & Borders */
+      --rule-subtle: #E8E2D8;       /* Refined 1px paper grain rule */
+      --rule-strong: #D5CBBB;       /* Structural divider */
+      --rule-focus: #B45309;        /* Warm burnished brass focus ring */
+
+      /* Typography & Ink Tokens (Never Pure #000) */
+      --ink: #1C1917;               /* Deep warm espresso ink (15.6:1 contrast AAA) */
+      --ink-secondary: #44403C;     /* Stone 700 secondary ink (9.2:1 contrast AAA) */
+      --ink-muted: #78716C;         /* Stone 500 metadata ink (4.6:1 contrast AA) */
+      --ink-tertiary: #A8A29E;      /* Stone 400 captions & rules */
+
+      /* Interactive Accent: Burnished Brass / Old Gold */
+      --accent: #B45309;            /* Amber 700 brass accent (5.1:1 AA) */
+      --accent-hover: #92400E;      /* Amber 800 deep brass */
+      --accent-surface: #FEF3C7;    /* Delicate warm amber wash */
+      --accent-border: #FDE68A;
+
+      /* Status Semantics: Reconciled Emerald, Oxide Red, Telemetry Blue */
+      --status-success: #047857;    /* Emerald 700 (5.8:1 AA) */
+      --status-success-bg: #ECFDF5;
+      --status-success-border: #A7F3D0;
+      
+      --status-error: #B91C1C;      /* Oxide red 700 (5.9:1 AA) */
+      --status-error-bg: #FEF2F2;
+      --status-error-border: #FECACA;
+
+      --status-warning: #B45309;    /* Amber 700 (5.1:1 AA) */
+      --status-warning-bg: #FFFBEB;
+      --status-warning-border: #FDE68A;
+
+      --status-info: #1D4ED8;       /* Telemetry blue 700 (6.2:1 AA) */
+      --status-info-bg: #EFF6FF;
+      --status-info-border: #BFDBFE;
+
+      /* Legacy compatibility mappings */
+      --bg: var(--canvas);
+      --card-bg: var(--surface);
+      --card-border: var(--rule-subtle);
+      --primary: var(--accent);
+      --primary-hover: var(--accent-hover);
+      --text: var(--ink);
+      --text-muted: var(--ink-muted);
+      --success: var(--status-success);
+      --success-bg: var(--status-success-bg);
+      --error: var(--status-error);
+      --error-bg: var(--status-error-bg);
+      --warning: var(--status-warning);
+      --warning-bg: var(--status-warning-bg);
+
+      /* Radius tokens */
+      --radius-sm: 6px;
+      --radius-md: 10px;
+      --radius-lg: 16px;
+      --radius-full: 9999px;
+      --radius: var(--radius-md);
+
+      /* Multi-layered ink shadows */
+      --shadow-sm: 0 1px 2px rgba(28, 25, 23, 0.04);
+      --shadow-card: 0 1px 3px rgba(28, 25, 23, 0.03), 0 6px 18px -3px rgba(28, 25, 23, 0.05);
+      --shadow-hover: 0 4px 6px -1px rgba(28, 25, 23, 0.05), 0 12px 28px -4px rgba(28, 25, 23, 0.08);
+      --shadow-modal: 0 20px 50px -12px rgba(28, 25, 23, 0.2), 0 0 1px rgba(28, 25, 23, 0.1);
+
+      /* Motion easing */
+      --ease-spring: cubic-bezier(0.16, 1, 0.3, 1);
+      --ease-bounce: cubic-bezier(0.34, 1.56, 0.64, 1);
+      --duration-fast: 150ms;
+      --duration-normal: 250ms;
+      --duration-slow: 400ms;
     }
-    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    /* Reset & Base Typography */
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
     body {
-      font-family: "Inter", -apple-system, BlinkMacSystemFont, sans-serif;
-      background: var(--bg);
-      color: var(--text);
+      font-family: "Instrument Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background-color: var(--canvas);
+      background-image: 
+        radial-gradient(ellipse 70% 40% at 50% -10%, rgba(180, 83, 9, 0.035), transparent 70%),
+        linear-gradient(to bottom, #FAF8F5, #F5EFEB);
+      background-attachment: fixed;
+      color: var(--ink);
       min-height: 100vh;
       display: flex;
       flex-direction: column;
       align-items: center;
-      padding: 2rem 1rem;
+      padding: 2.5rem 1rem 4rem;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
     }
+
     .container {
       width: 100%;
-      max-width: 880px;
+      max-width: 920px;
     }
+
+    /* Header & Institutional Brand Bar */
     header {
       text-align: center;
-      margin-bottom: 2rem;
+      margin-bottom: 2.25rem;
+      position: relative;
     }
+
+    .header-badge-row {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      margin-bottom: 1rem;
+    }
+
     .badge {
       display: inline-flex;
       align-items: center;
       gap: 6px;
-      padding: 4px 12px;
-      border-radius: 9999px;
-      font-size: 0.75rem;
+      padding: 5px 14px;
+      border-radius: var(--radius-full);
+      font-size: 0.73rem;
       font-weight: 600;
-      letter-spacing: 0.05em;
+      letter-spacing: 0.04em;
       text-transform: uppercase;
-      background: rgba(56, 189, 248, 0.15);
-      color: var(--primary);
-      border: 1px solid rgba(56, 189, 248, 0.3);
-      margin-bottom: 0.75rem;
+      background: var(--surface-subtle);
+      color: var(--ink-secondary);
+      border: 1px solid var(--rule-subtle);
+      box-shadow: var(--shadow-sm);
     }
+
+    .badge i, .badge svg {
+      width: 13px;
+      height: 13px;
+      color: var(--accent);
+    }
+
     h1 {
-      font-size: 2rem;
-      font-weight: 700;
-      letter-spacing: -0.02em;
-      color: #ffffff;
-      margin-bottom: 0.5rem;
+      font-family: "Newsreader", Georgia, serif;
+      font-size: 2.6rem;
+      font-weight: 600;
+      letter-spacing: -0.025em;
+      color: var(--ink);
+      line-height: 1.15;
+      margin-bottom: 0.6rem;
+      text-wrap: balance;
     }
+
     .subtitle {
-      color: var(--text-muted);
-      font-size: 0.95rem;
-      max-width: 650px;
+      color: var(--ink-secondary);
+      font-size: 0.98rem;
+      line-height: 1.55;
+      max-width: 680px;
       margin: 0 auto;
+      text-wrap: balance;
     }
+
+    .telemetry-meta-bar {
+      display: inline-flex;
+      align-items: center;
+      gap: 16px;
+      margin-top: 1rem;
+      padding: 6px 14px;
+      background: var(--surface);
+      border: 1px solid var(--rule-subtle);
+      border-radius: var(--radius-full);
+      font-size: 0.78rem;
+      color: var(--ink-muted);
+      box-shadow: var(--shadow-sm);
+    }
+
+    .telemetry-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--status-success);
+      display: inline-block;
+      box-shadow: 0 0 0 3px rgba(4, 120, 87, 0.15);
+      animation: pulse-ring 2.5s infinite;
+    }
+
+    @keyframes pulse-ring {
+      0% { box-shadow: 0 0 0 0 rgba(4, 120, 87, 0.4); }
+      70% { box-shadow: 0 0 0 6px rgba(4, 120, 87, 0); }
+      100% { box-shadow: 0 0 0 0 rgba(4, 120, 87, 0); }
+    }
+
+    /* Portal Mode Selector Navigation */
+    .portal-nav {
+      display: flex;
+      background: var(--surface-subtle);
+      border: 1px solid var(--rule-subtle);
+      border-radius: var(--radius-lg);
+      padding: 6px;
+      gap: 6px;
+      margin-bottom: 2rem;
+      box-shadow: inset 0 1px 2px rgba(28, 25, 23, 0.04);
+    }
+
+    .portal-tab {
+      flex: 1;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 10px 16px;
+      border-radius: var(--radius-md);
+      font-family: inherit;
+      font-size: 0.88rem;
+      font-weight: 500;
+      color: var(--ink-muted);
+      background: transparent;
+      border: 1px solid transparent;
+      cursor: pointer;
+      transition: all var(--duration-normal) var(--ease-spring);
+      position: relative;
+    }
+
+    .portal-tab:hover {
+      color: var(--ink);
+      background: rgba(255, 255, 255, 0.6);
+    }
+
+    .portal-tab.active {
+      background: var(--surface);
+      color: var(--ink);
+      font-weight: 600;
+      border-color: var(--rule-subtle);
+      box-shadow: var(--shadow-sm), 0 2px 8px rgba(28, 25, 23, 0.04);
+    }
+
+    .portal-tab i, .portal-tab svg {
+      width: 16px;
+      height: 16px;
+      transition: transform var(--duration-normal) var(--ease-spring);
+    }
+
+    .portal-tab.active i, .portal-tab.active svg {
+      color: var(--accent);
+      transform: translateY(-1px);
+    }
+
+    .portal-tab .badge {
+      margin: 0;
+      padding: 2px 8px;
+      font-size: 0.68rem;
+      font-family: "JetBrains Mono", monospace;
+      font-weight: 600;
+      background: var(--accent-surface);
+      color: var(--accent);
+      border-color: var(--accent-border);
+    }
+
+    /* Stepper Bar */
     .stepper {
       display: flex;
       justify-content: space-between;
-      margin: 1.5rem 0 2rem 0;
-      background: var(--card-bg);
-      padding: 0.75rem 1rem;
-      border-radius: var(--radius);
-      border: 1px solid var(--card-border);
+      margin-bottom: 2rem;
+      background: var(--surface);
+      padding: 1rem 1.5rem;
+      border-radius: var(--radius-lg);
+      border: 1px solid var(--rule-subtle);
+      box-shadow: var(--shadow-card);
+      position: relative;
     }
+
     .step {
       display: flex;
       align-items: center;
-      gap: 8px;
-      font-size: 0.8rem;
-      color: var(--text-muted);
-      transition: color 0.2s;
+      gap: 10px;
+      font-size: 0.83rem;
+      font-weight: 500;
+      color: var(--ink-muted);
+      transition: color var(--duration-normal) var(--ease-spring);
+      cursor: default;
     }
+
     .step.active {
-      color: var(--primary);
+      color: var(--ink);
       font-weight: 600;
     }
+
     .step.completed {
-      color: var(--success);
+      color: var(--status-success);
     }
+
     .step-circle {
-      width: 24px;
-      height: 24px;
+      width: 26px;
+      height: 26px;
       border-radius: 50%;
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 0.75rem;
-      background: #334155;
-      color: #cbd5e1;
-    }
-    .step.active .step-circle {
-      background: var(--primary);
-      color: #0f172a;
-      font-weight: 700;
-    }
-    .step.completed .step-circle {
-      background: var(--success);
-      color: #0f172a;
-      font-weight: 700;
-    }
-    .card {
-      background: var(--card-bg);
-      border: 1px solid var(--card-border);
-      border-radius: var(--radius);
-      padding: 1.75rem;
-      margin-bottom: 1.5rem;
-      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.1);
-    }
-    .card-title {
-      font-size: 1.15rem;
+      font-family: "JetBrains Mono", monospace;
+      font-size: 0.78rem;
       font-weight: 600;
-      margin-bottom: 1rem;
+      background: var(--surface-subtle);
+      color: var(--ink-muted);
+      border: 1px solid var(--rule-subtle);
+      transition: all var(--duration-normal) var(--ease-bounce);
+    }
+
+    .step.active .step-circle {
+      background: var(--accent);
+      color: #FFFFFF;
+      border-color: var(--accent);
+      box-shadow: 0 0 0 4px rgba(180, 83, 9, 0.15);
+      transform: scale(1.08);
+    }
+
+    .step.completed .step-circle {
+      background: var(--status-success);
+      color: #FFFFFF;
+      border-color: var(--status-success);
+      box-shadow: 0 0 0 3px rgba(4, 120, 87, 0.12);
+    }
+
+    /* Cards & Form Architecture */
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--rule-subtle);
+      border-radius: var(--radius-lg);
+      padding: 2rem;
+      margin-bottom: 1.75rem;
+      box-shadow: var(--shadow-card);
+      transition: box-shadow var(--duration-normal) var(--ease-spring), border-color var(--duration-normal) var(--ease-spring);
+      position: relative;
+    }
+
+    .card:hover {
+      box-shadow: var(--shadow-hover);
+      border-color: var(--rule-strong);
+    }
+
+    .card-title {
+      font-family: "Newsreader", Georgia, serif;
+      font-size: 1.4rem;
+      font-weight: 600;
+      color: var(--ink);
+      margin-bottom: 1.25rem;
       display: flex;
       align-items: center;
       justify-content: space-between;
+      gap: 12px;
+      letter-spacing: -0.015em;
     }
+
+    .card-title span:first-child {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
     .form-grid {
       display: grid;
       grid-template-columns: 1fr 1fr;
-      gap: 1rem;
-      margin-bottom: 1.25rem;
+      gap: 1.25rem;
+      margin-bottom: 1.5rem;
     }
+
     @media (max-width: 640px) {
       .form-grid { grid-template-columns: 1fr; }
+      .stepper { flex-wrap: wrap; gap: 12px; }
+      h1 { font-size: 2.1rem; }
     }
+
     .form-group {
-      margin-bottom: 1rem;
+      margin-bottom: 1.25rem;
     }
+
     label {
-      display: block;
-      font-size: 0.85rem;
-      font-weight: 500;
-      color: #cbd5e1;
-      margin-bottom: 0.4rem;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 0.82rem;
+      font-weight: 600;
+      color: var(--ink-secondary);
+      margin-bottom: 0.45rem;
     }
-    input[type="text"], input[type="number"], select {
+
+    label i, label svg {
+      width: 14px;
+      height: 14px;
+      color: var(--accent);
+    }
+
+    input[type="text"], input[type="number"], select, textarea {
       width: 100%;
-      padding: 0.75rem 1rem;
-      border-radius: 8px;
-      background: #0f172a;
-      border: 1px solid var(--card-border);
-      color: var(--text);
-      font-size: 0.95rem;
-      transition: border-color 0.2s;
+      padding: 0.8rem 1rem;
+      border-radius: var(--radius-sm);
+      background: var(--surface-inset);
+      border: 1px solid var(--rule-subtle);
+      color: var(--ink);
+      font-family: "Instrument Sans", sans-serif;
+      font-size: 0.92rem;
+      transition: all var(--duration-fast) var(--ease-spring);
+      box-shadow: inset 0 1px 2px rgba(28, 25, 23, 0.02);
     }
-    input[type="text"]:focus, input[type="number"]:focus, select:focus {
+
+    input[type="text"]:focus, input[type="number"]:focus, select:focus, textarea:focus {
       outline: none;
-      border-color: var(--primary);
+      background: var(--surface);
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px rgba(180, 83, 9, 0.12), inset 0 1px 2px rgba(28, 25, 23, 0.02);
     }
+
+    /* Dropzone: Tactile Paper Slot */
     .dropzone {
-      border: 2px dashed var(--card-border);
-      border-radius: var(--radius);
-      padding: 2.25rem 1.5rem;
+      border: 2px dashed var(--rule-strong);
+      border-radius: var(--radius-lg);
+      padding: 2.5rem 1.5rem;
       text-align: center;
       cursor: pointer;
-      background: rgba(15, 23, 42, 0.5);
-      transition: all 0.2s ease;
+      background: var(--surface-inset);
+      transition: all var(--duration-normal) var(--ease-spring);
       position: relative;
     }
+
     .dropzone:hover, .dropzone.dragover {
-      border-color: var(--primary);
-      background: rgba(56, 189, 248, 0.05);
+      border-color: var(--accent);
+      background: var(--accent-surface);
+      transform: translateY(-1px);
     }
+
     .dropzone-icon {
       font-size: 2.5rem;
       margin-bottom: 0.75rem;
-      color: var(--primary);
+      color: var(--accent);
+      display: flex;
+      justify-content: center;
+      align-items: center;
     }
+
+    .dropzone-icon i, .dropzone-icon svg {
+      width: 44px;
+      height: 44px;
+      stroke-width: 1.6;
+    }
+
     .dropzone-text {
       font-size: 0.95rem;
-      color: #cbd5e1;
-      margin-bottom: 0.25rem;
+      font-weight: 600;
+      color: var(--ink);
+      margin-bottom: 0.35rem;
     }
+
     .dropzone-hint {
       font-size: 0.8rem;
-      color: var(--text-muted);
+      color: var(--ink-muted);
     }
+
     input[type="file"] {
       display: none;
     }
+
+    /* File Preview Plate */
     .file-preview {
       display: none;
-      margin-top: 1rem;
-      padding: 1rem;
-      background: #0f172a;
-      border-radius: 8px;
-      border: 1px solid var(--card-border);
       align-items: center;
       justify-content: space-between;
+      padding: 1rem 1.25rem;
+      background: var(--surface-subtle);
+      border: 1px solid var(--rule-subtle);
+      border-radius: var(--radius-md);
+      margin-bottom: 1.25rem;
     }
+
     .file-details {
       display: flex;
       align-items: center;
       gap: 12px;
     }
+
     .file-icon {
-      font-size: 1.5rem;
+      width: 40px;
+      height: 40px;
+      border-radius: var(--radius-sm);
+      background: var(--surface);
+      border: 1px solid var(--rule-subtle);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--accent);
+      font-size: 1.2rem;
     }
+
     .file-name {
-      font-size: 0.9rem;
-      font-weight: 500;
+      font-size: 0.92rem;
+      font-weight: 600;
+      color: var(--ink);
     }
+
     .file-meta {
-      font-size: 0.75rem;
-      color: var(--text-muted);
+      font-size: 0.78rem;
+      color: var(--ink-muted);
+      font-family: "JetBrains Mono", monospace;
     }
+
+    /* Button Architecture */
     .btn {
       display: inline-flex;
       align-items: center;
       justify-content: center;
       gap: 8px;
-      padding: 0.75rem 1.5rem;
-      border-radius: 8px;
-      font-size: 0.95rem;
+      padding: 0.82rem 1.5rem;
+      border-radius: var(--radius-sm);
+      font-family: inherit;
+      font-size: 0.9rem;
       font-weight: 600;
       cursor: pointer;
-      border: none;
-      transition: all 0.2s;
+      transition: all var(--duration-fast) var(--ease-spring);
+      position: relative;
+      overflow: hidden;
+      text-decoration: none;
     }
+
+    .btn:active {
+      transform: translateY(1px);
+    }
+
+    .btn:disabled {
+      opacity: 0.55;
+      cursor: not-allowed;
+      pointer-events: none;
+    }
+
+    /* Primary Accent Button with Micro Shimmer */
     .btn-primary {
-      background: var(--primary);
-      color: #0f172a;
-      width: 100%;
-      margin-top: 0.75rem;
+      background: var(--accent);
+      color: #FFFFFF;
+      border: 1px solid var(--accent-hover);
+      box-shadow: 0 1px 3px rgba(180, 83, 9, 0.25), inset 0 1px 0 rgba(255, 255, 255, 0.2);
     }
-    .btn-primary:hover:not(:disabled) {
-      background: var(--primary-hover);
+
+    .btn-primary:hover {
+      background: var(--accent-hover);
+      box-shadow: 0 4px 12px rgba(180, 83, 9, 0.3);
+      transform: translateY(-1px);
     }
-    .btn-primary:disabled {
-      opacity: 0.5;
-      cursor: not-allowed;
-    }
-    .btn-outline {
-      background: transparent;
-      border: 1px solid var(--card-border);
-      color: var(--text);
-      font-size: 0.85rem;
-      padding: 0.5rem 1rem;
-    }
-    .btn-outline:hover {
-      border-color: var(--primary);
-      color: var(--primary);
-    }
+
+    /* Authoritative Dark Espresso Action Button */
     .btn-action {
-      background: #10b981;
-      color: #0f172a;
+      background: var(--ink);
+      color: #FFFFFF;
+      border: 1px solid #000000;
+      box-shadow: 0 1px 3px rgba(28, 25, 23, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.15);
       width: 100%;
-      margin-top: 1rem;
-      font-weight: 700;
     }
-    .btn-action:hover:not(:disabled) {
-      background: #059669;
+
+    .btn-action:hover {
+      background: #2D2724;
+      box-shadow: 0 4px 14px rgba(28, 25, 23, 0.25);
+      transform: translateY(-1px);
     }
-    .btn-action:disabled {
-      opacity: 0.5;
-      cursor: not-allowed;
+
+    /* Quiet Paper Outline Button */
+    .btn-outline {
+      background: var(--surface);
+      color: var(--ink-secondary);
+      border: 1px solid var(--rule-strong);
+      box-shadow: var(--shadow-sm);
     }
-    .alert {
-      display: none;
-      padding: 1rem;
-      border-radius: 8px;
-      margin-bottom: 1.25rem;
-      font-size: 0.9rem;
+
+    .btn-outline:hover {
+      background: var(--surface-inset);
+      color: var(--ink);
+      border-color: var(--ink-muted);
     }
-    .alert-error {
-      background: var(--error-bg);
-      border: 1px solid var(--error);
-      color: var(--error);
+
+    .btn-success {
+      background: var(--status-success);
+      color: #FFFFFF;
+      border: 1px solid #03543F;
+      box-shadow: 0 1px 3px rgba(4, 120, 87, 0.25);
     }
-    .alert-success {
-      background: var(--success-bg);
-      border: 1px solid var(--success);
-      color: var(--success);
+
+    .btn-success:hover {
+      background: #03543F;
+      box-shadow: 0 4px 12px rgba(4, 120, 87, 0.3);
+      transform: translateY(-1px);
     }
-    .result-section {
-      display: none;
-      margin-top: 1.5rem;
-      border-top: 1px solid var(--card-border);
-      padding-top: 1.5rem;
+
+    .btn-danger {
+      background: var(--status-error);
+      color: #FFFFFF;
+      border: 1px solid #991B1B;
+      box-shadow: 0 1px 3px rgba(185, 28, 28, 0.25);
     }
-    .result-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 1rem;
-      margin-bottom: 1.25rem;
+
+    .btn-danger:hover {
+      background: #991B1B;
+      box-shadow: 0 4px 12px rgba(185, 28, 28, 0.3);
+      transform: translateY(-1px);
     }
-    .result-item {
-      background: #0f172a;
-      padding: 0.75rem 1rem;
-      border-radius: 8px;
-      border: 1px solid var(--card-border);
+
+    .btn-sm {
+      padding: 0.45rem 0.9rem;
+      font-size: 0.78rem;
     }
-    .result-label {
-      font-size: 0.75rem;
-      color: var(--text-muted);
-      text-transform: uppercase;
-      letter-spacing: 0.05em;
-      margin-bottom: 4px;
+
+    /* Button Shimmer Gleam (INTERACTION-PATTERNS.md 2.11) */
+    @keyframes shimmer-sweep {
+      0%   { transform: translateX(-100%); }
+      100% { transform: translateX(200%); }
     }
-    .result-value {
-      font-family: "JetBrains Mono", monospace;
-      font-size: 0.85rem;
-      word-break: break-all;
+
+    .btn-shimmer::after {
+      content: "";
+      position: absolute;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: linear-gradient(90deg, transparent 0%, rgba(255, 255, 255, 0.22) 50%, transparent 100%);
+      transform: translateX(-100%);
+      animation: shimmer-sweep 3s ease-in-out infinite;
+      pointer-events: none;
     }
-    .integration-tags {
-      display: flex;
-      gap: 8px;
-      flex-wrap: wrap;
+
+    /* Ripple Interaction Effect (INTERACTION-PATTERNS.md 2.5) */
+    @keyframes ripple-expand {
+      to { transform: scale(2.5); opacity: 0; }
     }
-    .tag {
-      font-size: 0.75rem;
-      padding: 3px 8px;
-      border-radius: 4px;
-      font-family: "JetBrains Mono", monospace;
+
+    .ripple-effect {
+      position: absolute;
+      border-radius: 50%;
+      pointer-events: none;
+      background: rgba(255, 255, 255, 0.35);
+      transform: scale(0);
+      animation: ripple-expand 500ms cubic-bezier(0.16, 1, 0.3, 1) forwards;
     }
-    .tag-s3 {
-      background: rgba(234, 179, 8, 0.15);
-      color: #facc15;
-      border: 1px solid rgba(234, 179, 8, 0.3);
-    }
-    .tag-dynamo {
-      background: rgba(59, 130, 246, 0.15);
-      color: #60a5fa;
-      border: 1px solid rgba(59, 130, 246, 0.3);
-    }
-    .tag-status {
-      background: rgba(251, 191, 36, 0.15);
-      color: #fbbf24;
-      border: 1px solid rgba(251, 191, 36, 0.3);
-    }
-    .tag-success {
-      background: rgba(52, 211, 153, 0.15);
-      color: #34d399;
-      border: 1px solid rgba(52, 211, 153, 0.3);
-    }
-    .tag-error {
-      background: rgba(248, 113, 113, 0.15);
-      color: #f87171;
-      border: 1px solid rgba(248, 113, 113, 0.3);
-    }
+
+    /* Live Quote Financial Ticket Box */
     .quote-box {
-      background: linear-gradient(135deg, rgba(30, 41, 59, 0.8) 0%, rgba(15, 23, 42, 0.9) 100%);
-      border: 1px solid rgba(56, 189, 248, 0.3);
-      border-radius: 10px;
-      padding: 1.25rem;
-      margin: 1.25rem 0;
+      background: var(--surface-subtle);
+      border: 1px solid var(--rule-subtle);
+      border-radius: var(--radius-md);
+      padding: 1.5rem;
+      margin: 1.5rem 0;
+      box-shadow: inset 0 1px 2px rgba(28, 25, 23, 0.03);
     }
+
     .quote-header {
       display: flex;
       justify-content: space-between;
       align-items: center;
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: var(--ink-secondary);
       margin-bottom: 0.75rem;
-      font-size: 0.85rem;
-      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
     }
+
+    #quoteStatus {
+      color: var(--status-success);
+      font-weight: 600;
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+    }
+
     .quote-price-display {
       display: flex;
       align-items: baseline;
       gap: 8px;
+      margin-bottom: 1.25rem;
     }
+
     .quote-amount {
-      font-size: 2.2rem;
-      font-weight: 700;
-      color: var(--primary);
       font-family: "JetBrains Mono", monospace;
+      font-size: 2.4rem;
+      font-weight: 700;
+      color: var(--accent);
+      font-variant-numeric: tabular-nums;
+      line-height: 1;
+      transition: opacity 0.15s ease;
     }
+
     .quote-paise {
-      font-size: 0.9rem;
-      color: var(--text-muted);
+      font-family: "JetBrains Mono", monospace;
+      font-size: 0.95rem;
+      color: var(--ink-muted);
+      font-variant-numeric: tabular-nums;
     }
+
     .quote-breakdown {
       display: grid;
       grid-template-columns: repeat(4, 1fr);
-      gap: 8px;
-      margin-top: 1rem;
+      gap: 12px;
+      border-top: 1px solid var(--rule-subtle);
       padding-top: 1rem;
-      border-top: 1px solid rgba(255, 255, 255, 0.08);
-      font-size: 0.8rem;
     }
+
     @media (max-width: 640px) {
       .quote-breakdown { grid-template-columns: 1fr 1fr; }
     }
+
     .quote-stat-label {
-      color: var(--text-muted);
+      font-size: 0.72rem;
+      color: var(--ink-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
       margin-bottom: 2px;
     }
+
     .quote-stat-val {
       font-family: "JetBrains Mono", monospace;
+      font-size: 0.92rem;
       font-weight: 600;
-      color: #e2e8f0;
+      color: var(--ink);
+      font-variant-numeric: tabular-nums;
     }
-    .query-section {
-      margin-top: 1rem;
-      display: flex;
-      gap: 8px;
+
+    /* Result Sections & Inset Grids */
+    .result-section {
+      display: none;
+      margin-top: 1.5rem;
+      padding: 1.5rem;
+      background: var(--surface-inset);
+      border: 1px solid var(--rule-subtle);
+      border-radius: var(--radius-md);
+      box-shadow: inset 0 1px 2px rgba(28, 25, 23, 0.03);
     }
-    pre {
-      background: #090d16;
-      padding: 1rem;
-      border-radius: 8px;
-      font-family: "JetBrains Mono", monospace;
-      font-size: 0.8rem;
-      color: #a5f3fc;
-      overflow-x: auto;
-      margin-top: 0.75rem;
-      border: 1px solid var(--card-border);
+
+    .result-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin: 1rem 0;
     }
-    footer {
-      margin-top: 2rem;
-      text-align: center;
-      font-size: 0.8rem;
-      color: var(--text-muted);
+
+    .result-item {
+      padding: 10px 14px;
+      background: var(--surface);
+      border: 1px solid var(--rule-subtle);
+      border-radius: var(--radius-sm);
     }
-    .token-hero {
-      background: radial-gradient(circle at top, rgba(56, 189, 248, 0.18) 0%, rgba(15, 23, 42, 0.95) 80%);
-      border: 2px solid rgba(56, 189, 248, 0.45);
-      border-radius: 12px;
-      padding: 1.75rem 1.25rem;
-      text-align: center;
-      margin: 1.25rem 0;
-      box-shadow: 0 0 25px rgba(56, 189, 248, 0.15);
-    }
-    .token-label {
-      font-size: 0.8rem;
+
+    .result-label {
+      font-size: 0.72rem;
       text-transform: uppercase;
-      letter-spacing: 0.1em;
-      color: var(--text-muted);
-      margin-bottom: 8px;
+      letter-spacing: 0.04em;
+      color: var(--ink-muted);
+      margin-bottom: 3px;
     }
-    .token-display {
-      font-size: 3.2rem;
-      font-weight: 800;
+
+    .result-value {
       font-family: "JetBrains Mono", monospace;
-      color: var(--primary);
-      letter-spacing: 0.05em;
-      text-shadow: 0 0 24px rgba(56, 189, 248, 0.4);
-      line-height: 1.1;
+      font-size: 0.9rem;
+      font-weight: 600;
+      color: var(--ink);
+      word-break: break-all;
     }
+
+    /* Tags & Badges */
+    .integration-tags {
+      display: flex;
+      gap: 6px;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+
+    .tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      padding: 3px 8px;
+      border-radius: var(--radius-sm);
+      font-size: 0.72rem;
+      font-weight: 600;
+      font-family: "JetBrains Mono", monospace;
+      letter-spacing: 0.02em;
+    }
+
+    .tag-s3 {
+      background: #FEF3C7;
+      color: #92400E;
+      border: 1px solid #FDE68A;
+    }
+
+    .tag-dynamo {
+      background: #EFF6FF;
+      color: #1D4ED8;
+      border: 1px solid #BFDBFE;
+    }
+
+    .tag-status {
+      background: var(--surface-subtle);
+      color: var(--ink-secondary);
+      border: 1px solid var(--rule-subtle);
+    }
+
+    .tag-success {
+      background: var(--status-success-bg);
+      color: var(--status-success);
+      border: 1px solid var(--status-success-border);
+    }
+
+    .tag-error {
+      background: var(--status-error-bg);
+      color: var(--status-error);
+      border: 1px solid var(--status-error-border);
+    }
+
+    .tag-action {
+      background: #FFFBEB;
+      color: var(--accent);
+      border: 1px solid var(--accent-border);
+    }
+
+    .tag-primary {
+      background: #EFF6FF;
+      color: #1D4ED8;
+      border: 1px solid #BFDBFE;
+    }
+
+    .tag-outline {
+      background: transparent;
+      color: var(--ink-muted);
+      border: 1px solid var(--rule-strong);
+    }
+
+    /* Operational Token & Queue Hero Banner */
+    .token-hero {
+      text-align: center;
+      padding: 2rem 1.5rem;
+      background: var(--surface);
+      border: 1px solid var(--rule-subtle);
+      border-radius: var(--radius-md);
+      box-shadow: var(--shadow-sm);
+      margin-bottom: 1.25rem;
+    }
+
+    .token-label {
+      font-size: 0.75rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--ink-muted);
+      margin-bottom: 0.5rem;
+    }
+
+    .token-display {
+      font-family: "JetBrains Mono", monospace;
+      font-size: 3.4rem;
+      font-weight: 700;
+      color: var(--ink);
+      letter-spacing: 0.04em;
+      line-height: 1;
+      margin-bottom: 0.75rem;
+    }
+
     .queue-position-banner {
       display: inline-flex;
       align-items: center;
       gap: 6px;
-      margin-top: 12px;
-      padding: 6px 18px;
-      border-radius: 9999px;
-      font-size: 0.95rem;
+      padding: 8px 18px;
+      border-radius: var(--radius-full);
+      font-size: 0.88rem;
       font-weight: 600;
-      background: rgba(52, 211, 153, 0.15);
-      color: var(--success);
-      border: 1px solid rgba(52, 211, 153, 0.3);
+      background: var(--status-success-bg);
+      color: var(--status-success);
+      border: 1px solid var(--status-success-border);
     }
-    /* Portal Navigation Tabs */
-    .portal-nav {
+
+    /* Verification Query Panels */
+    .query-section {
       display: flex;
       gap: 10px;
-      margin-bottom: 1.5rem;
-      width: 100%;
-      background: var(--card-bg);
-      padding: 6px;
-      border-radius: var(--radius);
-      border: 1px solid var(--card-border);
+      margin-top: 0.75rem;
     }
-    .portal-tab {
+
+    .query-section input {
       flex: 1;
-      padding: 10px 16px;
-      border: none;
-      background: transparent;
-      color: var(--text-muted);
-      font-weight: 600;
-      font-size: 0.9rem;
-      border-radius: 8px;
-      cursor: pointer;
-      transition: all 0.2s;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 8px;
     }
-    .portal-tab:hover {
-      color: var(--text);
-      background: rgba(255, 255, 255, 0.05);
-    }
-    .portal-tab.active {
-      background: var(--primary);
-      color: #0f172a;
-      box-shadow: 0 2px 8px rgba(56, 189, 248, 0.3);
-    }
-    .btn-sm {
-      padding: 6px 12px;
-      font-size: 0.78rem;
-    }
-    .btn-success {
-      background: var(--success);
-      color: #0f172a;
-      border: none;
-      font-weight: 600;
-    }
-    .btn-success:hover {
-      filter: brightness(1.1);
-    }
-    .btn-danger {
-      background: var(--error);
-      color: #0f172a;
-      border: none;
-      font-weight: 600;
-    }
-    .btn-danger:hover {
-      filter: brightness(1.1);
-    }
-    .staff-order-card {
-      background: rgba(15, 23, 42, 0.6);
-      border: 1px solid var(--card-border);
-      border-radius: 10px;
-      padding: 1.25rem;
-      margin-bottom: 1rem;
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
-      transition: border-color 0.2s;
-    }
-    .staff-order-card:hover {
-      border-color: rgba(56, 189, 248, 0.4);
-    }
-    .staff-order-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      flex-wrap: wrap;
-      gap: 8px;
-    }
-    .staff-token-badge {
-      font-size: 1.25rem;
-      font-weight: 800;
-      font-family: "JetBrains Mono", monospace;
-      color: var(--primary);
-      background: rgba(56, 189, 248, 0.15);
-      padding: 4px 12px;
-      border-radius: 6px;
-      border: 1px solid rgba(56, 189, 248, 0.3);
-    }
-    .staff-order-meta {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
-      gap: 8px;
-      background: #090d16;
-      padding: 10px 14px;
-      border-radius: 8px;
-      font-size: 0.8rem;
-    }
-    .staff-actions {
-      display: flex;
-      gap: 8px;
-      flex-wrap: wrap;
-      align-items: center;
-    }
-    .modal-overlay {
-      position: fixed;
-      top: 0; left: 0; right: 0; bottom: 0;
-      background: rgba(0, 0, 0, 0.75);
-      backdrop-filter: blur(4px);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      z-index: 1000;
+
+    pre {
+      margin-top: 1rem;
       padding: 1rem;
+      background: var(--surface-inset);
+      border: 1px solid var(--rule-subtle);
+      border-radius: var(--radius-sm);
+      font-family: "JetBrains Mono", monospace;
+      font-size: 0.8rem;
+      color: var(--ink);
+      overflow-x: auto;
+      max-height: 250px;
     }
-    .modal-card {
-      background: var(--card-bg);
-      border: 1px solid var(--card-border);
-      border-radius: var(--radius);
-      padding: 1.75rem;
-      max-width: 500px;
-      width: 100%;
-      box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.5);
+
+    /* Alerts */
+    .alert {
+      display: none;
+      padding: 0.9rem 1.25rem;
+      border-radius: var(--radius-sm);
+      font-size: 0.88rem;
+      font-weight: 500;
+      margin-bottom: 1.5rem;
+      line-height: 1.45;
     }
-    /* Slice 6: Student Tracking & History Styles */
+
+    .alert-error {
+      background: var(--status-error-bg);
+      color: var(--status-error);
+      border: 1px solid var(--status-error-border);
+    }
+
+    .alert-success {
+      background: var(--status-success-bg);
+      color: var(--status-success);
+      border: 1px solid var(--status-success-border);
+    }
+
+    .alert-info {
+      background: var(--status-info-bg);
+      color: var(--status-info);
+      border: 1px solid var(--status-info-border);
+    }
+
+    /* History & Filter Controls */
     .history-filter-bar {
       display: flex;
       gap: 8px;
       flex-wrap: wrap;
-      margin: 1rem 0 1.25rem 0;
+      margin-bottom: 1.25rem;
     }
+
     .filter-btn {
-      background: #0f172a;
-      border: 1px solid var(--card-border);
-      color: var(--text-muted);
-      border-radius: 6px;
       padding: 6px 12px;
-      font-size: 0.8rem;
-      cursor: pointer;
-      transition: all 0.15s ease;
-    }
-    .filter-btn:hover {
-      border-color: var(--primary);
-      color: var(--text);
-    }
-    .filter-btn.active {
-      background: rgba(56, 189, 248, 0.15);
-      border-color: var(--primary);
-      color: var(--primary);
+      border-radius: var(--radius-full);
+      font-family: inherit;
+      font-size: 0.78rem;
       font-weight: 600;
+      background: var(--surface);
+      color: var(--ink-secondary);
+      border: 1px solid var(--rule-subtle);
+      cursor: pointer;
+      transition: all var(--duration-fast) var(--ease-spring);
     }
+
+    .filter-btn:hover {
+      background: var(--surface-subtle);
+      border-color: var(--rule-strong);
+      color: var(--ink);
+    }
+
+    .filter-btn.active {
+      background: var(--ink);
+      color: #FFFFFF;
+      border-color: var(--ink);
+    }
+
     .history-order-card {
-      background: #0f172a;
-      border: 1px solid var(--card-border);
-      border-radius: var(--radius);
+      background: var(--surface);
+      border: 1px solid var(--rule-subtle);
+      border-radius: var(--radius-md);
       padding: 1.5rem;
-      margin-bottom: 1.5rem;
-      transition: border-color 0.2s, box-shadow 0.2s;
+      margin-bottom: 1.25rem;
+      box-shadow: var(--shadow-sm);
+      transition: all var(--duration-normal) var(--ease-spring);
     }
+
     .history-order-card:hover {
-      border-color: rgba(56, 189, 248, 0.35);
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+      box-shadow: var(--shadow-card);
+      border-color: var(--rule-strong);
     }
+
     .history-order-header {
       display: flex;
       justify-content: space-between;
       align-items: center;
       flex-wrap: wrap;
-      gap: 12px;
-      padding-bottom: 1rem;
-      border-bottom: 1px solid var(--card-border);
+      gap: 10px;
       margin-bottom: 1.25rem;
+      padding-bottom: 0.75rem;
+      border-bottom: 1px solid var(--rule-subtle);
     }
+
     .history-meta-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-      gap: 12px;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
       margin-bottom: 1.25rem;
     }
-    .history-meta-card {
-      background: #1e293b;
-      border: 1px solid var(--card-border);
-      border-radius: 8px;
-      padding: 12px;
+
+    @media (max-width: 640px) {
+      .history-meta-grid { grid-template-columns: 1fr; }
     }
+
+    .history-meta-card {
+      padding: 10px 14px;
+      background: var(--surface-inset);
+      border: 1px solid var(--rule-subtle);
+      border-radius: var(--radius-sm);
+    }
+
     .history-meta-label {
       font-size: 0.72rem;
-      color: var(--text-muted);
       text-transform: uppercase;
-      letter-spacing: 0.05em;
-      margin-bottom: 4px;
+      letter-spacing: 0.04em;
+      color: var(--ink-muted);
+      margin-bottom: 3px;
     }
+
     .history-meta-value {
+      font-family: "JetBrains Mono", monospace;
       font-size: 0.88rem;
-      font-weight: 500;
-      color: var(--text);
-    }
-    .rejection-callout {
-      background: rgba(248, 113, 113, 0.1);
-      border: 1px solid var(--error);
-      border-radius: 8px;
-      padding: 12px 14px;
-      margin-bottom: 1.25rem;
-      color: #fca5a5;
-      font-size: 0.85rem;
-    }
-    .rejection-callout strong {
-      color: var(--error);
-    }
-    /* Timeline Stepper */
-    .timeline-container {
-      margin-top: 1.25rem;
-      padding-top: 1.25rem;
-      border-top: 1px solid var(--card-border);
-    }
-    .timeline-title-banner {
-      font-size: 0.85rem;
       font-weight: 600;
-      color: #cbd5e1;
-      text-transform: uppercase;
-      letter-spacing: 0.05em;
-      margin-bottom: 1rem;
+      color: var(--ink);
+    }
+
+    /* Lifecycle Timeline Stepper */
+    .timeline-container {
+      margin-top: 1rem;
+      padding-top: 1rem;
+      border-top: 1px dashed var(--rule-subtle);
+    }
+
+    .timeline-title-banner {
       display: flex;
       align-items: center;
-      gap: 8px;
+      gap: 6px;
+      font-size: 0.82rem;
+      font-weight: 600;
+      color: var(--ink);
+      margin-bottom: 1rem;
     }
+
     .timeline-stepper {
       position: relative;
       padding-left: 28px;
     }
+
     .timeline-stepper::before {
-      content: '';
+      content: "";
       position: absolute;
-      left: 11px;
-      top: 10px;
-      bottom: 10px;
+      left: 10px;
+      top: 6px;
+      bottom: 6px;
       width: 2px;
-      background: var(--card-border);
+      background: var(--rule-subtle);
     }
+
     .timeline-step-item {
       position: relative;
       margin-bottom: 1rem;
     }
+
     .timeline-step-item:last-child {
       margin-bottom: 0;
     }
+
     .timeline-icon-dot {
       position: absolute;
       left: -28px;
-      width: 24px;
-      height: 24px;
+      top: 2px;
+      width: 22px;
+      height: 22px;
       border-radius: 50%;
+      background: var(--surface);
+      border: 2px solid var(--rule-strong);
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 0.75rem;
-      background: #1e293b;
-      border: 2px solid var(--card-border);
+      font-size: 0.7rem;
+      color: var(--ink-muted);
     }
+
     .timeline-step-item.completed .timeline-icon-dot {
-      background: rgba(52, 211, 153, 0.2);
-      border-color: var(--success);
-      color: var(--success);
+      background: var(--status-success);
+      border-color: var(--status-success);
+      color: #FFFFFF;
     }
-    .timeline-step-item.current .timeline-icon-dot {
-      background: rgba(56, 189, 248, 0.2);
-      border-color: var(--primary);
-      color: var(--primary);
-      box-shadow: 0 0 8px rgba(56, 189, 248, 0.5);
-    }
+
     .timeline-step-item.failed .timeline-icon-dot {
-      background: rgba(248, 113, 113, 0.2);
-      border-color: var(--error);
-      color: var(--error);
+      background: var(--status-error);
+      border-color: var(--status-error);
+      color: #FFFFFF;
     }
+
+    .timeline-step-item.current .timeline-icon-dot {
+      background: var(--accent);
+      border-color: var(--accent);
+      color: #FFFFFF;
+      box-shadow: 0 0 0 4px rgba(180, 83, 9, 0.15);
+    }
+
     .timeline-content-card {
-      background: #1e293b;
-      border: 1px solid var(--card-border);
-      border-radius: 8px;
+      background: var(--surface-inset);
+      border: 1px solid var(--rule-subtle);
+      border-radius: var(--radius-sm);
       padding: 10px 14px;
     }
+
     .timeline-content-header {
       display: flex;
       justify-content: space-between;
@@ -757,473 +1125,632 @@
       gap: 6px;
       margin-bottom: 4px;
     }
+
     .timeline-event-name {
-      font-size: 0.85rem;
+      font-size: 0.84rem;
       font-weight: 600;
-      color: var(--text);
+      color: var(--ink);
     }
+
     .timeline-event-time {
       font-size: 0.72rem;
-      color: var(--text-muted);
+      color: var(--ink-muted);
       font-family: "JetBrains Mono", monospace;
     }
+
     .timeline-event-desc {
       font-size: 0.8rem;
-      color: #94a3b8;
+      color: var(--ink-secondary);
       line-height: 1.4;
     }
+
     .timeline-badge-pill {
-      font-size: 0.7rem;
+      font-size: 0.68rem;
       padding: 2px 6px;
-      border-radius: 4px;
+      border-radius: var(--radius-sm);
       font-family: "JetBrains Mono", monospace;
+      font-weight: 600;
+    }
+
+    /* Staff Operations Console */
+    .staff-order-card {
+      background: var(--surface);
+      border: 1px solid var(--rule-subtle);
+      border-radius: var(--radius-md);
+      padding: 1.25rem 1.5rem;
+      margin-bottom: 1rem;
+      box-shadow: var(--shadow-sm);
+      transition: all var(--duration-normal) var(--ease-spring);
+    }
+
+    .staff-order-card:hover {
+      box-shadow: var(--shadow-card);
+      border-color: var(--rule-strong);
+    }
+
+    .staff-order-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-bottom: 1rem;
+    }
+
+    .staff-token-badge {
+      font-family: "JetBrains Mono", monospace;
+      font-size: 1.05rem;
+      font-weight: 700;
+      padding: 4px 10px;
+      background: var(--surface-subtle);
+      border: 1px solid var(--rule-strong);
+      border-radius: var(--radius-sm);
+      color: var(--ink);
+    }
+
+    .staff-order-meta {
+      display: grid;
+      grid-template-columns: repeat(6, 1fr);
+      gap: 10px;
+      background: var(--surface-inset);
+      border: 1px solid var(--rule-subtle);
+      border-radius: var(--radius-sm);
+      padding: 10px 14px;
+      margin-bottom: 1rem;
+      font-size: 0.82rem;
+    }
+
+    @media (max-width: 768px) {
+      .staff-order-meta { grid-template-columns: 1fr 1fr 1fr; }
+    }
+
+    .staff-actions {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+
+    /* Modal System */
+    .modal-overlay {
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(28, 25, 23, 0.45);
+      backdrop-filter: blur(4px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+      padding: 1rem;
+    }
+
+    .modal-card {
+      background: var(--surface);
+      border: 1px solid var(--rule-strong);
+      border-radius: var(--radius-lg);
+      padding: 2rem;
+      max-width: 480px;
+      width: 100%;
+      box-shadow: var(--shadow-modal);
+      animation: modal-enter 0.25s var(--ease-spring);
+    }
+
+    @keyframes modal-enter {
+      from { transform: scale(0.95) translateY(10px); opacity: 0; }
+      to { transform: scale(1) translateY(0); opacity: 1; }
+    }
+
+    footer {
+      text-align: center;
+      margin-top: 3.5rem;
+      font-size: 0.8rem;
+      color: var(--ink-muted);
+      border-top: 1px solid var(--rule-subtle);
+      padding-top: 2rem;
+    }
+
+    /* Reduced Motion Governance (MANDATORY per INTERACTION-PATTERNS.md) */
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
+      }
+      .btn-shimmer::after { display: none !important; }
+      .telemetry-dot { animation: none !important; }
     }
   </style>
 </head>
 <body>
   <div class="container">
     <header>
-      <div class="badge">Slice 1: Document Upload • Slice 2: Print Options • Slice 3: Simulated Payment • Slice 4: Queue & Token • Slice 5: Staff Processing • Slice 6: Student Tracking + History</div>
-      <h1>Digital Xerox & Stationery System</h1>
-      <p class="subtitle">Modular monolith backend with FastAPI, Amazon S3 (Document storage), and Amazon DynamoDB (Order & Queue persistence).</p>
+      <div class="header-badge-row">
+        <div class="badge">
+          <i data-lucide="layers"></i>
+          <span>Slice 1: Document Upload • Slice 2: Print Options • Slice 3: Simulated Payment • Slice 4: Queue &amp; Token • Slice 5: Staff Processing • Slice 6: Student Tracking + History</span>
+        </div>
+      </div>
+      <h1>Digital Xerox &amp; Stationery System</h1>
+      <p class="subtitle">Modular monolith backend with FastAPI, Amazon S3 (Document storage), and Amazon DynamoDB (Order &amp; Queue persistence).</p>
+      
+      <div class="telemetry-meta-bar">
+        <span style="display: inline-flex; align-items: center; gap: 6px;">
+          <span class="telemetry-dot"></span>
+          <span>Stationery Counter 1 Online</span>
+        </span>
+        <span>•</span>
+        <span>Paper Stock: Heavyweight 75 GSM</span>
+        <span>•</span>
+        <span style="font-family: 'JetBrains Mono', monospace;">AWS Single-Table Active</span>
+      </div>
     </header>
 
     <!-- PORTAL MODE SELECTOR -->
     <div class="portal-nav">
       <button class="portal-tab active" id="tabStudentPortal" type="button">
-        <span>🎓 Student Ordering Portal</span>
+        <i data-lucide="graduation-cap"></i>
+        <span>Student Ordering Portal</span>
       </button>
       <button class="portal-tab" id="tabHistoryPortal" type="button">
-        <span>📜 Order Tracking & History (Slice 6)</span>
+        <i data-lucide="history"></i>
+        <span>Order Tracking &amp; History (Slice 6)</span>
       </button>
       <button class="portal-tab" id="tabStaffPortal" type="button">
-        <span>🛠️ Staff Operations Portal (Slice 5)</span>
-        <span class="badge" style="margin: 0; padding: 2px 8px; font-size: 0.65rem;" id="staffQueueCountBadge">0 active</span>
+        <i data-lucide="wrench"></i>
+        <span>Staff Operations Portal (Slice 5)</span>
+        <span class="badge" id="staffQueueCountBadge">0 active</span>
       </button>
     </div>
 
     <!-- STUDENT PORTAL SECTION -->
     <div id="studentPortalSection">
 
-    <div class="stepper">
-      <div class="step active" id="step1Indicator">
-        <div class="step-circle" id="step1Circle">1</div>
-        <span>Upload Document</span>
-      </div>
-      <div class="step" id="step2Indicator">
-        <div class="step-circle" id="step2Circle">2</div>
-        <span>Print Config & Order</span>
-      </div>
-      <div class="step" id="step3Indicator">
-        <div class="step-circle" id="step3Circle">3</div>
-        <span>Simulated Pay</span>
-      </div>
-      <div class="step" id="step4Indicator">
-        <div class="step-circle" id="step4IndicatorCircle">4</div>
-        <span>Queue & Token</span>
-      </div>
-      <div class="step" id="step5Indicator">
-        <div class="step-circle" id="step5IndicatorCircle">5</div>
-        <span>Ready / Pickup</span>
-      </div>
-    </div>
-
-    <div id="alertBox" class="alert"></div>
-
-    <!-- STEP 1: UPLOAD DOCUMENT -->
-    <div class="card" id="step1Card">
-      <div class="card-title">
-        <span>Step 1: Upload Document (Slice 1)</span>
-        <span style="font-size: 0.8rem; color: var(--text-muted); font-weight: 400;">Max 25 MB</span>
-      </div>
-
-      <div class="form-group">
-        <label for="studentId">Student ID</label>
-        <input type="text" id="studentId" value="STU-2026-001" placeholder="e.g. STU-2026-001">
-      </div>
-
-      <div class="dropzone" id="dropzone">
-        <div class="dropzone-icon">📁</div>
-        <div class="dropzone-text">Click to choose a file or drag and drop here</div>
-        <div class="dropzone-hint">Supports PDF, DOCX, DOC, TXT, PNG, JPG</div>
-        <input type="file" id="fileInput" accept=".pdf,.docx,.doc,.txt,.png,.jpg,.jpeg">
-      </div>
-
-      <div class="file-preview" id="filePreview">
-        <div class="file-details">
-          <div class="file-icon">📄</div>
-          <div>
-            <div class="file-name" id="previewName">filename.pdf</div>
-            <div class="file-meta" id="previewMeta">0 KB • application/pdf</div>
-          </div>
+      <div class="stepper">
+        <div class="step active" id="step1Indicator">
+          <div class="step-circle" id="step1Circle">1</div>
+          <span>Upload Document</span>
         </div>
-        <button class="btn btn-outline" id="removeFileBtn" type="button">Remove</button>
+        <div class="step" id="step2Indicator">
+          <div class="step-circle" id="step2Circle">2</div>
+          <span>Print Config &amp; Order</span>
+        </div>
+        <div class="step" id="step3Indicator">
+          <div class="step-circle" id="step3Circle">3</div>
+          <span>Simulated Pay</span>
+        </div>
+        <div class="step" id="step4Indicator">
+          <div class="step-circle" id="step4IndicatorCircle">4</div>
+          <span>Queue &amp; Token</span>
+        </div>
+        <div class="step" id="step5Indicator" style="cursor: pointer;" title="Jump to Staff Operations">
+          <div class="step-circle" id="step5IndicatorCircle">5</div>
+          <span>Ready / Pickup</span>
+        </div>
       </div>
 
-      <button class="btn btn-primary" id="uploadBtn" disabled>
-        <span id="btnText">Upload Document to S3 & DynamoDB</span>
-      </button>
+      <div id="alertBox" class="alert"></div>
 
-      <div class="result-section" id="uploadResultSection">
+      <!-- STEP 1: UPLOAD DOCUMENT -->
+      <div class="card" id="step1Card">
         <div class="card-title">
-          <span>Upload Successful!</span>
-          <div class="integration-tags">
-            <span class="tag tag-s3">S3 Stored</span>
-            <span class="tag tag-dynamo">DynamoDB Saved</span>
-          </div>
-        </div>
-
-        <div class="result-grid">
-          <div class="result-item">
-            <div class="result-label">Document ID</div>
-            <div class="result-value" id="resDocId">-</div>
-          </div>
-          <div class="result-item">
-            <div class="result-label">Filename</div>
-            <div class="result-value" id="resFilename">-</div>
-          </div>
-          <div class="result-item" style="grid-column: span 2;">
-            <div class="result-label">Amazon S3 Object Key</div>
-            <div class="result-value" id="resS3Key">-</div>
-          </div>
-        </div>
-
-        <div style="display: flex; gap: 10px;">
-          <a id="downloadLink" href="#" target="_blank" class="btn btn-outline" style="text-decoration: none; flex: 1;">
-            🔗 View / Access Document (Presigned S3 URL)
-          </a>
-        </div>
-      </div>
-    </div>
-
-    <!-- STEP 2: PRINT CONFIGURATION & PRICING -->
-    <div class="card" id="step2Card">
-      <div class="card-title">
-        <span>Step 2: Print Configuration & Pricing (Slice 2)</span>
-        <div class="integration-tags">
-          <span class="tag tag-dynamo">DATA-001 DynamoDB</span>
-        </div>
-      </div>
-
-      <div class="form-group">
-        <label for="orderDocId">Referenced Document ID</label>
-        <input type="text" id="orderDocId" placeholder="Upload a document above or paste Document ID here">
-      </div>
-
-      <div class="form-grid">
-        <div class="form-group">
-          <label for="pageCount">Page Count (per copy)</label>
-          <input type="number" id="pageCount" value="10" min="1">
+          <span><i data-lucide="file-up"></i> Step 1: Upload Document (Slice 1)</span>
+          <span style="font-size: 0.8rem; color: var(--ink-muted); font-weight: 500; font-family: 'JetBrains Mono', monospace;">Max 25 MB</span>
         </div>
 
         <div class="form-group">
-          <label for="copies">Copies</label>
-          <input type="number" id="copies" value="1" min="1">
+          <label for="studentId"><i data-lucide="user"></i> Student ID</label>
+          <input type="text" id="studentId" value="STU-2026-001" placeholder="e.g. STU-2026-001">
         </div>
 
-        <div class="form-group">
-          <label for="colorMode">Color Mode</label>
-          <select id="colorMode">
-            <option value="bw" selected>Black & White (₹1.00 / page)</option>
-            <option value="color">Color (₹5.00 / page)</option>
-          </select>
+        <div class="dropzone" id="dropzone">
+          <div class="dropzone-icon">
+            <i data-lucide="upload-cloud"></i>
+          </div>
+          <div class="dropzone-text">Click to select document or drag and drop file here</div>
+          <div class="dropzone-hint">Supported formats: PDF, DOCX, DOC, TXT, PNG, JPG</div>
+          <input type="file" id="fileInput" accept=".pdf,.docx,.doc,.txt,.png,.jpg,.jpeg">
         </div>
 
-        <div class="form-group">
-          <label for="paperSize">Paper Size</label>
-          <select id="paperSize">
-            <option value="A4" selected>A4 (Standard 1.0x)</option>
-            <option value="A3">A3 (Large 2.0x)</option>
-            <option value="Letter">Letter (Standard 1.0x)</option>
-          </select>
+        <div class="file-preview" id="filePreview">
+          <div class="file-details">
+            <div class="file-icon"><i data-lucide="file-text"></i></div>
+            <div>
+              <div class="file-name" id="previewName">filename.pdf</div>
+              <div class="file-meta" id="previewMeta">0 KB • application/pdf</div>
+            </div>
+          </div>
+          <button class="btn btn-outline btn-sm" id="removeFileBtn" type="button">Remove</button>
         </div>
 
-        <div class="form-group" style="grid-column: span 2;">
-          <label for="doubleSided">Side Option</label>
-          <select id="doubleSided">
-            <option value="false" selected>Single-Sided (1 sheet per page)</option>
-            <option value="true">Double-Sided (2 sides per sheet, 20% sheet discount)</option>
-          </select>
+        <button class="btn btn-primary btn-shimmer" id="uploadBtn" disabled style="width: 100%; margin-top: 1.25rem;">
+          <i data-lucide="cloud-upload"></i>
+          <span id="btnText">Upload Document to S3 &amp; DynamoDB</span>
+        </button>
+
+        <div class="result-section" id="uploadResultSection">
+          <div class="card-title" style="font-size: 1.15rem; margin-bottom: 0.75rem;">
+            <span style="color: var(--status-success);"><i data-lucide="check-circle-2"></i> Upload Successful!</span>
+            <div class="integration-tags">
+              <span class="tag tag-s3"><i data-lucide="hard-drive"></i> S3 Stored</span>
+              <span class="tag tag-dynamo"><i data-lucide="database"></i> DynamoDB Saved</span>
+            </div>
+          </div>
+
+          <div class="result-grid">
+            <div class="result-item">
+              <div class="result-label">Document ID</div>
+              <div class="result-value" id="resDocId">-</div>
+            </div>
+            <div class="result-item">
+              <div class="result-label">Filename</div>
+              <div class="result-value" id="resFilename">-</div>
+            </div>
+            <div class="result-item" style="grid-column: span 2;">
+              <div class="result-label">Amazon S3 Object Key</div>
+              <div class="result-value" id="resS3Key" style="font-size: 0.8rem;">-</div>
+            </div>
+          </div>
+
+          <div style="display: flex; gap: 10px;">
+            <a id="downloadLink" href="#" target="_blank" class="btn btn-outline" style="text-decoration: none; flex: 1;">
+              <i data-lucide="external-link"></i>
+              <span>View / Access Document (Presigned S3 URL)</span>
+            </a>
+          </div>
         </div>
       </div>
 
-      <!-- LIVE QUOTE PREVIEW -->
-      <div class="quote-box">
-        <div class="quote-header">
-          <span>Live Calculated Quote (POST /pricing/quote)</span>
-          <span id="quoteStatus">● Ready</span>
-        </div>
-        <div class="quote-price-display">
-          <span class="quote-amount" id="quoteRupees">₹10.00</span>
-          <span class="quote-paise" id="quotePaise">(1000 paise)</span>
-        </div>
-        <div class="quote-breakdown">
-          <div>
-            <div class="quote-stat-label">Base Rate</div>
-            <div class="quote-stat-val" id="statBaseRate">₹1.00/pg</div>
-          </div>
-          <div>
-            <div class="quote-stat-label">Sheets / Total</div>
-            <div class="quote-stat-val" id="statSheets">10 / 10</div>
-          </div>
-          <div>
-            <div class="quote-stat-label">Total Impressions</div>
-            <div class="quote-stat-val" id="statImpressions">10 pgs</div>
-          </div>
-          <div>
-            <div class="quote-stat-label">Unit Price / Copy</div>
-            <div class="quote-stat-val" id="statUnitPrice">₹10.00</div>
-          </div>
-        </div>
-      </div>
-
-      <button class="btn btn-action" id="createOrderBtn">
-        <span id="orderBtnText">Create Order in DynamoDB (POST /orders)</span>
-      </button>
-
-      <!-- CREATED ORDER SUMMARY -->
-      <div class="result-section" id="orderResultSection">
+      <!-- STEP 2: PRINT CONFIGURATION & PRICING -->
+      <div class="card" id="step2Card">
         <div class="card-title">
-          <span>Order Created Successfully!</span>
+          <span><i data-lucide="sliders-horizontal"></i> Step 2: Print Configuration &amp; Pricing (Slice 2)</span>
           <div class="integration-tags">
-            <span class="tag tag-status" id="resOrderStatus">PENDING_PAYMENT</span>
-            <span class="tag tag-dynamo">DynamoDB Persisted</span>
+            <span class="tag tag-dynamo"><i data-lucide="database"></i> DATA-001 DynamoDB</span>
           </div>
         </div>
 
-        <div class="result-grid">
-          <div class="result-item">
-            <div class="result-label">Order ID</div>
-            <div class="result-value" id="resOrderId">-</div>
+        <div class="form-group">
+          <label for="orderDocId"><i data-lucide="link-2"></i> Referenced Document ID</label>
+          <input type="text" id="orderDocId" placeholder="Upload a document above or paste Document ID here">
+        </div>
+
+        <div class="form-grid">
+          <div class="form-group">
+            <label for="pageCount"><i data-lucide="files"></i> Page Count (per copy)</label>
+            <input type="number" id="pageCount" value="10" min="1">
           </div>
-          <div class="result-item">
-            <div class="result-label">Payment Status (Slice 3 Prep)</div>
-            <div class="result-value" id="resOrderPaymentStatus" style="color: var(--warning); font-weight: 700;">PENDING</div>
+
+          <div class="form-group">
+            <label for="copies"><i data-lucide="copy"></i> Copies</label>
+            <input type="number" id="copies" value="1" min="1">
           </div>
-          <div class="result-item">
-            <div class="result-label">Total Amount</div>
-            <div class="result-value" id="resOrderAmount" style="color: var(--primary); font-weight: 700;">-</div>
+
+          <div class="form-group">
+            <label for="colorMode"><i data-lucide="palette"></i> Color Mode</label>
+            <select id="colorMode">
+              <option value="bw" selected>Black &amp; White (₹1.00 / page)</option>
+              <option value="color">Color (₹5.00 / page)</option>
+            </select>
           </div>
-          <div class="result-item">
-            <div class="result-label">Physical Sheets</div>
-            <div class="result-value" id="resOrderSheets">-</div>
+
+          <div class="form-group">
+            <label for="paperSize"><i data-lucide="file"></i> Paper Size</label>
+            <select id="paperSize">
+              <option value="A4" selected>A4 (Standard 1.0x)</option>
+              <option value="A3">A3 (Large 2.0x)</option>
+              <option value="Letter">Letter (Standard 1.0x)</option>
+            </select>
           </div>
-          <div class="result-item" style="grid-column: span 2;">
-            <div class="result-label">DynamoDB Partition & Sort Key</div>
-            <div class="result-value" id="resOrderDdbKey">-</div>
+
+          <div class="form-group" style="grid-column: span 2;">
+            <label for="doubleSided"><i data-lucide="book-open"></i> Sidedness</label>
+            <select id="doubleSided">
+              <option value="false" selected>Single-Sided (1 sheet per page)</option>
+              <option value="true">Double-Sided (2 sides per sheet, 20% sheet discount)</option>
+            </select>
           </div>
-          <div class="result-item" style="grid-column: span 2;">
-            <div class="result-label">Referenced S3 Object Key (DATA-001)</div>
-            <div class="result-value" id="resOrderDocKey" style="font-size: 0.8rem; font-family: 'JetBrains Mono', monospace;">-</div>
+        </div>
+
+        <!-- LIVE QUOTE PREVIEW -->
+        <div class="quote-box">
+          <div class="quote-header">
+            <span>Live Calculated Quote (POST /pricing/quote)</span>
+            <span id="quoteStatus">● Ready</span>
           </div>
-          <div class="result-item" style="grid-column: span 2;">
-            <div class="result-label">Print Specification</div>
-            <div class="result-value" id="resOrderConfig">-</div>
+          <div class="quote-price-display">
+            <span class="quote-amount" id="quoteRupees">₹10.00</span>
+            <span class="quote-paise" id="quotePaise">(1000 paise)</span>
+          </div>
+          <div class="quote-breakdown">
+            <div>
+              <div class="quote-stat-label">Base Rate</div>
+              <div class="quote-stat-val" id="statBaseRate">₹1.00/pg</div>
+            </div>
+            <div>
+              <div class="quote-stat-label">Sheets / Total</div>
+              <div class="quote-stat-val" id="statSheets">10 / 10</div>
+            </div>
+            <div>
+              <div class="quote-stat-label">Total Impressions</div>
+              <div class="quote-stat-val" id="statImpressions">10 pgs</div>
+            </div>
+            <div>
+              <div class="quote-stat-label">Unit Price / Copy</div>
+              <div class="quote-stat-val" id="statUnitPrice">₹10.00</div>
+            </div>
+          </div>
+        </div>
+
+        <button class="btn btn-action btn-shimmer" id="createOrderBtn">
+          <i data-lucide="check"></i>
+          <span id="orderBtnText">Create Order in DynamoDB (POST /orders)</span>
+        </button>
+
+        <!-- CREATED ORDER SUMMARY -->
+        <div class="result-section" id="orderResultSection">
+          <div class="card-title" style="font-size: 1.15rem; margin-bottom: 0.75rem;">
+            <span style="color: var(--status-success);"><i data-lucide="check-circle-2"></i> Order Created Successfully!</span>
+            <div class="integration-tags">
+              <span class="tag tag-status" id="resOrderStatus">PENDING_PAYMENT</span>
+              <span class="tag tag-dynamo"><i data-lucide="database"></i> DynamoDB Persisted</span>
+            </div>
+          </div>
+
+          <div class="result-grid">
+            <div class="result-item">
+              <div class="result-label">Order ID</div>
+              <div class="result-value" id="resOrderId">-</div>
+            </div>
+            <div class="result-item">
+              <div class="result-label">Payment Status (Slice 3 Prep)</div>
+              <div class="result-value" id="resOrderPaymentStatus" style="color: var(--accent); font-weight: 700;">PENDING</div>
+            </div>
+            <div class="result-item">
+              <div class="result-label">Total Amount</div>
+              <div class="result-value" id="resOrderAmount" style="color: var(--accent); font-weight: 700;">-</div>
+            </div>
+            <div class="result-item">
+              <div class="result-label">Physical Sheets</div>
+              <div class="result-value" id="resOrderSheets">-</div>
+            </div>
+            <div class="result-item" style="grid-column: span 2;">
+              <div class="result-label">DynamoDB Partition &amp; Sort Key</div>
+              <div class="result-value" id="resOrderDdbKey" style="font-size: 0.8rem;">-</div>
+            </div>
+            <div class="result-item" style="grid-column: span 2;">
+              <div class="result-label">Referenced S3 Object Key (DATA-001)</div>
+              <div class="result-value" id="resOrderDocKey" style="font-size: 0.8rem;">-</div>
+            </div>
+            <div class="result-item" style="grid-column: span 2;">
+              <div class="result-label">Print Specification</div>
+              <div class="result-value" id="resOrderConfig">-</div>
+            </div>
           </div>
         </div>
       </div>
-    </div>
 
-    <!-- STEP 3: SIMULATED PAYMENT -->
-    <div class="card" id="step3Card">
-      <div class="card-title">
-        <span>Step 3: Simulated Payment (Slice 3)</span>
-        <div class="integration-tags">
-          <span class="tag tag-status" id="paymentStatusBadge">PENDING</span>
-          <span class="tag tag-dynamo">DATA-001 DynamoDB</span>
-        </div>
-      </div>
-      <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 1.25rem;">
-        Deterministic payment simulation only (SUCCESS or FAILURE). Amounts and currency are authoritatively derived from the DynamoDB order pricing breakdown (client payment state is never trusted).
-      </p>
-
-      <div class="form-group">
-        <label for="paymentOrderId">Order ID to Pay</label>
-        <input type="text" id="paymentOrderId" placeholder="Create an order above or paste Order ID (ORD-...) here">
-      </div>
-
-      <div class="form-group">
-        <label>Deterministic Simulation Outcome</label>
-        <div style="display: flex; gap: 12px; margin-top: 6px;">
-          <label style="display: flex; align-items: center; gap: 8px; cursor: pointer; background: #0f172a; border: 1px solid var(--card-border); padding: 10px 16px; border-radius: 8px; flex: 1;">
-            <input type="radio" name="paymentOutcome" value="SUCCESS" checked style="accent-color: var(--success); width: auto;">
-            <span style="font-weight: 600; color: var(--success);">Simulate SUCCESS</span>
-          </label>
-          <label style="display: flex; align-items: center; gap: 8px; cursor: pointer; background: #0f172a; border: 1px solid var(--card-border); padding: 10px 16px; border-radius: 8px; flex: 1;">
-            <input type="radio" name="paymentOutcome" value="FAILURE" style="accent-color: var(--error); width: auto;">
-            <span style="font-weight: 600; color: var(--error);">Simulate FAILURE</span>
-          </label>
-        </div>
-      </div>
-
-      <button class="btn btn-action" id="simulatePaymentBtn">
-        <span id="paymentBtnText">Execute Simulated Payment (POST /orders/{order_id}/payment/simulate)</span>
-      </button>
-
-      <!-- SIMULATED PAYMENT RESULT SECTION -->
-      <div class="result-section" id="paymentResultSection">
+      <!-- STEP 3: SIMULATED PAYMENT -->
+      <div class="card" id="step3Card">
         <div class="card-title">
-          <span id="paymentResultHeading">Payment Outcome Recorded</span>
+          <span><i data-lucide="credit-card"></i> Step 3: Simulated Payment (Slice 3)</span>
           <div class="integration-tags">
-            <span class="tag" id="paymentResultTag">SUCCESS</span>
-            <span class="tag tag-dynamo">DynamoDB Updated</span>
+            <span class="tag tag-status" id="paymentStatusBadge">PENDING</span>
+            <span class="tag tag-dynamo"><i data-lucide="database"></i> DATA-001 DynamoDB</span>
+          </div>
+        </div>
+        <p style="font-size: 0.85rem; color: var(--ink-muted); margin-bottom: 1.25rem;">
+          Deterministic payment simulation only (SUCCESS or FAILURE). Amounts and currency are authoritatively derived from the DynamoDB order pricing breakdown (client payment state is never trusted).
+        </p>
+
+        <div class="form-group">
+          <label for="paymentOrderId"><i data-lucide="hash"></i> Order ID to Pay</label>
+          <input type="text" id="paymentOrderId" placeholder="Create an order above or paste Order ID (ORD-...) here">
+        </div>
+
+        <div class="form-group">
+          <label><i data-lucide="help-circle"></i> Deterministic Simulation Outcome</label>
+          <div style="display: flex; gap: 12px; margin-top: 6px;">
+            <label style="display: flex; align-items: center; gap: 10px; cursor: pointer; background: var(--surface-inset); border: 1px solid var(--rule-subtle); padding: 12px 18px; border-radius: var(--radius-sm); flex: 1; transition: all 0.2s ease;">
+              <input type="radio" name="paymentOutcome" value="SUCCESS" checked style="accent-color: var(--status-success); width: auto;">
+              <span style="font-weight: 600; color: var(--status-success); display: inline-flex; align-items: center; gap: 6px;">
+                <i data-lucide="check-circle-2" style="width: 16px; height: 16px;"></i> Simulate SUCCESS
+              </span>
+            </label>
+            <label style="display: flex; align-items: center; gap: 10px; cursor: pointer; background: var(--surface-inset); border: 1px solid var(--rule-subtle); padding: 12px 18px; border-radius: var(--radius-sm); flex: 1; transition: all 0.2s ease;">
+              <input type="radio" name="paymentOutcome" value="FAILURE" style="accent-color: var(--status-error); width: auto;">
+              <span style="font-weight: 600; color: var(--status-error); display: inline-flex; align-items: center; gap: 6px;">
+                <i data-lucide="x-circle" style="width: 16px; height: 16px;"></i> Simulate FAILURE
+              </span>
+            </label>
           </div>
         </div>
 
-        <div class="result-grid">
-          <div class="result-item">
-            <div class="result-label">Payment ID</div>
-            <div class="result-value" id="resPaymentId">-</div>
-          </div>
-          <div class="result-item">
-            <div class="result-label">Payment Reference</div>
-            <div class="result-value" id="resPaymentRef">-</div>
-          </div>
-          <div class="result-item">
-            <div class="result-label">Authoritative Amount Charged</div>
-            <div class="result-value" id="resPaymentAmount" style="color: var(--primary); font-weight: 700;">-</div>
-          </div>
-          <div class="result-item">
-            <div class="result-label">Updated Order Status</div>
-            <div class="result-value" id="resPaymentOrderStatus" style="font-weight: 700;">-</div>
-          </div>
-          <div class="result-item" style="grid-column: span 2;" id="resPaymentFailureRow">
-            <div class="result-label">Failure Reason / Details</div>
-            <div class="result-value" id="resPaymentFailureReason" style="color: var(--error);">-</div>
-          </div>
-          <div class="result-item" style="grid-column: span 2;">
-            <div class="result-label">DynamoDB Partition & Sort Key</div>
-            <div class="result-value" id="resPaymentDdbKey" style="font-size: 0.8rem; font-family: 'JetBrains Mono', monospace;">-</div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- STEP 4: OPERATIONAL QUEUE & TOKEN -->
-    <div class="card" id="step4Card">
-      <div class="card-title">
-        <span>Step 4: Operational Queue & Token (Slice 4)</span>
-        <div class="integration-tags">
-          <span class="tag tag-status" id="queueStatusBadge">READY_TO_QUEUE</span>
-          <span class="tag tag-dynamo">PK: QUEUE#ACTIVE</span>
-        </div>
-      </div>
-      <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 1.25rem;">
-        Successfully paid orders enter the operational print queue. The backend atomically issues a clean, sequential token (e.g. X-101) and calculates deterministic ETA based on active queue depth and pages printed ahead.
-      </p>
-
-      <div class="form-group">
-        <label for="queueOrderId">Order ID to Queue</label>
-        <input type="text" id="queueOrderId" placeholder="Complete Step 3 payment above or paste Order ID (ORD-...) here">
-      </div>
-
-      <div style="display: flex; gap: 10px; margin-bottom: 1rem;">
-        <button class="btn btn-action" id="enterQueueBtn" style="flex: 1;">
-          <span id="queueBtnText">Admit Order to Queue (POST /orders/{order_id}/queue)</span>
+        <button class="btn btn-action btn-shimmer" id="simulatePaymentBtn">
+          <i data-lucide="zap"></i>
+          <span id="paymentBtnText">Execute Simulated Payment (POST /orders/{order_id}/payment/simulate)</span>
         </button>
-        <button class="btn btn-outline" id="refreshQueueBtn" type="button">
-          <span id="refreshBtnText">↻ Refresh Live ETA & Position</span>
-        </button>
-      </div>
 
-      <!-- QUEUE RESULT SECTION -->
-      <div class="result-section" id="queueResultSection" style="display: none;">
-        <div class="token-hero">
-          <div class="token-label">Issued Sequential Print Token</div>
-          <div class="token-display" id="resTokenNumber">X-101</div>
-          <div class="queue-position-banner" id="resQueuePositionBanner">
-            <span id="resQueuePositionText">You are #1 in line</span>
+        <!-- SIMULATED PAYMENT RESULT SECTION -->
+        <div class="result-section" id="paymentResultSection">
+          <div class="card-title" style="font-size: 1.15rem; margin-bottom: 0.75rem;">
+            <span id="paymentResultHeading">Payment Outcome Recorded</span>
+            <div class="integration-tags">
+              <span class="tag" id="paymentResultTag">SUCCESS</span>
+              <span class="tag tag-dynamo"><i data-lucide="database"></i> DynamoDB Updated</span>
+            </div>
+          </div>
+
+          <div class="result-grid">
+            <div class="result-item">
+              <div class="result-label">Payment ID</div>
+              <div class="result-value" id="resPaymentId">-</div>
+            </div>
+            <div class="result-item">
+              <div class="result-label">Payment Reference</div>
+              <div class="result-value" id="resPaymentRef">-</div>
+            </div>
+            <div class="result-item">
+              <div class="result-label">Authoritative Amount Charged</div>
+              <div class="result-value" id="resPaymentAmount" style="color: var(--accent); font-weight: 700;">-</div>
+            </div>
+            <div class="result-item">
+              <div class="result-label">Updated Order Status</div>
+              <div class="result-value" id="resPaymentOrderStatus" style="font-weight: 700;">-</div>
+            </div>
+            <div class="result-item" style="grid-column: span 2;" id="resPaymentFailureRow">
+              <div class="result-label">Failure Reason / Details</div>
+              <div class="result-value" id="resPaymentFailureReason" style="color: var(--status-error);">-</div>
+            </div>
+            <div class="result-item" style="grid-column: span 2;">
+              <div class="result-label">DynamoDB Partition &amp; Sort Key</div>
+              <div class="result-value" id="resPaymentDdbKey" style="font-size: 0.8rem;">-</div>
+            </div>
           </div>
         </div>
+      </div>
 
-        <div class="result-grid">
-          <div class="result-item">
-            <div class="result-label">Live Queue Position</div>
-            <div class="result-value" id="resQueuePos" style="color: var(--primary); font-weight: 700;">-</div>
-          </div>
-          <div class="result-item">
-            <div class="result-label">Estimated Ready Time (ETA)</div>
-            <div class="result-value" id="resQueueEta" style="color: var(--success); font-weight: 700;">-</div>
-          </div>
-          <div class="result-item">
-            <div class="result-label">Estimated Wait Remaining</div>
-            <div class="result-value" id="resQueueWait">-</div>
-          </div>
-          <div class="result-item">
-            <div class="result-label">Active Queue Depth</div>
-            <div class="result-value" id="resQueueDepth">-</div>
-          </div>
-          <div class="result-item" style="grid-column: span 2;">
-            <div class="result-label">DynamoDB Partition & Keys</div>
-            <div class="result-value" id="resQueueDdbKey" style="font-size: 0.8rem; font-family: 'JetBrains Mono', monospace;">-</div>
+      <!-- STEP 4: OPERATIONAL QUEUE & TOKEN -->
+      <div class="card" id="step4Card">
+        <div class="card-title">
+          <span><i data-lucide="ticket"></i> Step 4: Operational Queue &amp; Token (Slice 4)</span>
+          <div class="integration-tags">
+            <span class="tag tag-status" id="queueStatusBadge">READY_TO_QUEUE</span>
+            <span class="tag tag-dynamo"><i data-lucide="database"></i> PK: QUEUE#ACTIVE</span>
           </div>
         </div>
-        <button class="btn btn-outline" id="jumpToHistoryBtn" type="button" style="width: 100%; margin-top: 0.75rem;">
-          📜 View Live Timeline in Student Order History & Tracking
-        </button>
-      </div>
-    </div>
+        <p style="font-size: 0.85rem; color: var(--ink-muted); margin-bottom: 1.25rem;">
+          Successfully paid orders enter the operational print queue. The backend atomically issues a clean, sequential token (e.g. X-101) and calculates deterministic ETA based on active queue depth and pages printed ahead.
+        </p>
 
-    <!-- VERIFY QUEUE IN DYNAMODB -->
-    <div class="card">
-      <div class="card-title">
-        <span>Verify Queue Status in DynamoDB</span>
-        <span style="font-size: 0.8rem; color: var(--text-muted); font-weight: 400;">GET /orders/{order_id}/queue</span>
-      </div>
-      <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 1rem;">
-        Query live queue position, deterministic ETA, and active queue length directly from DynamoDB via the backend API.
-      </p>
-      <div class="query-section">
-        <input type="text" id="queryQueueOrderId" placeholder="Paste Order ID here...">
-        <button class="btn btn-outline" id="queryQueueBtn" type="button">Fetch Queue Status</button>
-      </div>
-      <pre id="queryQueueResult" style="display: none;"></pre>
-    </div>
+        <div class="form-group">
+          <label for="queueOrderId"><i data-lucide="hash"></i> Order ID to Queue</label>
+          <input type="text" id="queueOrderId" placeholder="Complete Step 3 payment above or paste Order ID (ORD-...) here">
+        </div>
 
-    <!-- VERIFY PAYMENT IN DYNAMODB -->
-    <div class="card">
-      <div class="card-title">
-        <span>Verify Payment in DynamoDB</span>
-        <span style="font-size: 0.8rem; color: var(--text-muted); font-weight: 400;">GET /orders/{order_id}/payment</span>
-      </div>
-      <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 1rem;">
-        Query the single-table DynamoDB partition (PK: ORDER#{order_id}, SK: PAYMENT#{payment_id}) directly via the backend API.
-      </p>
-      <div class="query-section">
-        <input type="text" id="queryPaymentOrderId" placeholder="Paste Order ID here...">
-        <button class="btn btn-outline" id="queryPaymentBtn" type="button">Fetch Payment</button>
-      </div>
-      <pre id="queryPaymentResult" style="display: none;"></pre>
-    </div>
+        <div style="display: flex; gap: 10px; margin-bottom: 1rem; flex-wrap: wrap;">
+          <button class="btn btn-action btn-shimmer" id="enterQueueBtn" style="flex: 1; min-width: 280px;">
+            <i data-lucide="send"></i>
+            <span id="queueBtnText">Admit Order to Queue (POST /orders/{order_id}/queue)</span>
+          </button>
+          <button class="btn btn-outline" id="refreshQueueBtn" type="button">
+            <i data-lucide="rotate-cw"></i>
+            <span id="refreshBtnText">Refresh Live ETA &amp; Position</span>
+          </button>
+        </div>
 
-    <!-- VERIFY ORDER IN DYNAMODB -->
-    <div class="card">
-      <div class="card-title">
-        <span>Verify Order in DynamoDB</span>
-        <span style="font-size: 0.8rem; color: var(--text-muted); font-weight: 400;">GET /orders/{order_id}</span>
-      </div>
-      <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 1rem;">
-        Query the single-table DynamoDB partition (PK: ORDER#{order_id}, SK: ORDER#{order_id}) directly via the backend API.
-      </p>
-      <div class="query-section">
-        <input type="text" id="queryOrderId" placeholder="Paste Order ID here...">
-        <button class="btn btn-outline" id="queryOrderBtn" type="button">Fetch Order</button>
-      </div>
-      <pre id="queryOrderResult" style="display: none;"></pre>
-    </div>
+        <!-- QUEUE RESULT SECTION -->
+        <div class="result-section" id="queueResultSection" style="display: none;">
+          <div class="token-hero">
+            <div class="token-label">Issued Sequential Print Token</div>
+            <div class="token-display" id="resTokenNumber">X-101</div>
+            <div class="queue-position-banner" id="resQueuePositionBanner">
+              <span id="resQueuePositionText">You are #1 in line</span>
+            </div>
+          </div>
 
-    <!-- VERIFY DOCUMENT IN DYNAMODB -->
-    <div class="card">
-      <div class="card-title">
-        <span>Verify Document in DynamoDB</span>
-        <span style="font-size: 0.8rem; color: var(--text-muted); font-weight: 400;">GET /documents/{id}</span>
+          <div class="result-grid">
+            <div class="result-item">
+              <div class="result-label">Live Queue Position</div>
+              <div class="result-value" id="resQueuePos" style="color: var(--accent); font-weight: 700;">-</div>
+            </div>
+            <div class="result-item">
+              <div class="result-label">Estimated Ready Time (ETA)</div>
+              <div class="result-value" id="resQueueEta" style="color: var(--status-success); font-weight: 700;">-</div>
+            </div>
+            <div class="result-item">
+              <div class="result-label">Estimated Wait Remaining</div>
+              <div class="result-value" id="resQueueWait">-</div>
+            </div>
+            <div class="result-item">
+              <div class="result-label">Active Queue Depth</div>
+              <div class="result-value" id="resQueueDepth">-</div>
+            </div>
+            <div class="result-item" style="grid-column: span 2;">
+              <div class="result-label">DynamoDB Partition &amp; Keys</div>
+              <div class="result-value" id="resQueueDdbKey" style="font-size: 0.8rem;">-</div>
+            </div>
+          </div>
+          <button class="btn btn-outline" id="jumpToHistoryBtn" type="button" style="width: 100%; margin-top: 0.75rem;">
+            <i data-lucide="history"></i>
+            <span>View Live Timeline in Student Order History &amp; Tracking</span>
+          </button>
+        </div>
       </div>
-      <div class="query-section">
-        <input type="text" id="queryDocId" placeholder="Paste Document ID here...">
-        <button class="btn btn-outline" id="queryBtn" type="button">Fetch Metadata</button>
+
+      <!-- VERIFY QUEUE IN DYNAMODB -->
+      <div class="card">
+        <div class="card-title">
+          <span><i data-lucide="search"></i> Verify Queue Status in DynamoDB</span>
+          <span style="font-size: 0.8rem; color: var(--ink-muted); font-weight: 500; font-family: 'JetBrains Mono', monospace;">GET /orders/{order_id}/queue</span>
+        </div>
+        <p style="font-size: 0.85rem; color: var(--ink-muted); margin-bottom: 1rem;">
+          Query live queue position, deterministic ETA, and active queue length directly from DynamoDB via the backend API.
+        </p>
+        <div class="query-section">
+          <input type="text" id="queryQueueOrderId" placeholder="Paste Order ID here...">
+          <button class="btn btn-outline" id="queryQueueBtn" type="button">
+            <i data-lucide="terminal"></i>
+            <span>Fetch Queue Status</span>
+          </button>
+        </div>
+        <pre id="queryQueueResult" style="display: none;"></pre>
       </div>
-      <pre id="queryResult" style="display: none;"></pre>
-    </div>
+
+      <!-- VERIFY PAYMENT IN DYNAMODB -->
+      <div class="card">
+        <div class="card-title">
+          <span><i data-lucide="search"></i> Verify Payment in DynamoDB</span>
+          <span style="font-size: 0.8rem; color: var(--ink-muted); font-weight: 500; font-family: 'JetBrains Mono', monospace;">GET /orders/{order_id}/payment</span>
+        </div>
+        <p style="font-size: 0.85rem; color: var(--ink-muted); margin-bottom: 1rem;">
+          Query the single-table DynamoDB partition (PK: ORDER#{order_id}, SK: PAYMENT#{payment_id}) directly via the backend API.
+        </p>
+        <div class="query-section">
+          <input type="text" id="queryPaymentOrderId" placeholder="Paste Order ID here...">
+          <button class="btn btn-outline" id="queryPaymentBtn" type="button">
+            <i data-lucide="terminal"></i>
+            <span>Fetch Payment</span>
+          </button>
+        </div>
+        <pre id="queryPaymentResult" style="display: none;"></pre>
+      </div>
+
+      <!-- VERIFY ORDER IN DYNAMODB -->
+      <div class="card">
+        <div class="card-title">
+          <span><i data-lucide="search"></i> Verify Order in DynamoDB</span>
+          <span style="font-size: 0.8rem; color: var(--ink-muted); font-weight: 500; font-family: 'JetBrains Mono', monospace;">GET /orders/{order_id}</span>
+        </div>
+        <p style="font-size: 0.85rem; color: var(--ink-muted); margin-bottom: 1rem;">
+          Query the single-table DynamoDB partition (PK: ORDER#{order_id}, SK: ORDER#{order_id}) directly via the backend API.
+        </p>
+        <div class="query-section">
+          <input type="text" id="queryOrderId" placeholder="Paste Order ID here...">
+          <button class="btn btn-outline" id="queryOrderBtn" type="button">
+            <i data-lucide="terminal"></i>
+            <span>Fetch Order</span>
+          </button>
+        </div>
+        <pre id="queryOrderResult" style="display: none;"></pre>
+      </div>
+
+      <!-- VERIFY DOCUMENT IN DYNAMODB -->
+      <div class="card">
+        <div class="card-title">
+          <span><i data-lucide="search"></i> Verify Document in DynamoDB</span>
+          <span style="font-size: 0.8rem; color: var(--ink-muted); font-weight: 500; font-family: 'JetBrains Mono', monospace;">GET /documents/{id}</span>
+        </div>
+        <div class="query-section">
+          <input type="text" id="queryDocId" placeholder="Paste Document ID here...">
+          <button class="btn btn-outline" id="queryBtn" type="button">
+            <i data-lucide="terminal"></i>
+            <span>Fetch Metadata</span>
+          </button>
+        </div>
+        <pre id="queryResult" style="display: none;"></pre>
+      </div>
+
     <!-- END STUDENT PORTAL SECTION -->
     </div>
 
@@ -1232,23 +1759,25 @@
       <div class="card">
         <div class="card-title" style="flex-wrap: wrap; gap: 10px;">
           <div style="display: flex; align-items: center; gap: 10px;">
-            <span>Student Order Portal: Complete Tracking & History</span>
-            <span class="tag tag-dynamo">Slice 6: Authoritative Tracking</span>
+            <i data-lucide="history" style="color: var(--accent);"></i>
+            <span>Student Order Portal: Complete Tracking &amp; History</span>
+            <span class="tag tag-dynamo">Slice 6: Student Tracking + History</span>
           </div>
           <div class="integration-tags">
-            <span class="tag tag-s3">Presigned S3 Document Access</span>
-            <span class="tag tag-status">Lifecycle Timeline</span>
+            <span class="tag tag-s3"><i data-lucide="hard-drive"></i> S3 Document Access</span>
+            <span class="tag tag-status"><i data-lucide="git-commit"></i> Lifecycle Timeline</span>
           </div>
         </div>
-        <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 1.25rem;">
+        <p style="font-size: 0.88rem; color: var(--ink-muted); margin-bottom: 1.25rem;">
           Query current and past print orders for your Student ID. View authoritative order progression, chronological status timelines with timestamps, simulated payment receipts, token, live queue position, deterministic completion ETA, operator rejection notes, and re-download previously submitted documents securely via time-limited S3 presigned URLs.
         </p>
 
         <!-- Search Bar -->
-        <div style="display: flex; gap: 10px; margin-bottom: 1rem; flex-wrap: wrap;">
+        <div style="display: flex; gap: 10px; margin-bottom: 1.25rem; flex-wrap: wrap;">
           <input type="text" id="historyStudentId" placeholder="Enter Student ID (e.g. STU-2026-001, anonymous)" style="flex: 1; min-width: 240px;">
-          <button class="btn btn-primary" id="btnFetchHistory" type="button" style="width: auto; margin-top: 0; padding: 0.75rem 1.75rem;">
-            <span>🔍 Fetch Orders</span>
+          <button class="btn btn-primary" id="btnFetchHistory" type="button" style="padding: 0.8rem 1.75rem;">
+            <i data-lucide="search"></i>
+            <span>Fetch Orders</span>
           </button>
         </div>
 
@@ -1265,10 +1794,10 @@
 
         <!-- Orders Container -->
         <div id="historyOrdersContainer">
-          <div style="text-align: center; color: var(--text-muted); padding: 3rem 0; background: #0f172a; border-radius: 8px; border: 1px dashed var(--card-border);">
-            <div style="font-size: 2rem; margin-bottom: 0.5rem;">📜</div>
-            <div style="font-size: 0.95rem; font-weight: 500; color: #cbd5e1; margin-bottom: 0.25rem;">Enter your Student ID above</div>
-            <div style="font-size: 0.8rem; color: var(--text-muted);">Retrieve your past and current print orders, live queue status, and payment receipts.</div>
+          <div style="text-align: center; color: var(--ink-muted); padding: 3.5rem 1rem; background: var(--surface-inset); border-radius: var(--radius-md); border: 1px dashed var(--rule-strong);">
+            <div style="font-size: 2.2rem; margin-bottom: 0.5rem; color: var(--accent);"><i data-lucide="search" style="width: 36px; height: 36px;"></i></div>
+            <div style="font-size: 1rem; font-weight: 600; color: var(--ink); margin-bottom: 0.35rem;">Enter your Student ID above</div>
+            <div style="font-size: 0.83rem; color: var(--ink-muted);">Retrieve your past and current print orders, live queue status, and payment receipts.</div>
           </div>
         </div>
       </div>
@@ -1279,12 +1808,13 @@
       <div class="card">
         <div class="card-title" style="flex-wrap: wrap; gap: 10px;">
           <div style="display: flex; align-items: center; gap: 10px;">
-            <span>Staff Operations Console (Slice 5)</span>
+            <i data-lucide="wrench" style="color: var(--accent);"></i>
+            <span>Staff Operations Console (Slice 5: Staff Processing)</span>
             <span class="tag tag-dynamo">Authoritative State Machine</span>
           </div>
           <div style="display: flex; gap: 8px; align-items: center; flex-wrap: wrap;">
-            <select id="staffStatusFilter" style="padding: 6px 12px; font-size: 0.8rem; background: var(--bg); color: var(--text); border: 1px solid var(--card-border); border-radius: 6px;">
-              <option value="ACTIVE" selected>Active Jobs (QUEUED & PROCESSING)</option>
+            <select id="staffStatusFilter" style="padding: 7px 12px; font-size: 0.82rem; background: var(--surface-inset); color: var(--ink); border: 1px solid var(--rule-subtle); border-radius: var(--radius-sm); font-weight: 500;">
+              <option value="ACTIVE" selected>Active Jobs (QUEUED &amp; PROCESSING)</option>
               <option value="QUEUED">QUEUED (Incoming / Unprocessed)</option>
               <option value="PROCESSING">PROCESSING (Currently Printing)</option>
               <option value="READY">READY (Awaiting Pickup)</option>
@@ -1292,10 +1822,13 @@
               <option value="REJECTED">REJECTED (Formal Reason)</option>
               <option value="ALL">All Orders (Scan)</option>
             </select>
-            <button class="btn btn-outline btn-sm" id="refreshStaffBtn" type="button">↻ Refresh Orders</button>
+            <button class="btn btn-outline btn-sm" id="refreshStaffBtn" type="button">
+              <i data-lucide="rotate-cw"></i>
+              <span>Refresh Orders</span>
+            </button>
           </div>
         </div>
-        <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 1.25rem;">
+        <p style="font-size: 0.88rem; color: var(--ink-muted); margin-bottom: 1.25rem;">
           View active incoming orders, inspect uploaded documents securely via time-limited S3 presigned URLs, accept orders to begin printing, mark ready for pickup, or reject with mandatory formal justification.
         </p>
 
@@ -1303,7 +1836,7 @@
 
         <!-- Orders Container -->
         <div id="staffOrdersContainer">
-          <div style="text-align: center; color: var(--text-muted); padding: 2rem 0;">Loading incoming orders...</div>
+          <div style="text-align: center; color: var(--ink-muted); padding: 2.5rem 0;">Loading incoming orders...</div>
         </div>
       </div>
     </div>
@@ -1312,18 +1845,21 @@
     <div id="rejectModal" class="modal-overlay" style="display: none;">
       <div class="modal-card">
         <div class="card-title" style="margin-bottom: 0.75rem;">
-          <span style="color: var(--error);">Reject Order</span>
+          <span style="color: var(--status-error); display: flex; align-items: center; gap: 8px;">
+            <i data-lucide="alert-octagon"></i>
+            Reject Order
+          </span>
           <span id="modalOrderToken" class="staff-token-badge" style="font-size: 0.9rem;">X-101</span>
         </div>
-        <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 1rem;">
+        <p style="font-size: 0.85rem; color: var(--ink-muted); margin-bottom: 1rem; line-height: 1.5;">
           A non-empty formal rejection reason is mandatory by system policy. The student will see this reason on their tracking screen and the order will be removed from the operational print queue.
         </p>
         <input type="hidden" id="modalOrderId" value="">
         <div class="form-group">
-          <label for="modalRejectReason">Formal Rejection Reason</label>
-          <textarea id="modalRejectReason" rows="3" placeholder="e.g., Damaged file raster format, corrupted pages 3-4, invalid dimensions..." style="width: 100%; background: var(--bg); border: 1px solid var(--card-border); border-radius: 6px; padding: 8px 12px; color: var(--text); font-family: inherit; font-size: 0.85rem;"></textarea>
+          <label for="modalRejectReason"><i data-lucide="file-text"></i> Formal Rejection Reason</label>
+          <textarea id="modalRejectReason" rows="3" placeholder="e.g., Damaged file raster format, corrupted pages 3-4, invalid dimensions..."></textarea>
         </div>
-        <div style="display: flex; gap: 10px; justify-content: flex-end; margin-top: 1rem;">
+        <div style="display: flex; gap: 10px; justify-content: flex-end; margin-top: 1.25rem;">
           <button class="btn btn-outline" id="modalCancelBtn" type="button">Cancel</button>
           <button class="btn btn-danger" id="modalConfirmBtn" type="button">Confirm Rejection</button>
         </div>
@@ -1331,11 +1867,41 @@
     </div>
 
     <footer>
-      Digital Xerox & Stationery System • Vertical Slice 5 • FastAPI + DynamoDB + S3
+      Digital Xerox &amp; Stationery System • Vertical Slice 5 • FastAPI + DynamoDB + S3
     </footer>
   </div>
 
   <script>
+    // ==========================================================================
+    // LUCIDE ICONS CONTROLLER
+    // ==========================================================================
+    function refreshIcons() {
+      if (window.lucide && typeof window.lucide.createIcons === "function") {
+        window.lucide.createIcons();
+      }
+    }
+
+    // Ripple click interaction (INTERACTION-PATTERNS.md 2.5)
+    document.addEventListener("click", (e) => {
+      const btn = e.target.closest(".btn-primary, .btn-action, .btn-success, .btn-danger");
+      if (!btn) return;
+      if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+
+      const rect = btn.getBoundingClientRect();
+      const size = Math.max(btn.offsetWidth, btn.offsetHeight);
+      const x = e.clientX - rect.left - size / 2;
+      const y = e.clientY - rect.top - size / 2;
+
+      const ripple = document.createElement("span");
+      ripple.className = "ripple-effect";
+      ripple.style.width = `${size}px`;
+      ripple.style.height = `${size}px`;
+      ripple.style.left = `${x}px`;
+      ripple.style.top = `${y}px`;
+      btn.appendChild(ripple);
+      ripple.addEventListener("animationend", () => ripple.remove());
+    });
+
     // Elements - Step 1
     const dropzone = document.getElementById("dropzone");
     const fileInput = document.getElementById("fileInput");
@@ -1476,6 +2042,7 @@
       dropzone.style.display = "none";
       filePreview.style.display = "flex";
       uploadBtn.disabled = false;
+      refreshIcons();
     }
 
     dropzone.addEventListener("click", () => fileInput.click());
@@ -1506,6 +2073,7 @@
       uploadBtn.disabled = true;
       uploadResultSection.style.display = "none";
       hideAlert();
+      refreshIcons();
     });
 
     uploadBtn.addEventListener("click", async () => {
@@ -1559,6 +2127,7 @@
         step1Indicator.classList.add("completed");
         step2Indicator.classList.add("active");
         fetchLiveQuote();
+        refreshIcons();
       } catch (err) {
         showAlert("Network error during upload: " + err.message, "error");
         uploadBtn.disabled = false;
@@ -1566,7 +2135,7 @@
       }
     });
 
-    // --- Live Quote Calculation ---
+    // --- Live Quote Calculation with Number Crossfade ---
     async function fetchLiveQuote() {
       const pageCount = parseInt(pageCountInput.value) || 1;
       const copies = parseInt(copiesInput.value) || 1;
@@ -1575,7 +2144,7 @@
       const doubleSided = doubleSidedSelect.value === "true";
 
       quoteStatus.textContent = "● Calculating...";
-      quoteStatus.style.color = "var(--primary)";
+      quoteStatus.style.color = "var(--accent)";
 
       try {
         const res = await fetch("/pricing/quote", {
@@ -1594,25 +2163,30 @@
         if (!res.ok) {
           const err = await res.json();
           quoteStatus.textContent = "● Invalid input";
-          quoteStatus.style.color = "var(--error)";
+          quoteStatus.style.color = "var(--status-error)";
           return;
         }
 
         const quote = await res.json();
         latestQuote = quote;
 
-        quoteRupees.textContent = `₹${quote.total_price_rupees.toFixed(2)}`;
-        quotePaise.textContent = `(${quote.total_price_paise} paise)`;
-        statBaseRate.textContent = `₹${(quote.base_rate_per_page_paise / 100).toFixed(2)}/pg`;
-        statSheets.textContent = `${quote.sheets_per_copy} / ${quote.total_sheets}`;
-        statImpressions.textContent = `${quote.total_pages_printed} pgs`;
-        statUnitPrice.textContent = `₹${(quote.unit_price_paise / 100).toFixed(2)}`;
+        // Subtle number crossfade (INTERACTION-PATTERNS.md 2.7)
+        quoteRupees.style.opacity = "0.4";
+        setTimeout(() => {
+          quoteRupees.textContent = `₹${quote.total_price_rupees.toFixed(2)}`;
+          quotePaise.textContent = `(${quote.total_price_paise} paise)`;
+          statBaseRate.textContent = `₹${(quote.base_rate_per_page_paise / 100).toFixed(2)}/pg`;
+          statSheets.textContent = `${quote.sheets_per_copy} / ${quote.total_sheets}`;
+          statImpressions.textContent = `${quote.total_pages_printed} pgs`;
+          statUnitPrice.textContent = `₹${(quote.unit_price_paise / 100).toFixed(2)}`;
+          quoteRupees.style.opacity = "1";
+        }, 80);
 
         quoteStatus.textContent = "● Live Quote Ready";
-        quoteStatus.style.color = "var(--success)";
+        quoteStatus.style.color = "var(--status-success)";
       } catch (e) {
         quoteStatus.textContent = "● Error quoting";
-        quoteStatus.style.color = "var(--error)";
+        quoteStatus.style.color = "var(--status-error)";
       }
     }
 
@@ -1689,6 +2263,7 @@
         step2Indicator.classList.remove("active");
         step2Indicator.classList.add("completed");
         step3Indicator.classList.add("active");
+        refreshIcons();
       } catch (err) {
         showAlert("Error connecting to server: " + err.message, "error");
         createOrderBtn.disabled = false;
@@ -1743,10 +2318,10 @@
           paymentResultHeading.textContent = "Payment Succeeded!";
           paymentResultTag.textContent = "SUCCESS";
           paymentResultTag.className = "tag tag-success";
-          resPaymentOrderStatus.style.color = "var(--success)";
+          resPaymentOrderStatus.style.color = "var(--status-success)";
           resPaymentFailureRow.style.display = "none";
           resOrderPaymentStatus.textContent = "SUCCESS";
-          resOrderPaymentStatus.style.color = "var(--success)";
+          resOrderPaymentStatus.style.color = "var(--status-success)";
           resOrderStatus.textContent = "PAID";
           step3Indicator.classList.remove("active");
           step3Indicator.classList.add("completed");
@@ -1761,11 +2336,11 @@
           paymentResultHeading.textContent = "Payment Simulation Failed";
           paymentResultTag.textContent = "FAILED";
           paymentResultTag.className = "tag tag-error";
-          resPaymentOrderStatus.style.color = "var(--error)";
+          resPaymentOrderStatus.style.color = "var(--status-error)";
           resPaymentFailureRow.style.display = "block";
           resPaymentFailureReason.textContent = data.failure_reason || "Payment declined";
           resOrderPaymentStatus.textContent = "FAILED";
-          resOrderPaymentStatus.style.color = "var(--error)";
+          resOrderPaymentStatus.style.color = "var(--status-error)";
           resOrderStatus.textContent = "PAYMENT_FAILED";
         }
 
@@ -1773,6 +2348,7 @@
         queryPaymentOrderId.value = data.order_id;
         simulatePaymentBtn.disabled = false;
         paymentBtnText.textContent = "Execute Simulated Payment (POST /orders/{order_id}/payment/simulate)";
+        refreshIcons();
       } catch (err) {
         showAlert("Network error during payment simulation: " + err.message, "error");
         simulatePaymentBtn.disabled = false;
@@ -1845,10 +2421,10 @@
       const step5Ind = document.getElementById("step5Indicator");
 
       if (data.status === "PROCESSING") {
-        resQueuePositionBanner.style.background = "rgba(56, 189, 248, 0.2)";
-        resQueuePositionBanner.style.color = "var(--primary)";
-        resQueuePositionBanner.style.borderColor = "rgba(56, 189, 248, 0.4)";
-        resQueuePositionText.textContent = "🖨️ In Printing — Staff accepted your order and is currently printing!";
+        resQueuePositionBanner.style.background = "var(--status-info-bg)";
+        resQueuePositionBanner.style.color = "var(--status-info)";
+        resQueuePositionBanner.style.borderColor = "var(--status-info-border)";
+        resQueuePositionText.textContent = "In Printing — Staff accepted your order and is currently printing!";
         resQueuePos.textContent = pos > 0 ? `Printing in progress (#${pos})` : "Printing in progress";
         queueStatusBadge.textContent = "PROCESSING";
         queueStatusBadge.className = "tag tag-action";
@@ -1857,10 +2433,10 @@
           step5Ind.classList.remove("completed");
         }
       } else if (data.status === "READY") {
-        resQueuePositionBanner.style.background = "rgba(52, 211, 153, 0.2)";
-        resQueuePositionBanner.style.color = "var(--success)";
-        resQueuePositionBanner.style.borderColor = "rgba(52, 211, 153, 0.4)";
-        resQueuePositionText.textContent = `🎉 READY FOR PICKUP! Token ${data.token_number} is ready at Counter 1!`;
+        resQueuePositionBanner.style.background = "var(--status-success-bg)";
+        resQueuePositionBanner.style.color = "var(--status-success)";
+        resQueuePositionBanner.style.borderColor = "var(--status-success-border)";
+        resQueuePositionText.textContent = `READY FOR PICKUP! Token ${data.token_number} is ready at Stationery Counter 1!`;
         resQueuePos.textContent = "Ready for Collection";
         queueStatusBadge.textContent = "READY";
         queueStatusBadge.className = "tag tag-success";
@@ -1869,10 +2445,10 @@
           step5Ind.classList.add("completed");
         }
       } else if (data.status === "COMPLETED") {
-        resQueuePositionBanner.style.background = "rgba(148, 163, 184, 0.2)";
-        resQueuePositionBanner.style.color = "#cbd5e1";
-        resQueuePositionBanner.style.borderColor = "rgba(148, 163, 184, 0.4)";
-        resQueuePositionText.textContent = "✅ COMPLETED — Order has been collected. Thank you!";
+        resQueuePositionBanner.style.background = "var(--surface-subtle)";
+        resQueuePositionBanner.style.color = "var(--ink-secondary)";
+        resQueuePositionBanner.style.borderColor = "var(--rule-strong)";
+        resQueuePositionText.textContent = "COMPLETED — Order has been collected. Thank you!";
         resQueuePos.textContent = "Completed & Collected";
         queueStatusBadge.textContent = "COMPLETED";
         queueStatusBadge.className = "tag tag-success";
@@ -1881,24 +2457,24 @@
           step5Ind.classList.add("completed");
         }
       } else if (data.status === "REJECTED") {
-        resQueuePositionBanner.style.background = "rgba(248, 113, 113, 0.2)";
-        resQueuePositionBanner.style.color = "var(--error)";
-        resQueuePositionBanner.style.borderColor = "rgba(248, 113, 113, 0.4)";
-        resQueuePositionText.textContent = `❌ ORDER REJECTED: ${data.rejection_reason || "No reason specified"}`;
+        resQueuePositionBanner.style.background = "var(--status-error-bg)";
+        resQueuePositionBanner.style.color = "var(--status-error)";
+        resQueuePositionBanner.style.borderColor = "var(--status-error-border)";
+        resQueuePositionText.textContent = `ORDER REJECTED: ${data.rejection_reason || "No reason specified"}`;
         resQueuePos.textContent = "Rejected by Staff";
         queueStatusBadge.textContent = "REJECTED";
         queueStatusBadge.className = "tag tag-error";
       } else {
         if (pos > 0) {
-          resQueuePositionBanner.style.background = "rgba(52, 211, 153, 0.15)";
-          resQueuePositionBanner.style.color = "var(--success)";
-          resQueuePositionBanner.style.borderColor = "rgba(52, 211, 153, 0.3)";
+          resQueuePositionBanner.style.background = "var(--status-success-bg)";
+          resQueuePositionBanner.style.color = "var(--status-success)";
+          resQueuePositionBanner.style.borderColor = "var(--status-success-border)";
           resQueuePositionText.textContent = pos === 1 ? "★ You are #1 in line (Next up!)" : `You are #${pos} in line`;
           resQueuePos.textContent = `#${pos} of ${data.active_queue_length} active`;
         } else {
-          resQueuePositionBanner.style.background = "rgba(56, 189, 248, 0.15)";
-          resQueuePositionBanner.style.color = "var(--primary)";
-          resQueuePositionBanner.style.borderColor = "rgba(56, 189, 248, 0.3)";
+          resQueuePositionBanner.style.background = "var(--status-info-bg)";
+          resQueuePositionBanner.style.color = "var(--status-info)";
+          resQueuePositionBanner.style.borderColor = "var(--status-info-border)";
           resQueuePositionText.textContent = `Status: ${data.status}`;
           resQueuePos.textContent = data.status;
         }
@@ -1919,6 +2495,7 @@
         resQueueDdbKey.textContent = `PK: ORDER#${data.order_id} (Removed from active queue: ${data.status})`;
       }
       queueResultSection.style.display = "block";
+      refreshIcons();
     }
 
     async function admitOrderToQueue(orderId) {
@@ -1935,7 +2512,6 @@
 
         if (!res.ok) {
           if (data.detail && data.detail.error && data.detail.error.code === "ORDER_ALREADY_QUEUED") {
-            // If already queued, retrieve live queue status
             await refreshOrderQueue(orderId);
             enterQueueBtn.disabled = false;
             queueBtnText.textContent = "Admit Order to Queue (POST /orders/{order_id}/queue)";
@@ -1975,18 +2551,18 @@
           const msg = data.detail && data.detail.error ? data.detail.error.message : (data.detail || "Queue lookup failed");
           showAlert(msg, "error");
           refreshQueueBtn.disabled = false;
-          refreshBtnText.textContent = "↻ Refresh Live ETA & Position";
+          refreshBtnText.textContent = "Refresh Live ETA & Position";
           return;
         }
 
         renderQueueData(data);
         showAlert(`Live queue updated for ${orderId}: Token ${data.token_number}, #${data.queue_position} in line.`, "success");
         refreshQueueBtn.disabled = false;
-        refreshBtnText.textContent = "↻ Refresh Live ETA & Position";
+        refreshBtnText.textContent = "Refresh Live ETA & Position";
       } catch (err) {
         showAlert("Network error refreshing queue: " + err.message, "error");
         refreshQueueBtn.disabled = false;
-        refreshBtnText.textContent = "↻ Refresh Live ETA & Position";
+        refreshBtnText.textContent = "Refresh Live ETA & Position";
       }
     }
 
@@ -2089,6 +2665,7 @@
         if (historyPortalSection) historyPortalSection.style.display = "none";
         studentPortalSection.style.display = "block";
       }
+      refreshIcons();
     }
 
     if (tabStudentPortal) tabStudentPortal.addEventListener("click", () => switchPortal("student"));
@@ -2106,6 +2683,7 @@
       modalRejectReason.value = "";
       rejectModal.style.display = "flex";
       modalRejectReason.focus();
+      refreshIcons();
     };
 
     function closeRejectModal() {
@@ -2113,6 +2691,13 @@
     }
 
     if (modalCancelBtn) modalCancelBtn.addEventListener("click", closeRejectModal);
+
+    // Escape key modal support
+    document.addEventListener("keydown", (e) => {
+      if (e.key === "Escape" && rejectModal.style.display === "flex") {
+        closeRejectModal();
+      }
+    });
 
     if (modalConfirmBtn) {
       modalConfirmBtn.addEventListener("click", async () => {
@@ -2213,22 +2798,22 @@
         const res = await fetch(url);
         const orders = await res.json();
         if (!res.ok) {
-          staffOrdersContainer.innerHTML = `<div style="color: var(--error); padding: 1rem;">Failed to fetch orders: ${JSON.stringify(orders)}</div>`;
+          staffOrdersContainer.innerHTML = `<div style="color: var(--status-error); padding: 1rem;">Failed to fetch orders: ${JSON.stringify(orders)}</div>`;
           return;
         }
 
         renderStaffOrders(orders);
 
-        // Update active count badge
         if (filterVal === "ACTIVE" && staffQueueCountBadge) {
           staffQueueCountBadge.textContent = `${orders.length} active`;
         }
       } catch (err) {
-        staffOrdersContainer.innerHTML = `<div style="color: var(--error); padding: 1rem;">Error connecting to staff API: ${err.message}</div>`;
+        staffOrdersContainer.innerHTML = `<div style="color: var(--status-error); padding: 1rem;">Error connecting to staff API: ${err.message}</div>`;
       } finally {
         if (refreshStaffBtn) {
           refreshStaffBtn.disabled = false;
-          refreshStaffBtn.textContent = "↻ Refresh Orders";
+          refreshStaffBtn.innerHTML = `<i data-lucide="rotate-cw"></i><span>Refresh Orders</span>`;
+          refreshIcons();
         }
       }
     }
@@ -2236,12 +2821,13 @@
     function renderStaffOrders(orders) {
       if (!orders || orders.length === 0) {
         staffOrdersContainer.innerHTML = `
-          <div style="text-align: center; color: var(--text-muted); padding: 2.5rem 1rem; border: 1px dashed var(--card-border); border-radius: 8px;">
-            <div style="font-size: 1.5rem; margin-bottom: 0.5rem;">📭</div>
-            <div style="font-weight: 600;">No orders matching current filter</div>
+          <div style="text-align: center; color: var(--ink-muted); padding: 2.5rem 1rem; border: 1px dashed var(--rule-strong); border-radius: var(--radius-md); background: var(--surface-inset);">
+            <div style="font-size: 1.8rem; margin-bottom: 0.5rem; color: var(--accent);"><i data-lucide="inbox" style="width: 32px; height: 32px;"></i></div>
+            <div style="font-weight: 600; color: var(--ink);">No orders matching current filter</div>
             <div style="font-size: 0.8rem; margin-top: 4px;">Orders admitted to queue by students will appear here automatically.</div>
           </div>
         `;
+        refreshIcons();
         return;
       }
 
@@ -2260,41 +2846,42 @@
         else if (o.status === "REJECTED") statusBadgeClass = "tag-error";
 
         const docBtn = o.document_url
-          ? `<a href="${o.document_url}" target="_blank" class="btn btn-outline btn-sm" style="text-decoration: none; display: inline-flex; align-items: center; gap: 4px;">
-               <span>📄 Inspect Document (S3 Presigned)</span>
+          ? `<a href="${o.document_url}" target="_blank" class="btn btn-outline btn-sm" style="text-decoration: none; display: inline-flex; align-items: center; gap: 6px;">
+               <i data-lucide="file-text" style="width: 14px; height: 14px;"></i>
+               <span>Inspect Document (S3 Presigned)</span>
              </a>`
-          : `<span style="font-size: 0.8rem; color: var(--text-muted);">S3 Doc: ${o.document_key || "None"}</span>`;
+          : `<span style="font-size: 0.8rem; color: var(--ink-muted);">S3 Doc: ${o.document_key || "None"}</span>`;
 
         let actionBtns = "";
         if (o.status === "QUEUED") {
           actionBtns = `
             <button class="btn btn-action btn-sm" type="button" onclick="acceptStaffOrder('${o.order_id}')">
-              ✅ Accept & Print
+              <i data-lucide="printer" style="width: 14px; height: 14px;"></i> Accept &amp; Print
             </button>
             <button class="btn btn-danger btn-sm" type="button" onclick="openRejectModal('${o.order_id}', '${o.token_number || o.order_id}')">
-              ❌ Reject...
+              <i data-lucide="x" style="width: 14px; height: 14px;"></i> Reject...
             </button>
           `;
         } else if (o.status === "PROCESSING") {
           actionBtns = `
             <button class="btn btn-success btn-sm" type="button" onclick="readyStaffOrder('${o.order_id}')">
-              🎉 Mark Ready for Pickup
+              <i data-lucide="package-check" style="width: 14px; height: 14px;"></i> Mark Ready for Pickup
             </button>
           `;
         } else if (o.status === "READY") {
           actionBtns = `
             <button class="btn btn-primary btn-sm" type="button" onclick="completeStaffOrder('${o.order_id}')">
-              📦 Mark Completed (Collected)
+              <i data-lucide="check" style="width: 14px; height: 14px;"></i> Mark Completed (Collected)
             </button>
           `;
         } else if (o.status === "REJECTED") {
           actionBtns = `
-            <span style="font-size: 0.8rem; color: var(--error); font-weight: 500;">
+            <span style="font-size: 0.8rem; color: var(--status-error); font-weight: 600;">
               Reason: ${o.rejection_reason || "None specified"}
             </span>
           `;
         } else if (o.status === "COMPLETED") {
-          actionBtns = `<span style="font-size: 0.8rem; color: var(--success); font-weight: 500;">Order Finished</span>`;
+          actionBtns = `<span style="font-size: 0.8rem; color: var(--status-success); font-weight: 600;">Order Finished</span>`;
         }
 
         return `
@@ -2303,8 +2890,8 @@
               <div style="display: flex; align-items: center; gap: 10px;">
                 ${tokenBadge}
                 <div>
-                  <div style="font-weight: 600; font-size: 0.95rem; font-family: 'JetBrains Mono', monospace;">${o.order_id}</div>
-                  <div style="font-size: 0.75rem; color: var(--text-muted);">Student: ${o.student_id || "anonymous"} • ${o.filename || "file"}</div>
+                  <div style="font-weight: 700; font-size: 0.95rem; font-family: 'JetBrains Mono', monospace; color: var(--ink);">${o.order_id}</div>
+                  <div style="font-size: 0.75rem; color: var(--ink-muted);">Student: ${o.student_id || "anonymous"} • ${o.filename || "file"}</div>
                 </div>
               </div>
               <div style="display: flex; align-items: center; gap: 8px;">
@@ -2314,12 +2901,12 @@
             </div>
 
             <div class="staff-order-meta">
-              <div><strong style="color: var(--text-muted);">Pages:</strong> ${cfg.page_count || 1} pg</div>
-              <div><strong style="color: var(--text-muted);">Copies:</strong> ${cfg.copies || 1}</div>
-              <div><strong style="color: var(--text-muted);">Color:</strong> ${(cfg.color_mode || 'bw').toUpperCase()}</div>
-              <div><strong style="color: var(--text-muted);">Paper:</strong> ${cfg.paper_size || 'A4'} (${cfg.sidedness || 'SINGLE'})</div>
-              <div><strong style="color: var(--text-muted);">Impressions:</strong> ${pr.total_pages_printed || '-'}</div>
-              <div><strong style="color: var(--text-muted);">Total:</strong> ₹${pr.total_price_rupees ? pr.total_price_rupees.toFixed(2) : '-'}</div>
+              <div><strong style="color: var(--ink-muted);">Pages:</strong> ${cfg.page_count || 1} pg</div>
+              <div><strong style="color: var(--ink-muted);">Copies:</strong> ${cfg.copies || 1}</div>
+              <div><strong style="color: var(--ink-muted);">Color:</strong> ${(cfg.color_mode || 'bw').toUpperCase()}</div>
+              <div><strong style="color: var(--ink-muted);">Paper:</strong> ${cfg.paper_size || 'A4'} (${cfg.sidedness || 'SINGLE'})</div>
+              <div><strong style="color: var(--ink-muted);">Impressions:</strong> ${pr.total_pages_printed || '-'}</div>
+              <div><strong style="color: var(--ink-muted);">Total:</strong> ₹${pr.total_price_rupees ? pr.total_price_rupees.toFixed(2) : '-'}</div>
             </div>
 
             <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; padding-top: 4px;">
@@ -2329,6 +2916,8 @@
           </div>
         `;
       }).join("");
+
+      refreshIcons();
     }
 
     if (refreshStaffBtn) refreshStaffBtn.addEventListener("click", fetchStaffOrders);
@@ -2345,7 +2934,6 @@
     ) {
       switchPortal("history");
     } else {
-      // Fetch initial count in background for badge
       fetch("/staff/orders?status=ACTIVE")
         .then((r) => r.json())
         .then((data) => {
@@ -2396,17 +2984,17 @@
 
     function getTimelineIcon(event) {
       switch (event) {
-        case "DOCUMENT_UPLOADED": return "📄";
-        case "CREATED": return "📝";
-        case "PAYMENT_PENDING": return "⏳";
-        case "PAID": return "💳";
-        case "PAYMENT_FAILED": return "❌";
-        case "QUEUED": return "🎫";
-        case "PROCESSING": return "🖨️";
-        case "READY": return "📦";
-        case "COMPLETED": return "🎉";
-        case "REJECTED": return "🚫";
-        default: return "🔹";
+        case "DOCUMENT_UPLOADED": return `<i data-lucide="file-up" style="width: 12px; height: 12px;"></i>`;
+        case "CREATED": return `<i data-lucide="file-plus" style="width: 12px; height: 12px;"></i>`;
+        case "PAYMENT_PENDING": return `<i data-lucide="clock" style="width: 12px; height: 12px;"></i>`;
+        case "PAID": return `<i data-lucide="credit-card" style="width: 12px; height: 12px;"></i>`;
+        case "PAYMENT_FAILED": return `<i data-lucide="x-circle" style="width: 12px; height: 12px;"></i>`;
+        case "QUEUED": return `<i data-lucide="ticket" style="width: 12px; height: 12px;"></i>`;
+        case "PROCESSING": return `<i data-lucide="printer" style="width: 12px; height: 12px;"></i>`;
+        case "READY": return `<i data-lucide="package" style="width: 12px; height: 12px;"></i>`;
+        case "COMPLETED": return `<i data-lucide="check-check" style="width: 12px; height: 12px;"></i>`;
+        case "REJECTED": return `<i data-lucide="ban" style="width: 12px; height: 12px;"></i>`;
+        default: return `<i data-lucide="disc" style="width: 12px; height: 12px;"></i>`;
       }
     }
 
@@ -2421,18 +3009,19 @@
         showHistoryAlert("Please enter your Student ID above to view your print order history.", "info");
         if (historyOrdersContainer) {
           historyOrdersContainer.innerHTML = `
-            <div style="text-align: center; color: var(--text-muted); padding: 3rem 0; background: #0f172a; border-radius: 8px; border: 1px dashed var(--card-border);">
-              <div style="font-size: 2rem; margin-bottom: 0.5rem;">📜</div>
-              <div style="font-size: 0.95rem; font-weight: 500; color: #cbd5e1; margin-bottom: 0.25rem;">Enter your Student ID above</div>
-              <div style="font-size: 0.8rem; color: var(--text-muted);">Retrieve your past and current print orders, live queue status, and payment receipts.</div>
+            <div style="text-align: center; color: var(--ink-muted); padding: 3.5rem 1rem; background: var(--surface-inset); border-radius: var(--radius-md); border: 1px dashed var(--rule-strong);">
+              <div style="font-size: 2.2rem; margin-bottom: 0.5rem; color: var(--accent);"><i data-lucide="search" style="width: 36px; height: 36px;"></i></div>
+              <div style="font-size: 1rem; font-weight: 600; color: var(--ink); margin-bottom: 0.35rem;">Enter your Student ID above</div>
+              <div style="font-size: 0.83rem; color: var(--ink-muted);">Retrieve your past and current print orders, live queue status, and payment receipts.</div>
             </div>
           `;
+          refreshIcons();
         }
         return;
       }
 
       if (historyOrdersContainer) {
-        historyOrdersContainer.innerHTML = `<div style="text-align: center; color: var(--text-muted); padding: 3rem 0;">Loading orders for ${studentId}...</div>`;
+        historyOrdersContainer.innerHTML = `<div style="text-align: center; color: var(--ink-muted); padding: 3rem 0;">Loading orders for ${studentId}...</div>`;
       }
 
       try {
@@ -2442,7 +3031,7 @@
           const msg = errData?.detail?.error?.message || "Failed to fetch student order history.";
           showHistoryAlert(msg, "error");
           if (historyOrdersContainer) {
-            historyOrdersContainer.innerHTML = `<div style="text-align: center; color: var(--error); padding: 2rem 0;">Error: ${msg}</div>`;
+            historyOrdersContainer.innerHTML = `<div style="text-align: center; color: var(--status-error); padding: 2rem 0;">Error: ${msg}</div>`;
           }
           return;
         }
@@ -2453,7 +3042,7 @@
       } catch (err) {
         showHistoryAlert(`Network error: ${err.message}`, "error");
         if (historyOrdersContainer) {
-          historyOrdersContainer.innerHTML = `<div style="text-align: center; color: var(--error); padding: 2rem 0;">Network error loading orders.</div>`;
+          historyOrdersContainer.innerHTML = `<div style="text-align: center; color: var(--status-error); padding: 2rem 0;">Network error loading orders.</div>`;
         }
       }
     }
@@ -2491,19 +3080,19 @@
 
       if (!filtered.length) {
         historyOrdersContainer.innerHTML = `
-          <div style="text-align: center; color: var(--text-muted); padding: 3rem 0; background: #0f172a; border-radius: 8px; border: 1px dashed var(--card-border);">
-            <div style="font-size: 2.2rem; margin-bottom: 0.5rem;">🔍</div>
-            <div style="font-size: 0.95rem; font-weight: 500; color: #cbd5e1; margin-bottom: 0.25rem;">No orders found</div>
-            <div style="font-size: 0.8rem; color: var(--text-muted);">
+          <div style="text-align: center; color: var(--ink-muted); padding: 3rem 1rem; background: var(--surface-inset); border-radius: var(--radius-md); border: 1px dashed var(--rule-strong);">
+            <div style="font-size: 2.2rem; margin-bottom: 0.5rem; color: var(--accent);"><i data-lucide="search-x" style="width: 36px; height: 36px;"></i></div>
+            <div style="font-size: 1rem; font-weight: 600; color: var(--ink); margin-bottom: 0.25rem;">No orders found</div>
+            <div style="font-size: 0.8rem; color: var(--ink-muted);">
               ${currentHistoryOrders.length === 0 ? "You haven't placed any print orders yet with this Student ID." : "No orders match the selected status filter."}
             </div>
           </div>
         `;
+        refreshIcons();
         return;
       }
 
       historyOrdersContainer.innerHTML = filtered.map(o => {
-        // Status Badge Style
         let statusTagClass = "tag-status";
         if (o.status === "COMPLETED" || o.status === "PAID") statusTagClass = "tag-success";
         else if (o.status === "READY") statusTagClass = "tag-success";
@@ -2514,52 +3103,49 @@
           ? `<span class="staff-token-badge">${o.token_number}</span>`
           : "";
 
-        // Re-download Document Link (presigned S3 GET URL)
         const docDownloadBtn = o.document_url
           ? `<a href="${o.document_url}" target="_blank" rel="noopener noreferrer" class="btn btn-outline btn-sm" style="text-decoration: none; display: inline-flex; align-items: center; gap: 6px;">
-               <span>🔗</span> <span>Re-download Document</span>
+               <i data-lucide="download" style="width: 14px; height: 14px;"></i> <span>Re-download Document</span>
              </a>`
-          : `<span style="font-size: 0.8rem; color: var(--text-muted);">Document unavailable</span>`;
+          : `<span style="font-size: 0.8rem; color: var(--ink-muted);">Document unavailable</span>`;
 
-        // Payment Receipt Block
         let paymentBlock = "";
         if (o.payment_receipt) {
           const pr = o.payment_receipt;
           const isSuccess = pr.status === "SUCCESS";
           paymentBlock = `
             <div class="history-meta-card" style="grid-column: span 2;">
-              <div class="history-meta-label">Payment Receipt & Details (Simulated)</div>
-              <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px; font-size: 0.82rem;">
+              <div class="history-meta-label">Payment Receipt &amp; Details (Simulated)</div>
+              <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px; font-size: 0.84rem;">
                 <div>
-                  <span style="font-family: 'JetBrains Mono', monospace; color: var(--primary); font-weight: 600;">${pr.payment_reference || pr.payment_id}</span>
-                  <span style="color: var(--text-muted); margin-left: 8px;">• ${pr.currency} ₹${pr.amount_rupees.toFixed(2)}</span>
+                  <span style="font-family: 'JetBrains Mono', monospace; color: var(--accent); font-weight: 700;">${pr.payment_reference || pr.payment_id}</span>
+                  <span style="color: var(--ink-muted); margin-left: 8px;">• ${pr.currency} ₹${pr.amount_rupees.toFixed(2)}</span>
                 </div>
                 <div style="display: flex; align-items: center; gap: 6px;">
                   <span class="tag ${isSuccess ? 'tag-success' : 'tag-error'}">${pr.status}</span>
-                  <span style="font-size: 0.75rem; color: var(--text-muted); font-family: 'JetBrains Mono', monospace;">${formatDateTime(pr.created_at)}</span>
+                  <span style="font-size: 0.75rem; color: var(--ink-muted); font-family: 'JetBrains Mono', monospace;">${formatDateTime(pr.created_at)}</span>
                 </div>
               </div>
-              ${pr.failure_reason ? `<div style="color: var(--error); font-size: 0.78rem; margin-top: 4px;">Reason: ${pr.failure_reason}</div>` : ""}
+              ${pr.failure_reason ? `<div style="color: var(--status-error); font-size: 0.78rem; margin-top: 4px; font-weight: 500;">Reason: ${pr.failure_reason}</div>` : ""}
             </div>
           `;
         }
 
-        // Live Queue Card (when QUEUED or PROCESSING)
         let queueLiveBlock = "";
         if ((o.status === "QUEUED" || o.status === "PROCESSING") && o.queue_position) {
           queueLiveBlock = `
-            <div class="history-meta-card" style="grid-column: span 2; background: rgba(56, 189, 248, 0.05); border-color: rgba(56, 189, 248, 0.3);">
-              <div class="history-meta-label" style="color: var(--primary);">Live Queue & Status</div>
+            <div class="history-meta-card" style="grid-column: span 2; background: #EFF6FF; border-color: #BFDBFE;">
+              <div class="history-meta-label" style="color: #1D4ED8;">Live Queue &amp; Status</div>
               <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
                 <div>
-                  <div style="font-size: 1.1rem; font-weight: 700; color: var(--primary);">Queue Position #${o.queue_position}</div>
-                  <div style="font-size: 0.78rem; color: var(--text-muted);">Active in operational printer line</div>
+                  <div style="font-size: 1.15rem; font-weight: 700; color: #1D4ED8;">Queue Position #${o.queue_position}</div>
+                  <div style="font-size: 0.78rem; color: var(--ink-muted);">Active in operational printer line</div>
                 </div>
                 <div style="text-align: right;">
-                  <div style="font-size: 0.85rem; font-weight: 600; color: var(--success);">
+                  <div style="font-size: 0.88rem; font-weight: 600; color: var(--status-success);">
                     ${o.estimated_completion_at ? formatDateTime(o.estimated_completion_at) : "Calculating..."}
                   </div>
-                  <div style="font-size: 0.75rem; color: var(--text-muted);">
+                  <div style="font-size: 0.75rem; color: var(--ink-muted);">
                     ${o.estimated_wait_minutes !== null && o.estimated_wait_minutes !== undefined ? `~${o.estimated_wait_minutes} mins remaining` : "In queue"}
                   </div>
                 </div>
@@ -2568,28 +3154,25 @@
           `;
         }
 
-        // Rejection Reason Callout (when REJECTED)
         let rejectionBlock = "";
         if (o.status === "REJECTED" && o.rejection_reason) {
           rejectionBlock = `
-            <div class="rejection-callout">
+            <div style="background: var(--status-error-bg); border: 1px solid var(--status-error-border); border-radius: var(--radius-sm); padding: 12px 14px; margin-bottom: 1.25rem; color: var(--status-error); font-size: 0.85rem;">
               <strong>⚠️ Rejection Notice:</strong> ${o.rejection_reason}
-              <div style="font-size: 0.75rem; color: #f87171; margin-top: 4px;">Your order could not be printed. Please review operator notes and submit a corrected file.</div>
+              <div style="font-size: 0.78rem; color: #991B1B; margin-top: 4px;">Your order could not be printed. Please review operator notes and submit a corrected file.</div>
             </div>
           `;
         }
 
-        // Ready for Pickup Callout (when READY)
         let readyBlock = "";
         if (o.status === "READY") {
           readyBlock = `
-            <div style="background: rgba(52, 211, 153, 0.1); border: 1px solid var(--success); border-radius: 8px; padding: 12px 14px; margin-bottom: 1.25rem; color: #6ee7b7; font-size: 0.85rem;">
-              <strong>🎉 Ready for Pickup!</strong> Your print job is complete at the stationery counter. Show Token <span style="font-family: 'JetBrains Mono', monospace; font-weight: 700; color: #34d399;">${o.token_number || o.order_id}</span> to collect.
+            <div style="background: var(--status-success-bg); border: 1px solid var(--status-success-border); border-radius: var(--radius-sm); padding: 12px 14px; margin-bottom: 1.25rem; color: var(--status-success); font-size: 0.88rem;">
+              <strong>🎉 Ready for Pickup!</strong> Your print job is complete at the stationery counter. Show Token <span style="font-family: 'JetBrains Mono', monospace; font-weight: 700; color: #047857;">${o.token_number || o.order_id}</span> to collect.
             </div>
           `;
         }
 
-        // Status Timeline Stepper
         const timelineSteps = (o.timeline || []).map(ev => {
           let stepClass = "completed";
           if (ev.status === "FAILED") stepClass = "failed";
@@ -2621,11 +3204,11 @@
               <div style="display: flex; align-items: center; gap: 12px;">
                 ${tokenBadge}
                 <div>
-                  <div style="font-weight: 700; font-size: 1rem; font-family: 'JetBrains Mono', monospace; color: var(--text);">
+                  <div style="font-weight: 700; font-size: 1.05rem; font-family: 'JetBrains Mono', monospace; color: var(--ink);">
                     ${o.order_id}
                   </div>
-                  <div style="font-size: 0.75rem; color: var(--text-muted);">
-                    Document: <strong style="color: #cbd5e1;">${o.filename || o.document_name || "file"}</strong> • Placed: ${formatDateTime(o.created_at)}
+                  <div style="font-size: 0.78rem; color: var(--ink-muted);">
+                    Document: <strong style="color: var(--ink);">${o.filename || o.document_name || "file"}</strong> • Placed: ${formatDateTime(o.created_at)}
                   </div>
                 </div>
               </div>
@@ -2643,17 +3226,17 @@
                 <div class="history-meta-value">
                   ${cfg.page_count || 1} pages • ${(cfg.color_mode || 'bw').toUpperCase()} • ${cfg.paper_size || 'A4'}
                 </div>
-                <div style="font-size: 0.75rem; color: var(--text-muted); margin-top: 2px;">
+                <div style="font-size: 0.75rem; color: var(--ink-muted); margin-top: 2px;">
                   ${cfg.copies || 1} copy(ies) • ${cfg.sidedness || 'SINGLE'} sided
                 </div>
               </div>
 
               <div class="history-meta-card">
-                <div class="history-meta-label">Price & Billing</div>
-                <div class="history-meta-value" style="color: var(--primary);">
+                <div class="history-meta-label">Price &amp; Billing</div>
+                <div class="history-meta-value" style="color: var(--accent);">
                   ₹${pr.total_price_rupees ? pr.total_price_rupees.toFixed(2) : '-'}
                 </div>
-                <div style="font-size: 0.75rem; color: var(--text-muted); margin-top: 2px;">
+                <div style="font-size: 0.75rem; color: var(--ink-muted); margin-top: 2px;">
                   ${pr.total_pages_printed || '-'} printed impressions (${pr.total_sheets || '-'} sheets)
                 </div>
               </div>
@@ -2664,7 +3247,7 @@
 
             <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; margin-bottom: 1rem;">
               <div>${docDownloadBtn}</div>
-              <div style="font-size: 0.75rem; color: var(--text-muted);">
+              <div style="font-size: 0.75rem; color: var(--ink-muted); font-family: 'JetBrains Mono', monospace;">
                 Authoritative DynamoDB: PK: ORDER#${o.order_id}
               </div>
             </div>
@@ -2672,8 +3255,9 @@
             <!-- Visual Timeline Stepper -->
             <div class="timeline-container">
               <div class="timeline-title-banner">
-                <span>⏱️ Status Timeline & Lifecycle Events</span>
-                <span style="font-size: 0.75rem; color: var(--text-muted); font-weight: 400;">(${o.timeline ? o.timeline.length : 0} events)</span>
+                <i data-lucide="clock" style="width: 15px; height: 15px; color: var(--accent);"></i>
+                <span>Status Timeline &amp; Lifecycle Events</span>
+                <span style="font-size: 0.75rem; color: var(--ink-muted); font-weight: 500;">(${o.timeline ? o.timeline.length : 0} events)</span>
               </div>
               <div class="timeline-stepper">
                 ${timelineSteps}
@@ -2682,6 +3266,8 @@
           </div>
         `;
       }).join("");
+
+      refreshIcons();
     }
 
     if (btnFetchHistory) btnFetchHistory.addEventListener("click", fetchStudentHistory);
@@ -2710,6 +3296,14 @@
         switchPortal("history");
       });
     }
+
+    // Initialize Lucide icons on page load
+    document.addEventListener("DOMContentLoaded", () => {
+      refreshIcons();
+    });
+    // Secondary fallback to guarantee icons rendered if script loads asynchronously
+    setTimeout(refreshIcons, 100);
+    setTimeout(refreshIcons, 500);
   </script>
 </body>
 </html>
