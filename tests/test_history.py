@@ -429,3 +429,104 @@ def test_history_ui_elements_and_routes(client: TestClient):
         assert 'id="historyAlertBox"' in html
         assert 'id="filterBtnAll"' in html
         assert 'id="jumpToHistoryBtn"' in html
+
+
+# ==============================================================================
+# 10. REJECTED & PAYMENT_FAILED STANDALONE TIMELINE VERIFICATION
+# ==============================================================================
+
+def test_order_timeline_for_rejected_and_payment_failed_orders(client: TestClient):
+    """
+    Verify standalone GET /orders/{order_id}/timeline correctly reflects:
+    1. PAYMENT_FAILED state with failure reason and FAILED event status.
+    2. REJECTED state with formal operator rejection reason and FAILED event status.
+    """
+    # 1. Payment Failed Timeline
+    stu_fail = "STU-TIMELINE-FAIL"
+    order_fail = _create_order(client, student_id=stu_fail, filename="unpaid.pdf")
+    fail_oid = order_fail["order_id"]
+    client.post(f"/orders/{fail_oid}/payment/simulate", json={"outcome": "FAILURE"})
+
+    res_fail = client.get(f"/orders/{fail_oid}/timeline")
+    assert res_fail.status_code == 200
+    fail_data = res_fail.json()
+    assert fail_data["current_status"] == "PAYMENT_FAILED"
+    events_fail = [e["event"] for e in fail_data["events"]]
+    assert events_fail == ["DOCUMENT_UPLOADED", "CREATED", "PAYMENT_FAILED"]
+    pf_event = next(e for e in fail_data["events"] if e["event"] == "PAYMENT_FAILED")
+    assert pf_event["status"] == "FAILED"
+    assert "failure" in pf_event["description"].lower() or "declined" in pf_event["description"].lower()
+
+    # 2. Rejected Order Timeline
+    stu_rej = "STU-TIMELINE-REJ"
+    order_rej = _create_order(client, student_id=stu_rej, filename="bad_doc.pdf")
+    rej_oid = order_rej["order_id"]
+    client.post(f"/orders/{rej_oid}/payment/simulate", json={"outcome": "SUCCESS"})
+    client.post(f"/orders/{rej_oid}/queue")
+    client.post(
+        f"/staff/orders/{rej_oid}/reject",
+        json={"rejection_reason": "Low DPI image below 150 target threshold."},
+    )
+
+    res_rej = client.get(f"/orders/{rej_oid}/timeline")
+    assert res_rej.status_code == 200
+    rej_data = res_rej.json()
+    assert rej_data["current_status"] == "REJECTED"
+    events_rej = [e["event"] for e in rej_data["events"]]
+    assert events_rej == ["DOCUMENT_UPLOADED", "CREATED", "PAID", "QUEUED", "REJECTED"]
+    rej_event = next(e for e in rej_data["events"] if e["event"] == "REJECTED")
+    assert rej_event["status"] == "FAILED"
+    assert rej_event["rejection_reason"] == "Low DPI image below 150 target threshold."
+
+
+# ==============================================================================
+# 11. ROUTE VALIDATION & WHITESPACE INTEGRITY
+# ==============================================================================
+
+def test_students_whitespace_route_rejected(client: TestClient):
+    """GET /students/{student_id}/orders with whitespace-only returns 400."""
+    res = client.get("/students/%20%20%20/orders")
+    assert res.status_code == 400
+    assert res.json()["detail"]["error"]["code"] == "STUDENT_ID_REQUIRED"
+
+
+# ==============================================================================
+# 12. PARTITION QUERY NO SCAN VERIFICATION
+# ==============================================================================
+
+def test_dynamodb_student_partition_query_no_scan_on_empty(client: TestClient, aws_env):
+    """
+    Assert that querying an empty student directly invokes DynamoDB Query
+    and does NOT fall back to Table Scan (preserving least-privilege IAM policy
+    and O(1) partition access).
+    """
+    from unittest.mock import patch
+    from app.repositories.dynamodb_repo import DynamoDBRepository
+
+    repo = DynamoDBRepository()
+    with patch.object(repo.table, "scan", wraps=repo.table.scan) as mock_scan:
+        orders = repo.get_orders_by_student_id("STU-DEFINITELY-EMPTY-9999")
+        assert orders == []
+        mock_scan.assert_not_called()
+
+
+# ==============================================================================
+# 13. MULTIPLE ORDERS CHRONOLOGICAL INTEGRITY
+# ==============================================================================
+
+def test_student_history_multiple_orders_pagination_integrity(client: TestClient):
+    """Verify that multiple orders for a single student maintain strict reverse chronological order."""
+    stu = "STU-MULTI-ORDER-888"
+    order_ids = []
+    for i in range(5):
+        ord_res = _create_order(client, student_id=stu, filename=f"sheet_{i}.pdf")
+        order_ids.append(ord_res["order_id"])
+
+    res = client.get(f"/orders?student_id={stu}")
+    assert res.status_code == 200
+    items = res.json()
+    assert len(items) == 5
+
+    retrieved_ids = [it["order_id"] for it in items]
+    assert retrieved_ids == list(reversed(order_ids))
+
